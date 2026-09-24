@@ -8,7 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-
+use Filament\Actions\DeleteAction;
 class CustomersTable
 {
     public static function configure(Table $table): Table
@@ -39,9 +39,12 @@ class CustomersTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+           ->recordActions([
+            ViewAction::make(),
+            EditAction::make(),
+            DeleteAction::make(),
+           
+                
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
