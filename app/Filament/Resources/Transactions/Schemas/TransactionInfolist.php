@@ -11,8 +11,8 @@ class TransactionInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('account.id')
-                    ->label('Account'),
+                TextEntry::make('account_id')
+                    ->numeric(),
                 TextEntry::make('user_id')
                     ->numeric(),
                 TextEntry::make('no_slip'),

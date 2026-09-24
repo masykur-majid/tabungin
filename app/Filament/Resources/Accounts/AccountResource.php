@@ -6,7 +6,6 @@ use App\Filament\Resources\Accounts\Pages\CreateAccount;
 use App\Filament\Resources\Accounts\Pages\EditAccount;
 use App\Filament\Resources\Accounts\Pages\ListAccounts;
 use App\Filament\Resources\Accounts\Pages\ViewAccount;
-use App\Filament\Resources\Accounts\RelationManagers\TransactionsRelationManager;
 use App\Filament\Resources\Accounts\Schemas\AccountForm;
 use App\Filament\Resources\Accounts\Schemas\AccountInfolist;
 use App\Filament\Resources\Accounts\Tables\AccountsTable;
@@ -21,9 +20,7 @@ class AccountResource extends Resource
 {
     protected static ?string $model = Account::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
-
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::CreditCard;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
     {
@@ -43,7 +40,7 @@ class AccountResource extends Resource
     public static function getRelations(): array
     {
         return [
-            TransactionsRelationManager::class,
+            //
         ];
     }
 
@@ -51,9 +48,10 @@ class AccountResource extends Resource
     {
         return [
             'index' => ListAccounts::route('/'),
-            // 'create' => CreateAccount::route('/create'),
+            'create' => CreateAccount::route('/create'),
             'view' => ViewAccount::route('/{record}'),
             'edit' => EditAccount::route('/{record}/edit'),
+            
         ];
     }
 }

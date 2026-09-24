@@ -8,7 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-
+use Filament\Actions\DeleteAction;
 class CustomersTable
 {
     public static function configure(Table $table): Table
@@ -20,9 +20,9 @@ class CustomersTable
                 TextColumn::make('NISN')
                     ->searchable(),
                 TextColumn::make('jenis_kelamin')
-                    ->searchable(),
+                    ->badge(),
                 TextColumn::make('asal_sekolah')
-                    ->searchable(),
+                    ->badge(),
                 TextColumn::make('alamat_rumah')
                     ->searchable(),
                 TextColumn::make('no_telepon')
@@ -39,9 +39,12 @@ class CustomersTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+           ->recordActions([
+            ViewAction::make(),
+            EditAction::make(),
+            DeleteAction::make(),
+           
+                
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

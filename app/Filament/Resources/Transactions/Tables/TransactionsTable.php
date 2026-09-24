@@ -15,20 +15,20 @@ class TransactionsTable
     {
         return $table
             ->columns([
-                TextColumn::make('tanggal')
-                    ->date()
+                TextColumn::make('account_id')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('user_id')
+                    ->numeric()
                     ->sortable(),
                 TextColumn::make('no_slip')
                     ->searchable(),
-                TextColumn::make('account.customer.nama')
-                    ->searchable(),
+                TextColumn::make('tanggal')
+                    ->date()
+                    ->sortable(),
                 TextColumn::make('jenis_transaksi')
                     ->searchable(),
                 TextColumn::make('jumlah_transaksi')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('user.name')
-                    ->label('Petugas')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')

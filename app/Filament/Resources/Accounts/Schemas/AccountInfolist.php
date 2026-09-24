@@ -12,13 +12,19 @@ class AccountInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('customer.nama')
-                    ->label('Customer'),
+                TextEntry::make('customer_id')
+                    ->numeric(),
                 TextEntry::make('nomor_rekening'),
                 TextEntry::make('saldo')
                     ->numeric(),
                 IconEntry::make('is_active')
                     ->boolean(),
+                TextEntry::make('created_at')
+                    ->dateTime()
+                    ->placeholder('-'),
+                TextEntry::make('updated_at')
+                    ->dateTime()
+                    ->placeholder('-'),
             ]);
     }
 }

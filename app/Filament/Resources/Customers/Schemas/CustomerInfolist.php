@@ -13,8 +13,10 @@ class CustomerInfolist
             ->components([
                 TextEntry::make('nama'),
                 TextEntry::make('NISN'),
-                TextEntry::make('jenis_kelamin'),
-                TextEntry::make('asal_sekolah'),
+                TextEntry::make('jenis_kelamin')
+                    ->badge(),
+                TextEntry::make('asal_sekolah')
+                    ->badge(),
                 TextEntry::make('alamat_rumah'),
                 TextEntry::make('no_telepon'),
                 TextEntry::make('created_at')

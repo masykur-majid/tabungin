@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Accounts\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -17,7 +18,8 @@ class AccountsTable
         return $table
             ->columns([
                 TextColumn::make('customer.nama')
-                    ->searchable(),
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('nomor_rekening')
                     ->searchable(),
                 TextColumn::make('saldo')
@@ -40,6 +42,7 @@ class AccountsTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

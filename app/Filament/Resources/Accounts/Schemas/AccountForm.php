@@ -5,10 +5,7 @@ namespace App\Filament\Resources\Accounts\Schemas;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
-use Filament\Support\Icons\Heroicon;
 
 class AccountForm
 {
@@ -18,24 +15,21 @@ class AccountForm
             ->components([
                 Select::make('customer_id')
                     ->relationship('customer', 'nama')
-                    ->getOptionLabelFromRecordUsing(fn ($record)=> "$record->NISN - {$record->nama}")
-                    ->preload()
-                    ->searchable()
                     ->required(),
-                TextInput::make('nomor_rekening')
-                    ->required(),
+               TextInput::make('nomor_rekening')
+                ->label('Nomor rekening')
+                ->required()
+                ->rules(['max_digits:15']) // maksimal 15 digit angka
+                ->validationMessages([
+                    'max_digits' => 'Nomor rekening maksimal 15 digit.',
+                    'required' => 'Nomor rekening wajib diisi.',
+                ])
+                ->unique(ignoreRecord: true),
                 TextInput::make('saldo')
                     ->required()
-                    ->prefix('Rp')
-                    ->currencyMask(thousandSeparator: '.', decimalSeparator: ',', precision: 2)
                     ->numeric(),
                 Toggle::make('is_active')
-                    ->required()
-                    ->onIcon(Heroicon::Check)
-                    ->offIcon(Heroicon::XMark)
-                    ->onColor('success')
-                    ->offColor('danger'),
-            ])
-            ->columns(1);
+                    ->required(),
+            ]);
     }
 }
