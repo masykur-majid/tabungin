@@ -6,6 +6,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\ToggleButtons;
 
 class AccountForm
 {
@@ -14,22 +15,37 @@ class AccountForm
         return $schema
             ->components([
                 Select::make('customer_id')
+                    ->label('Customer')
                     ->relationship('customer', 'nama')
+                    ->prefixIcon('heroicon-m-user')
                     ->required(),
+
                TextInput::make('nomor_rekening')
-                ->label('Nomor rekening')
-                ->required()
-                ->rules(['max_digits:15']) // maksimal 15 digit angka
-                ->validationMessages([
+                    ->label('Nomor rekening')
+                    ->prefix('Rp')
+                    ->required()
+                    ->rules(['max_digits:15'])
+                    ->validationMessages([
                     'max_digits' => 'Nomor rekening maksimal 15 digit.',
                     'required' => 'Nomor rekening wajib diisi.',
-                ])
-                ->unique(ignoreRecord: true),
+                ])     
+                    ->unique(ignoreRecord: true),
                 TextInput::make('saldo')
                     ->required()
                     ->numeric(),
-                Toggle::make('is_active')
-                    ->required(),
+               ToggleButtons::make('is_active')
+                ->label('Is active')
+                ->boolean()
+                ->inline()
+                ->icons([
+                    true => 'heroicon-m-check-circle',
+                    false => 'heroicon-m-x-circle',
+                ])
+                ->colors([
+                    true => 'success',
+                    false => 'danger',
+                ])
+                ->required(),
             ]);
     }
 }

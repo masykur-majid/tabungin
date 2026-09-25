@@ -45,13 +45,11 @@ class AccountResource extends Resource
     }
 
     public static function getPages(): array
-    {
-        return [
-            'index' => ListAccounts::route('/'),
-            'create' => CreateAccount::route('/create'),
-            'view' => ViewAccount::route('/{record}'),
-            'edit' => EditAccount::route('/{record}/edit'),
-            
-        ];
-    }
+{
+    return [
+        'index' => Pages\ListAccounts::route('/'),
+        // 'create' => Pages\CreateAccount::route('/create'),
+        // 'edit' => Pages\EditAccount::route('/{record}/edit'),
+    ];
+}
 }
