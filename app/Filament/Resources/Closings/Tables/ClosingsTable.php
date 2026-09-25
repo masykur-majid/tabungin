@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Transactions\Tables;
+namespace App\Filament\Resources\Closings\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,28 +9,26 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class TransactionsTable
+class ClosingsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('account_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('no_slip')
-                    ->searchable(),
                 TextColumn::make('tanggal')
                     ->date()
                     ->sortable(),
-                TextColumn::make('jenis_transaksi')
-                    ->searchable(),
-                TextColumn::make('jumlah_transaksi')
+                TextColumn::make('total_sistem')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('total_fisik')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('selisih')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

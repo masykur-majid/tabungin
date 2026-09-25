@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Transactions\Schemas;
 
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class TransactionForm
@@ -16,29 +16,28 @@ class TransactionForm
                 Select::make('account_id')
                     ->required()
                     ->relationship('account', 'nomor_rekening'),
+
                 Select::make('user_id')
                     ->required()
                     ->relationship('user', 'name'),
+
                 TextInput::make('no_slip')
-                    ->default(function () {
-        $latest = \App\Models\Transaction::latest('id')->first();
-        $nextNumber = $latest ? $latest->id + 1 : 1;
-        $formattedNumber = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-        return "{$formattedNumber}/2026";
-    })
+                    ->label('No Slip')
                     ->disabled()
-                    ->dehydrated()
-                    ->required(),
+                    ->dehydrated(false)
+                    ->required(false),
+
                 DatePicker::make('tanggal')
-                    ->required()
-                    ->MaxDate(now()),
+                    ->required(),
+
                 TextInput::make('jenis_transaksi')
                     ->required()
                     ->default('setoran'),
+
                 TextInput::make('jumlah_transaksi')
                     ->required()
                     ->numeric()
-                    ->prefix('Rp'), // Ini bikin tulisan Rp di sebelah kiri input
+                    ->prefix('Rp'), // ini bikin tulisan Rp di sebelah kiri input
             ]);
     }
 }
