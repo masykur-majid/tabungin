@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Guarded('id')]
 
-#[Guarded('id')]
 class Customer extends Model
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */

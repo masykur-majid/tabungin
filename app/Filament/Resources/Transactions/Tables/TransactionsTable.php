@@ -15,11 +15,13 @@ class TransactionsTable
     {
         return $table
             ->columns([
-                TextColumn::make('account_id')
-                    ->numeric()
+                TextColumn::make('account.nomor_rekening')
+                    ->label('No. Rekening')
+                    ->searchable()
                     ->sortable(),
-                TextColumn::make('user_id')
-                    ->numeric()
+                TextColumn::make('user.name')
+                    ->label('Petugas')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('no_slip')
                     ->searchable(),
