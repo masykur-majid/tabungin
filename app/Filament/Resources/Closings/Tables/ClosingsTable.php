@@ -28,7 +28,7 @@ class ClosingsTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->searchable(),
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

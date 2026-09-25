@@ -20,9 +20,7 @@ class ClosingResource extends Resource
 {
     protected static ?string $model = Closing::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
-
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Banknotes;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
     {

@@ -19,7 +19,8 @@ class ClosingInfolist
                     ->numeric(),
                 TextEntry::make('selisih')
                     ->numeric(),
-                TextEntry::make('status'),
+                TextEntry::make('status')
+                    ->badge(),
                 TextEntry::make('catatan')
                     ->columnSpanFull(),
                 TextEntry::make('created_at')

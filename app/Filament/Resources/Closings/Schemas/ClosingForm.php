@@ -3,11 +3,8 @@
 namespace App\Filament\Resources\Closings\Schemas;
 
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\ToggleButtons;
@@ -17,191 +14,353 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
-use Filament\Support\View\Components\ToggleComponent;
-use Filament\Tables\Columns\ToggleColumn;
+use Filament\Support\RawJs;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\HtmlString;
 
 class ClosingForm
 {
     public static function configure(Schema $schema): Schema
     {
+        $moneyMask = RawJs::make('$money($input, ",", ".", 0)');
+
         return $schema
             ->components([
 
+                // INFORMASI TUTUP KAS
                 Section::make('Informasi Tutup Kas')
                     ->schema([
+
                         DatePicker::make('tanggal')
                             ->label('Tanggal Tutup Kas')
+                            ->default(now())
                             ->required(),
+
                         TextInput::make('user_id')
                             ->label('Nama Petugas')
-                            ->default(fn() => Auth()->user()?->name)
+                            ->formatStateUsing(fn () => Auth::user()?->name)
+                            ->dehydrated(false)
                             ->readOnly()
-                            ->dehydrated()
                             ->required(),
+
                     ])
                     ->columns(2)
                     ->columnSpanFull(),
 
+                // PERHITUNGAN UANG FISIK
                 Section::make('Perhitungan Uang Fisik')
                     ->description('Silakan inputkan jumlah uang fisik yang terkumpul')
                     ->columns(2)
                     ->schema([
+
+                        // TOTAL UANG KOIN
                         TextInput::make('total_uang_koin')
-                            ->live()
-                            ->currencyMask(thousandSeparator: '.', decimalSeparator: ',', precision: 2),
+                            ->label('Total Uang Koin')
+                            ->prefix('Rp')
+                            ->default(0)
+                            ->numeric()
+                            ->readOnly()
+                            ->dehydrated()
+                            ->live(),
+
+                        // TOTAL UANG KERTAS
                         TextInput::make('total_uang_kertas')
-                            ->live()
-                            ->currencyMask(thousandSeparator: '.', decimalSeparator: ',', precision: 2),
+                            ->label('Total Uang Kertas')
+                            ->prefix('Rp')
+                            ->default(0)
+                            ->numeric()
+                            ->readOnly()
+                            ->dehydrated()
+                            ->live(),
+
+                        // RINCIAN UANG KOIN
                         Repeater::make('jumlah_uang_koin')
-                            ->label('')
-                            ->hiddenLabel(true)
+                            ->label('Rincian Uang Koin')
                             ->live()
                             ->table([
                                 TableColumn::make('Nominal Pecahan'),
                                 TableColumn::make('Jumlah'),
-                                TableColumn::make('sub Total')
+                                TableColumn::make('Subtotal'),
                             ])
                             ->default([
-                                    ['koin' => 100, 'banyak_koin' => 0, 'sub_total_koin' => 0],
-                                    ['koin' => 200, 'banyak_koin' => 0, 'sub_total_koin' => 0],
-                                    ['koin' => 500, 'banyak_koin' => 0, 'sub_total_koin' => 0],
-                                    ['koin' => 1000, 'banyak_koin' => 0, 'sub_total_koin' => 0],
-                                ])
+                                [
+                                    'koin' => 100,
+                                    'banyak_koin' => 0,
+                                    'sub_total_koin' => 0,
+                                ],
+                                [
+                                    'koin' => 200,
+                                    'banyak_koin' => 0,
+                                    'sub_total_koin' => 0,
+                                ],
+                                [
+                                    'koin' => 500,
+                                    'banyak_koin' => 0,
+                                    'sub_total_koin' => 0,
+                                ],
+                                [
+                                    'koin' => 1000,
+                                    'banyak_koin' => 0,
+                                    'sub_total_koin' => 0,
+                                ],
+                            ])
                             ->schema([
+
                                 TextInput::make('koin')
-                                    ->dehydrated()
-                                    ->prefixIcon(Heroicon::CircleStack)
-                                    ->currencyMask(thousandSeparator: '.', decimalSeparator: ',', precision: 2)
-                                    ->live(),
+                                    ->label('Pecahan')
+                                    ->prefix('Rp')
+                                    ->numeric()
+                                    ->readOnly()
+                                    ->dehydrated(),
+
                                 TextInput::make('banyak_koin')
-                                    ->dehydrated()
+                                    ->label('Jumlah')
+                                    ->numeric()
+                                    ->minValue(0)
                                     ->default(0)
-                                    ->afterStateUpdated(function (Get $get, Set $set, $state){
-                                        $pecahan=$get('koin');
-                                        if($state >= 0){
-                                            $subtotal = $pecahan * $state;
+                                    ->live()
+                                    ->afterStateUpdated(
+                                        function (Get $get, Set $set, $state) {
+
+                                            $pecahan = (int) $get('koin');
+                                            $jumlah = max(0, (int) $state);
+
+                                            $subtotal = $pecahan * $jumlah;
+
                                             $set('sub_total_koin', $subtotal);
                                         }
-                                    })
-                                    ->live(),
+                                    ),
+
                                 TextInput::make('sub_total_koin')
-                                    ->live()
-                                    ->prefix('IDR')
-                                    ->extraInputAttributes(['style' => 'font-weight: bold;'])
+                                    ->label('Subtotal')
+                                    ->prefix('Rp')
+                                    ->numeric()
                                     ->readOnly()
                                     ->dehydrated()
-                                    ->currencyMask(thousandSeparator: '.', decimalSeparator: ',', precision: 2)
-                            ])
-                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                $items = $get('jumlah_uang_koin') ?? [];
-                                $totalKoin = array_reduce($items, function ($carry, $item) {
-                                    return $carry + (float) ($item['sub_total_koin'] ?? 0);
-                                }, 0);
+                                    ->default(0),
 
-                                $set('total_uang_koin', $totalKoin);
-                            })
+                            ])
+                            ->afterStateUpdated(
+                                function (Get $get, Set $set) {
+
+                                    $items = $get('jumlah_uang_koin') ?? [];
+
+                                    $total = array_reduce(
+                                        $items,
+                                        function ($carry, $item) {
+                                            return $carry
+                                                + (int) ($item['sub_total_koin'] ?? 0);
+                                        },
+                                        0
+                                    );
+
+                                    $set('total_uang_koin', $total);
+
+                                    $totalKertas = (int) ($get('total_uang_kertas') ?? 0);
+
+                                    $set('total_fisik', $total + $totalKertas);
+
+                                    $totalSistem = (int) ($get('total_sistem') ?? 0);
+
+                                    $set('selisih', ($total + $totalKertas) - $totalSistem);
+                                }
+                            )
                             ->deletable(false)
                             ->reorderable(false)
                             ->addable(false)
                             ->compact()
                             ->columns(1),
 
+                        // RINCIAN UANG KERTAS
                         Repeater::make('jumlah_uang_kertas')
-                            ->hiddenLabel()
+                            ->label('Rincian Uang Kertas')
+                            ->live()
                             ->table([
                                 TableColumn::make('Nominal Pecahan'),
                                 TableColumn::make('Jumlah'),
-                                TableColumn::make('sub Total'),
+                                TableColumn::make('Subtotal'),
                             ])
                             ->default([
-                                    ['kertas' => 1000, 'banyak_kertas' => 0, 'sub_total_kertas' => 0],
-                                    ['kertas' => 2000, 'banyak_kertas' => 0, 'sub_total_kertas' => 0],
-                                    ['kertas' => 5000, 'banyak_kertas' => 0, 'sub_total_kertas' => 0],
-                                    ['kertas' => 10000, 'banyak_kertas' => 0, 'sub_total_kertas' => 0],
-                                    ['kertas' => 20000, 'banyak_kertas' => 0, 'sub_total_kertas' => 0],
-                                    ['kertas' => 50000, 'banyak_kertas' => 0, 'sub_total_kertas' => 0],
-                                    ['kertas' => 100000, 'banyak_kertas' => 0, 'sub_total_kertas' => 0],
-                                ])
+                                [
+                                    'kertas' => 1000,
+                                    'banyak_kertas' => 0,
+                                    'sub_total_kertas' => 0,
+                                ],
+                                [
+                                    'kertas' => 2000,
+                                    'banyak_kertas' => 0,
+                                    'sub_total_kertas' => 0,
+                                ],
+                                [
+                                    'kertas' => 5000,
+                                    'banyak_kertas' => 0,
+                                    'sub_total_kertas' => 0,
+                                ],
+                                [
+                                    'kertas' => 10000,
+                                    'banyak_kertas' => 0,
+                                    'sub_total_kertas' => 0,
+                                ],
+                                [
+                                    'kertas' => 20000,
+                                    'banyak_kertas' => 0,
+                                    'sub_total_kertas' => 0,
+                                ],
+                                [
+                                    'kertas' => 50000,
+                                    'banyak_kertas' => 0,
+                                    'sub_total_kertas' => 0,
+                                ],
+                                [
+                                    'kertas' => 100000,
+                                    'banyak_kertas' => 0,
+                                    'sub_total_kertas' => 0,
+                                ],
+                            ])
                             ->schema([
+
                                 TextInput::make('kertas')
-                                    ->currencyMask(thousandSeparator: '.', decimalSeparator: ',', precision: 2)
-                                    ->prefixIcon(Heroicon::Banknotes)
-                                    ->dehydrated()
-                                    ->live(),
+                                    ->label('Pecahan')
+                                    ->prefix('Rp')
+                                    ->numeric()
+                                    ->readOnly()
+                                    ->dehydrated(),
+
                                 TextInput::make('banyak_kertas')
-                                    ->dehydrated()
-                                    ->default(0 )
-                                    ->afterStateUpdated(function (Get $get, Set $set, $state){
-                                        $pecahan=$get('kertas');
-                                        if($state >= 0){
-                                            $subtotal = $pecahan * $state;
+                                    ->label('Jumlah')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->default(0)
+                                    ->live()
+                                    ->afterStateUpdated(
+                                        function (Get $get, Set $set, $state) {
+
+                                            $pecahan = (int) $get('kertas');
+                                            $jumlah = max(0, (int) $state);
+
+                                            $subtotal = $pecahan * $jumlah;
+
                                             $set('sub_total_kertas', $subtotal);
                                         }
-                                    })
-                                    ->live(),
+                                    ),
+
                                 TextInput::make('sub_total_kertas')
-                                    ->live()
-                                    ->prefix('IDR')
-                                    ->extraInputAttributes(['style' => 'font-weight: bold;'])
+                                    ->label('Subtotal')
+                                    ->prefix('Rp')
+                                    ->numeric()
                                     ->readOnly()
                                     ->dehydrated()
-                                    ->currencyMask(thousandSeparator: '.', decimalSeparator: ',', precision: 2)
-                            ])
-                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                $items = $get('jumlah_uang_kertas') ?? [];
-                                $totalKoin = array_reduce($items, function ($carry, $item) {
-                                    return $carry + (float) ($item['sub_total_kertas'] ?? 0);
-                                }, 0);
+                                    ->default(0),
 
-                                $set('total_uang_kertas', $totalKoin);
-                            })
+                            ])
+                            ->afterStateUpdated(
+                                function (Get $get, Set $set) {
+
+                                    $items = $get('jumlah_uang_kertas') ?? [];
+
+                                    $total = array_reduce(
+                                        $items,
+                                        function ($carry, $item) {
+                                            return $carry
+                                                + (int) ($item['sub_total_kertas'] ?? 0);
+                                        },
+                                        0
+                                    );
+
+                                    $set('total_uang_kertas', $total);
+
+                                    $totalKoin = (int) ($get('total_uang_koin') ?? 0);
+
+                                    $totalFisik = $total + $totalKoin;
+
+                                    $set('total_fisik', $totalFisik);
+
+                                    $totalSistem = (int) ($get('total_sistem') ?? 0);
+
+                                    $set('selisih', $totalFisik - $totalSistem);
+                                }
+                            )
                             ->deletable(false)
                             ->reorderable(false)
                             ->addable(false)
                             ->compact()
                             ->columns(1),
+
                     ])
                     ->columnSpanFull(),
 
-                    Section::make('Informasi Saldo Kas')
-                        ->columns(3)
-                        ->columnSpanFull()
-                        ->schema([
-                            TextInput::make('total_sistem')
-                                ->required()
-                                ->numeric(),
-                            TextInput::make('total_fisik')
-                                ->required()
-                                ->numeric(),
-                            TextInput::make('selisih')
-                                ->required()
-                                ->numeric(),
-                            ToggleButtons::make('status')
-                                ->options([
-                                    'Buka' => 'Buka',
-                                    'Tutup' => 'Tutup',
-                                    'Selisih' => 'Selisih',
-                                ])
-                                ->colors([
-                                    'Buka' => Color::Emerald,
-                                    'Tutup' => Color::Rose,
-                                    'Selisih' => Color::Amber,
-                                ])
-                                ->icons([
-                                    'Buka' => Heroicon::LockOpen,
-                                    'Tutup' => Heroicon::LockClosed,
-                                    'Selisih' => Heroicon::ExclamationTriangle,
-                                ])
-                                ->inline()
-                                ->default('Buka'),
-                            Textarea::make('catatan')
-                                ->required()
-                                ->columnSpan(2),
-                        ])
+                // INFORMASI SALDO KAS
+                Section::make('Informasi Saldo Kas')
+                    ->columns(3)
+                    ->columnSpanFull()
+                    ->schema([
+
+                        TextInput::make('total_sistem')
+                            ->label('Total Uang Sistem')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->minValue(0)
+                            ->default(0)
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(
+                                function (Get $get, Set $set, $state) {
+
+                                    $totalFisik = (int) ($get('total_fisik') ?? 0);
+
+                                    $totalSistem = (int) ($state ?? 0);
+
+                                    $set('selisih', $totalFisik - $totalSistem);
+                                }
+                            ),
+
+                        TextInput::make('total_fisik')
+                            ->label('Total Uang Fisik')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->default(0)
+                            ->readOnly()
+                            ->dehydrated()
+                            ->required(),
+
+                        TextInput::make('selisih')
+                            ->label('Selisih Kas')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->default(0)
+                            ->readOnly()
+                            ->dehydrated()
+                            ->required(),
+
+                        ToggleButtons::make('status')
+                            ->label('Status')
+                            ->options([
+                                'Buka' => 'Buka',
+                                'Tutup' => 'Tutup',
+                                'Selisih' => 'Selisih',
+                            ])
+                            ->colors([
+                                'Buka' => Color::Emerald,
+                                'Tutup' => Color::Rose,
+                                'Selisih' => Color::Amber,
+                            ])
+                            ->icons([
+                                'Buka' => Heroicon::LockOpen,
+                                'Tutup' => Heroicon::LockClosed,
+                                'Selisih' => Heroicon::ExclamationTriangle,
+                            ])
+                            ->inline()
+                            ->default('Buka')
+                            ->required(),
+                 
+                        Textarea::make('catatan')
+                            ->label('Catatan')
+                            ->placeholder('Masukkan catatan tutup kas')
+                            ->default('-')
+                            ->required()
+                            ->columnSpan(2),
+
+                    ]),
+
             ]);
     }
-
-
 }
