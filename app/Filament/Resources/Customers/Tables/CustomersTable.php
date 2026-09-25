@@ -39,13 +39,24 @@ class CustomersTable
             ->filters([
                 //
             ])
-           ->recordActions([
-            ViewAction::make(),
-            EditAction::make(),
-            DeleteAction::make(),
            
-                
+          ->actions([
+                ViewAction::make()
+                    ->hiddenLabel()
+                    ->tooltip('View')
+                    ->slideOver(),
+
+                EditAction::make()
+                    ->hiddenLabel()
+                    ->tooltip('Edit')
+                    ->slideOver(),
+
+                DeleteAction::make()
+                    ->hiddenLabel()
+                    ->tooltip('Delete'),
             ])
+                
+            
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
