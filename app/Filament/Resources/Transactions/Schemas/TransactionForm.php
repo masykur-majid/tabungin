@@ -18,9 +18,11 @@ class TransactionForm
                     ->relationship('account', 'nomor_rekening'),
 
                 Select::make('user_id')
-                    ->required()
-                    ->relationship('user', 'name'),
-
+                    ->label('Petugas')
+                    ->relationship('user', 'name')
+                    ->default(auth()->id())
+                    ->disabled()
+                    ->dehydrated(),
                 TextInput::make('no_slip')
                     ->label('No Slip')
                     ->disabled()
@@ -28,7 +30,8 @@ class TransactionForm
                     ->required(false),
 
                 DatePicker::make('tanggal')
-                    ->required(),
+                    ->required()
+                    ->MaxDate(now()),
 
                 TextInput::make('jenis_transaksi')
                     ->required()
