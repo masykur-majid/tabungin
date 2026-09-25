@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('total_sistem', 12, 2);
             $table->decimal('total_fisik', 12, 2);
             $table->decimal('selisih', 12, 2);
-            $table->enum('status', ['Selisih', 'Belum Ditutup', 'Sudah Ditutup'])->default('Belum Ditutup');
+            $table->enum('status', ['Selisih', 'Buka', 'Tutup'])->default('Buka');
             $table->text('catatan');
             $table->timestamps();
         });
