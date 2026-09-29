@@ -47,13 +47,11 @@ class AccountsTable
           ->actions([
                 ViewAction::make()
                     ->hiddenLabel()
-                    ->tooltip('View')
-                    ->slideOver(),
+                    ->tooltip('View'),
 
                 EditAction::make()
                     ->hiddenLabel()
-                    ->tooltip('Edit')
-                    ->slideOver(),
+                    ->tooltip('Edit'),
 
                 DeleteAction::make()
                     ->hiddenLabel()

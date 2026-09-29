@@ -20,6 +20,7 @@ class CustomerForm
                 ->prefixIcon('heroicon-m-identification')
                 ->required()
                 ->numeric()
+              ->live(debounce: 300)
                 ->length(10)
                 ->unique(ignoreRecord: true)
                 ->validationMessages([
