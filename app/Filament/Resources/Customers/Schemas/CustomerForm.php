@@ -14,8 +14,10 @@ class CustomerForm
         return $schema
             ->components([
                 TextInput::make('nama')
-                    ->required(),
+                ->prefixIcon('heroicon-m-user')
+                ->required(),
                 TextInput::make('NISN')
+                ->prefixIcon('heroicon-m-identification')
                 ->required()
                 ->numeric()
                 ->length(10)
@@ -24,23 +26,26 @@ class CustomerForm
                  'digits' => 'NISN maksimal 10 digit.',
                  'unique' => 'NISN sudah terdaftar.',
         ]),
-                Select::make('jenis_kelamin')
-                    ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])
-                    ->required(),
-                    Radio::make('asal_sekolah')
-                    ->options([
-                        'SMKS 1 PARAHYANGAN' => 'SMKS 1 Parahyangan',
-                        'SMP PARAHYANGAN' => 'SMP Parahyangan',
+                Radio::make('jenis_kelamin')
+                ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])
+                ->inline()
+                ->required(),
+                Radio::make('asal_sekolah')
+                ->options([
+                    'SMKS 1 PARAHYANGAN' => 'SMKS 1 Parahyangan',
+                    'SMP PARAHYANGAN' => 'SMP Parahyangan',
                     ])
                     ->required(),
                 TextInput::make('alamat_rumah')
-                    ->required(),
-             TextInput::make('no_telepon')
-                    ->tel()
-                    ->required()
-                    ->rules(['digits_between:10,13'])
-                    ->validationMessages([
-                        'digits_between' => 'Nomor telepon harus 10-13 digit angka.',
+                ->prefixIcon('heroicon-m-home')
+                ->required(),
+                TextInput::make('no_telepon')
+                ->prefixIcon('heroicon-m-phone')
+                ->tel()
+                ->required()
+                ->rules(['digits_between:10,13'])
+                ->validationMessages([
+                        'digits_between' => 'Nomor telepon harus 10-13 digit.',
                         'required' => 'Nomor telepon wajib diisi.',
                     ]),
             ]);

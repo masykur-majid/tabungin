@@ -45,13 +45,13 @@ class CustomerResource extends Resource
         ];
     }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListCustomers::route('/'),
-            'create' => CreateCustomer::route('/create'),
-            'view' => ViewCustomer::route('/{record}'),
-            'edit' => EditCustomer::route('/{record}/edit'),
-        ];
-    }
+   public static function getPages(): array
+{
+    return [
+        'index' => ListCustomers::route('/'),
+        // 'create' => CreateCustomer::route('/create'),
+        'view' => ViewCustomer::route('/{record}'),
+        'edit' => EditCustomer::route('/{record}/edit'),
+    ];
+}
 }
