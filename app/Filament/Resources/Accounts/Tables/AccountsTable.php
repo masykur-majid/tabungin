@@ -19,11 +19,11 @@ class AccountsTable
     {
         return $table
             ->columns([
-                TextColumn::make('customer.nama')
-                    ->numeric()
+               TextColumn::make('customer.nama')
                     ->sortable(),
-                TextColumn::make('nomor_rekening')
-                    ->searchable(),
+
+                TextColumn::make('nomor_rekening'),
+
                 TextColumn::make('saldo')
                     ->numeric()
                     ->sortable(),

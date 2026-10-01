@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Support\Icons\Heroicon;
 
 class AccountForm
 {
@@ -20,17 +21,16 @@ class AccountForm
                     ->prefixIcon('heroicon-m-user')
                     ->required(),
 
-               TextInput::make('nomor_rekening')
+              TextInput::make('nomor_rekening')
                 ->label('Nomor rekening')
                 ->required()
-                ->numeric()
-                ->rules(['min_digits:15', 'max_digits:15'])
+                ->length(15)
                 ->validationMessages([
                     'required' => 'Nomor rekening wajib diisi.',
-                    'min_digits' => 'Nomor rekening harus 15 digit.',
-                    'max_digits' => 'Nomor rekening tidak boleh lebih dari 15 digit.',
+                    'length' => 'Nomor rekening harus 15 digit.',
                 ])
                 ->unique(ignoreRecord: true),
+              
 
                 TextInput::make('saldo')
                     ->required()
@@ -41,19 +41,14 @@ class AccountForm
                     'min' => 'Saldo tidak boleh kurang dari 0.',
                     
                     ]),
-               ToggleButtons::make('is_active')
-                ->label('Is active')
-                ->boolean()
-                ->inline()
-                ->icons([
-                    true => 'heroicon-m-check-circle',
-                    false => 'heroicon-m-x-circle',
-                ])
-                ->colors([
-                    true => 'success',
-                    false => 'danger',
-                ])
+               Toggle::make('is_active')
+                ->onIcon(Heroicon::Check)
+                ->offIcon(Heroicon::XMark)
+                ->onColor('success')
+                ->offColor('danger')
+                
                 ->required(),
-            ]);
+            ])
+            ->columns(1);
     }
 }
