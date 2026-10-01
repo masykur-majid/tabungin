@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('tanggal');
             $table->string('jenis_transaksi')->default('setoran');
             $table->decimal('jumlah_transaksi', 9, 2);
-            $table->timestamps();
+            $table->timestamps();            
         });
     }
 

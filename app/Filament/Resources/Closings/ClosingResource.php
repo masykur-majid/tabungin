@@ -18,6 +18,8 @@ use Filament\Tables\Table;
 
 class ClosingResource extends Resource
 {
+    protected static ?int $navigationSort = 999;
+
     protected static ?string $model = Closing::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
