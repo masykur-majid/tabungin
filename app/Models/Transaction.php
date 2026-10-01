@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Guarded('id')]
-
 class Transaction extends Model
 {
     /** @use HasFactory<\Database\Factories\TransactionFactory> */
@@ -22,14 +21,13 @@ class Transaction extends Model
             if (empty($transaction->no_slip)) {
                 $transaction->no_slip = self::generateNoSlip();
             }
-
-            
         });
     }
 
     public static function generateNoSlip(): string
     {
         $lastNumber = self::count() + 1;
+
         return $lastNumber . '/' . $lastNumber;
     }
 
@@ -42,9 +40,4 @@ class Transaction extends Model
     {
         return $this->belongsTo(Account::class, 'account_id', 'id');
     }
-
-public function corrections()
-{
-    return $this->hasMany(TransactionCorrection::class);
-}
 }
