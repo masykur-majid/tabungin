@@ -47,6 +47,7 @@ class TransactionForm
                     ->required()
                     ->prefix('Rp') 
                     ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(',')
                     ->numeric(),
                     
             ]);

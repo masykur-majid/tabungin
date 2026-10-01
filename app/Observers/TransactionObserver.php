@@ -44,5 +44,13 @@ class TransactionObserver
             'penarikan' => $account->increment('saldo', $transaction->jumlah_transaksi),
             default     => null,
         };
+    } 
+        public function updated(Transaction $transaction): void
+    {
+        $original = $transaction->getOriginal();
+        $oldTransaction = new Transaction($original);
+        $this->reverseSaldo($oldTransaction);
+
+        $this->updateSaldo($transaction);
     }
 }
