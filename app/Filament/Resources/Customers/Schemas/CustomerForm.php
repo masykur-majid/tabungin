@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Customers\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Radio;
 
@@ -28,14 +29,21 @@ class CustomerForm
                     'max_digits' => 'NISN maksimal 10 digit.',
                     'unique' => 'NISN sudah terdaftar.',
                 ]),
+
                 Radio::make('jenis_kelamin')
                 ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])
-                ->inline(false)
+                ->inline()
                 ->required(),
-                Radio::make('asal_sekolah')
+                ToggleButtons::make('asal_sekolah')
                 ->options([
                     'SMKS 1 PARAHYANGAN' => 'SMKS 1 Parahyangan',
                     'SMP PARAHYANGAN' => 'SMP Parahyangan',
+                    ])
+                    ->inline()
+                    ->colors([
+                        'SMK 1 PARAHYANGAN' => 'warning',
+                        'SMP PARAHYANGAN' => 'info'
+
                     ])
                     ->required(),
                 TextInput::make('alamat_rumah')
