@@ -9,18 +9,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Guarded('id')]
-
 class Account extends Model
 {
     /** @use HasFactory<\Database\Factories\AccountFactory> */
     use HasFactory;
 
-    //definisikan relasi
-    public function customer():BelongsTo{
+    //definiskan  relasi
+    public function customer(): BelongsTo{
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
     public function transactions(): HasMany{
         return $this->hasMany(Transaction::class, 'account_id', 'id');
     }
-    
 }

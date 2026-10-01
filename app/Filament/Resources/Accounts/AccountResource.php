@@ -20,12 +20,6 @@ class AccountResource extends Resource
 {
     protected static ?string $model = Account::class;
 
-    protected static ?string $navigationLabel = 'Rekening';
-
-    protected static ?string $pluralModelLabel = 'Rekening';
-
-    protected static ?string $modelLabel = 'Rekening';
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema
@@ -51,11 +45,11 @@ class AccountResource extends Resource
     }
 
     public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListAccounts::route('/'),
-            //'create' => CreateAccount::route('/create'),
-            //'edit' => EditAccount::route('/{record}/edit'),
-        ];
-    }
+{
+    return [
+        'index' => Pages\ListAccounts::route('/'),
+        // 'create' => Pages\CreateAccount::route('/create'),
+        // 'edit' => Pages\EditAccount::route('/{record}/edit'),
+    ];
+}
 }

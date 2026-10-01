@@ -6,6 +6,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Filament\Forms\Components\ToggleButtons;
 
 class AccountForm
 {
@@ -14,30 +15,45 @@ class AccountForm
         return $schema
             ->components([
                 Select::make('customer_id')
+                    ->label('Customer')
                     ->relationship('customer', 'nama')
+                    ->prefixIcon('heroicon-m-user')
                     ->required(),
-                TextInput::make('nomor_rekening')
-                    ->label('Nomor rekening')
-                    ->required()
-                    ->rules(['min_digits','max_digits:15'])
-                    ->validationMessages([
-                        'max_digits' => 'Nomor rekening maksimal 15 digit.',
-                        'required' => 'Nomor rekening wajid diisi',
-                        'min_digits' => 'No rekening tidak boleh minus atau kurang dari 0.',
-                    ]),
+
+               TextInput::make('nomor_rekening')
+                ->label('Nomor rekening')
+                ->required()
+                ->numeric()
+                ->rules(['min_digits:15', 'max_digits:15'])
+                ->validationMessages([
+                    'required' => 'Nomor rekening wajib diisi.',
+                    'min_digits' => 'Nomor rekening harus 15 digit.',
+                    'max_digits' => 'Nomor rekening tidak boleh lebih dari 15 digit.',
+                ])
+                ->unique(ignoreRecord: true),
+
                 TextInput::make('saldo')
                     ->required()
+                    ->prefix('Rp')
+                    ->rules(['min:0'])
                     ->numeric()
-                    ->rules(['min:0']) // Mencegah nilai minus/negatif
                     ->validationMessages([
-                    'min' => 'Saldo tidak boleh minus atau kurang dari 0.',
-                ]),
-                Toggle::make('is_active')
-                    ->label('Aktif')
-                    ->onColor('success')
-                    ->offColor('danger')
-                    ->required(),
-            ])
-            ->columns(1);
+                    'min' => 'Saldo tidak boleh kurang dari 0.',
+                    
+                    ]),
+               ToggleButtons::make('is_active')
+                ->label('Is active')
+                ->boolean()
+                ->inline()
+                ->icons([
+                    true => 'heroicon-m-check-circle',
+                    false => 'heroicon-m-x-circle',
+                ])
+                ->colors([
+                    true => 'success',
+                    false => 'danger',
+                ])
+                ->required(),
+            ]);
     }
 }

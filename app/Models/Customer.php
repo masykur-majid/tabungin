@@ -15,9 +15,7 @@ class Customer extends Model
     use HasFactory;
 
     //definisikan dulu relasi
-
     public function accounts(): HasMany{
-        return $this->hasMany(Account::Class, 'customer_id', 'id');
+        return $this->hasMany(Account::class, 'customer_id', 'id');
     }
-    
 }

@@ -1,34 +1,36 @@
 <?php
 
-namespace App\Filament\Resources\Accounts\Tables;
+namespace App\Filament\Resources\Closings\Tables;
 
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-
-class AccountsTable
+class ClosingsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('customer.nama')
+                TextColumn::make('tanggal')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('total_sistem')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('nomor_rekening')
-                    ->searchable(),
-                TextColumn::make('saldo')
+                TextColumn::make('total_fisik')
                     ->numeric()
                     ->sortable(),
-                IconColumn::make('is_active')
-                    ->boolean(),
+                TextColumn::make('selisih')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('status')
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -41,23 +43,19 @@ class AccountsTable
             ->filters([
                 //
             ])
-            
-            
-
-          ->actions([
-                ViewAction::make()
-                    ->hiddenLabel()
-                    ->tooltip('View'),
-
-                EditAction::make()
-                    ->hiddenLabel()
-                    ->tooltip('Edit'),
-
-                DeleteAction::make()
-                    ->hiddenLabel()
-                    ->tooltip('Delete'),
+            ->recordActions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make()
+                        ->requiresConfirmation()
+                        ->modalHeading('Hapus Data Closing')
+                        ->modalDescription(
+                            'Yakin ingin menghapus data ini?'
+                        )
+                        ->modalSubmitActionLabel('Ya, Hapus'),
+                ]),     
             ])
-            
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

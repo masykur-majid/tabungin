@@ -14,8 +14,8 @@ class ListAccounts extends ListRecords
     {
         return [
             CreateAction::make()
-            ->slideOver()
-            ->modalWidth('md'),
+                ->slideOver()
+                 ->modalWidth('md'),
         ];
     }
 }
