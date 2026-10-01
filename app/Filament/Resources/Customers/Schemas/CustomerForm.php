@@ -24,7 +24,13 @@ class CustomerForm
                 ->required()
                 ->numeric()
                 ->live(debounce: 500)
-                ->rules(['min_digits:10', 'max_digits:10'])
+                ->rules([
+                    fn() => function (string $attribute, $value, \Closure $fail){
+                        if (strlen((string) $value) !==10) {
+                            $fail('NISN tidak boleh kurang dari 10 digit');
+                        }
+                    }
+                ])
                 ->unique(ignoreRecord: true)
                 ->validationMessages([
                 'min_digits' => 'NISN harus 10 digit.',
