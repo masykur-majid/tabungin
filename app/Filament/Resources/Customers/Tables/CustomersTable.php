@@ -20,9 +20,19 @@ class CustomersTable
                 TextColumn::make('NISN')
                     ->searchable(),
                 TextColumn::make('jenis_kelamin')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                    'Laki-laki' => 'info',    
+                    'Perempuan' => 'danger',
+                    default => 'gray',
+                 }),
                 TextColumn::make('asal_sekolah')
-                    ->badge(),
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                    'SMKS 1 PARAHYANGAN' => 'gray', 
+                    'SMP PARAHYANGAN'    => 'success', 
+                    default => 'gray',
+                 }),
                 TextColumn::make('alamat_rumah')
                     ->searchable(),
                 TextColumn::make('no_telepon')

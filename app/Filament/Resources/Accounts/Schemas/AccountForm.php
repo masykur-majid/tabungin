@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Support\Icons\Heroicon;
 
 class AccountForm
 {
@@ -20,32 +21,34 @@ class AccountForm
                     ->prefixIcon('heroicon-m-user')
                     ->required(),
 
-               TextInput::make('nomor_rekening')
-                    ->label('Nomor rekening')
-                    ->prefix('Rp')
-                    ->required()
-                    ->rules(['max_digits:15'])
-                    ->validationMessages([
-                    'max_digits' => 'Nomor rekening maksimal 15 digit.',
+              TextInput::make('nomor_rekening')
+                ->label('Nomor rekening')
+                ->required()
+                ->length(15)
+                ->validationMessages([
                     'required' => 'Nomor rekening wajib diisi.',
-                ])     
-                    ->unique(ignoreRecord: true),
+                    'length' => 'Nomor rekening harus 15 digit.',
+                ])
+                ->unique(ignoreRecord: true),
+              
+
                 TextInput::make('saldo')
                     ->required()
-                    ->numeric(),
-               ToggleButtons::make('is_active')
-                ->label('Is active')
-                ->boolean()
-                ->inline()
-                ->icons([
-                    true => 'heroicon-m-check-circle',
-                    false => 'heroicon-m-x-circle',
-                ])
-                ->colors([
-                    true => 'success',
-                    false => 'danger',
-                ])
+                    ->prefix('Rp')
+                    ->rules(['min:0'])
+                    ->numeric()
+                    ->validationMessages([
+                    'min' => 'Saldo tidak boleh kurang dari 0.',
+                    
+                    ]),
+               Toggle::make('is_active')
+                ->onIcon(Heroicon::Check)
+                ->offIcon(Heroicon::XMark)
+                ->onColor('success')
+                ->offColor('danger')
+                
                 ->required(),
-            ]);
+            ])
+            ->columns(1);
     }
 }

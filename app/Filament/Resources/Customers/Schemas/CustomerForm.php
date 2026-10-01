@@ -16,19 +16,21 @@ class CustomerForm
                 TextInput::make('nama')
                 ->prefixIcon('heroicon-m-user')
                 ->required(),
-                TextInput::make('NISN')
+              TextInput::make('NISN')
                 ->prefixIcon('heroicon-m-identification')
                 ->required()
                 ->numeric()
-                ->length(10)
+                ->live(debounce: 500)
+                ->rules(['min_digits:10', 'max_digits:10'])
                 ->unique(ignoreRecord: true)
                 ->validationMessages([
-                 'digits' => 'NISN maksimal 10 digit.',
-                 'unique' => 'NISN sudah terdaftar.',
-        ]),
+                    'min_digits' => 'NISN harus 10 digit.',
+                    'max_digits' => 'NISN maksimal 10 digit.',
+                    'unique' => 'NISN sudah terdaftar.',
+                ]),
                 Radio::make('jenis_kelamin')
                 ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])
-                ->inline()
+                ->inline(false)
                 ->required(),
                 Radio::make('asal_sekolah')
                 ->options([
@@ -48,6 +50,9 @@ class CustomerForm
                         'digits_between' => 'Nomor telepon harus 10-13 digit.',
                         'required' => 'Nomor telepon wajib diisi.',
                     ]),
-            ]);
+                    
+            ])
+            ->columns(1);
+            
     }
 }
