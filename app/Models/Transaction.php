@@ -22,6 +22,8 @@ class Transaction extends Model
             if (empty($transaction->no_slip)) {
                 $transaction->no_slip = self::generateNoSlip();
             }
+
+            
         });
     }
 
@@ -40,4 +42,9 @@ class Transaction extends Model
     {
         return $this->belongsTo(Account::class, 'account_id', 'id');
     }
+
+public function corrections()
+{
+    return $this->hasMany(TransactionCorrection::class);
+}
 }

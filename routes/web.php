@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TransactionCorrectionController;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::post(
+    '/transactions/{transaction}/correction',
+    [TransactionCorrectionController::class, 'store']
+)->name('transactions.correction.store');
