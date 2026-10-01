@@ -23,7 +23,7 @@ class AccountsTable
                     ->sortable(),
 
                 TextColumn::make('nomor_rekening'),
-
+                
                 TextColumn::make('saldo')
                     ->numeric()
                     ->sortable(),
@@ -60,7 +60,7 @@ class AccountsTable
             
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
                 ]),
             ]);
     }
