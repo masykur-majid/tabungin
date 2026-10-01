@@ -15,9 +15,23 @@ use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Transaction;
 
 class ClosingForm
 {
+    // Mengambil total setoran pada tanggal Closing (semua rekening).
+    private static function totalTransaksi(?string $tanggal): int
+    {
+        if (! $tanggal) {
+            return 0;
+        }
+
+        return (int) Transaction::query()
+            ->whereDate('tanggal', $tanggal)
+            ->where('jenis_transaksi', 'setoran')
+            ->sum('jumlah_transaksi');
+    }
+
     /** Hitung ulang dari jumlah dan pecahan, bukan dari subtotal yang mungkin belum terbarui. */
     private static function hitungKas(Get $get, Set $set): void
     {
@@ -49,6 +63,11 @@ class ClosingForm
                         ->minDate(fn () => today()->toDateString())
                         ->maxDate(fn () => today()->toDateString())
                         ->native(false)
+                        ->live()
+                        ->afterStateUpdated(function (Get $get, Set $set, $state): void {
+                            $set('total_sistem', self::totalTransaksi($state));
+                            self::hitungKas($get, $set);
+                        })
                         ->unique(table: 'closings', column: 'tanggal', ignoreRecord: true)
                         ->validationMessages([
                             'unique' => 'Tanggal ini sudah digunakan untuk tutup kas!',
@@ -189,14 +208,19 @@ class ClosingForm
                 ->description('Bandingkan uang fisik dengan nominal pada sistem.')
                 ->schema([
                     TextInput::make('total_sistem')
-                        ->label('Total Uang Sistem')
+                        ->label('Total Uang Sistem (Setoran Hari Ini)')
+                        ->helperText('Diambil otomatis dari seluruh transaksi setoran pada tanggal Closing.')
                         ->prefix('Rp')
                         ->numeric()
-                        ->minValue(0)
                         ->default(0)
-                        ->required()
-                        ->live(debounce: 400)
-                        ->afterStateUpdated(fn (Get $get, Set $set) => self::hitungKas($get, $set)),
+                        ->readOnly()
+                        ->dehydrated()
+                        ->afterStateHydrated(function (Get $get, Set $set): void {
+                            $tanggal = $get('tanggal') ?: today()->toDateString();
+                            $set('total_sistem', self::totalTransaksi($tanggal));
+                            self::hitungKas($get, $set);
+                        })
+                        ->required(),
 
                     TextInput::make('total_fisik')
                         ->label('Total Uang Fisik')

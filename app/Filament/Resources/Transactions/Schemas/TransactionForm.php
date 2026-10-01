@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Transactions\Schemas;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
 use Filament\Support\RawJs;
 use Filament\Schemas\Schema;
 
@@ -43,12 +45,10 @@ class TransactionForm
 
                 TextInput::make('jumlah_transaksi')
                     ->required()
-                    ->prefix('Rp')
+                    ->prefix('Rp') 
                     ->mask(RawJs::make('$money($input)'))
-                    ->stripCharacters(',')
-                    ->numeric()
+                    ->numeric(),
                     
             ]);
-
     }
 }
