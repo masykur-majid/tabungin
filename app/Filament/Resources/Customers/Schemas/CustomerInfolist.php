@@ -14,9 +14,11 @@ class CustomerInfolist
                 TextEntry::make('nama'),
                 TextEntry::make('NISN'),
                 TextEntry::make('jenis_kelamin')
-                    ->badge(),
+                    ->badge()
+                    ->color('info'),
                 TextEntry::make('asal_sekolah')
-                    ->badge(),
+                    ->badge()
+                    ->color('success'),
                 TextEntry::make('alamat_rumah'),
                 TextEntry::make('no_telepon'),
                 TextEntry::make('created_at')
