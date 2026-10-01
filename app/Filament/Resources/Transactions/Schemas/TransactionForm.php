@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Transactions\Schemas;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Support\RawJs;
 use Filament\Schemas\Schema;
 
 class TransactionForm
@@ -14,12 +15,14 @@ class TransactionForm
         return $schema
             ->components([
                 Select::make('account_id')
+                    ->label('Nomor Rekening')
                     ->required()
                     ->relationship('account', 'nomor_rekening'),
 
                 Select::make('user_id')
-                    ->label('User')
+                    ->label('Petugas')
                     ->relationship('user', 'name')
+                    ->prefixIcon('heroicon-o-user')
                     ->default(auth()->id())
                     ->disabled()
                     ->dehydrated(),
@@ -40,8 +43,12 @@ class TransactionForm
 
                 TextInput::make('jumlah_transaksi')
                     ->required()
+                    ->prefix('Rp')
+                    ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(',')
                     ->numeric()
-                    ->prefix('Rp'), // ini bikin tulisan Rp di sebelah kiri input
+                    
             ]);
+
     }
 }
