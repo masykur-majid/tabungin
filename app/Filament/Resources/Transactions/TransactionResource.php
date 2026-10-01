@@ -11,10 +11,13 @@ use App\Filament\Resources\Transactions\Schemas\TransactionInfolist;
 use App\Filament\Resources\Transactions\Tables\TransactionsTable;
 use App\Models\Transaction;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Override;
 
 class TransactionResource extends Resource
 {
@@ -55,5 +58,18 @@ class TransactionResource extends Resource
             'view' => ViewTransaction::route('/{record}'),
             'edit' => EditTransaction::route('/{record}/edit'),
         ];
+    }
+
+    #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        /** @var User $user */
+        $user = Filament::auth()->user();
+
+        $query = parent::getEloquentQuery();
+        if($user->hasRole('petugas')){
+            $query->where('user_id', $user->id);
+        }
+        return $query;
     }
 }
