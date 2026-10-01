@@ -21,18 +21,26 @@ class AccountForm
                     ->required(),
 
                TextInput::make('nomor_rekening')
-                    ->label('Nomor rekening')
-                    ->prefix('Rp')
-                    ->required()
-                    ->rules(['max_digits:15'])
-                    ->validationMessages([
-                    'max_digits' => 'Nomor rekening maksimal 15 digit.',
+                ->label('Nomor rekening')
+                ->required()
+                ->numeric()
+                ->rules(['min_digits:15', 'max_digits:15'])
+                ->validationMessages([
                     'required' => 'Nomor rekening wajib diisi.',
-                ])     
-                    ->unique(ignoreRecord: true),
+                    'min_digits' => 'Nomor rekening harus 15 digit.',
+                    'max_digits' => 'Nomor rekening tidak boleh lebih dari 15 digit.',
+                ])
+                ->unique(ignoreRecord: true),
+
                 TextInput::make('saldo')
                     ->required()
-                    ->numeric(),
+                    ->prefix('Rp')
+                    ->rules(['min:0'])
+                    ->numeric()
+                    ->validationMessages([
+                    'min' => 'Saldo tidak boleh kurang dari 0.',
+                    
+                    ]),
                ToggleButtons::make('is_active')
                 ->label('Is active')
                 ->boolean()
