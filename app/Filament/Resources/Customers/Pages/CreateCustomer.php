@@ -11,6 +11,6 @@ class CreateCustomer extends CreateRecord
 
     public function getMaxContentWidth(): ?string
     {
-        return 'sm';
+        return 'xl';
     }
 }
