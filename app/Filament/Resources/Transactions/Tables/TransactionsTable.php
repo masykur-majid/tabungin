@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Transactions\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -50,6 +52,10 @@ class TransactionsTable
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
+                Action::make('Ajukan Pembatalan')
+                    ->hidden(fn() => Filament::auth()->user()->hasRole('super_admin')),
+                Action::make('Setujui Pembatalan')
+                    ->hidden(fn() => Filament::auth()->user()->hasRole('petugas')),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
