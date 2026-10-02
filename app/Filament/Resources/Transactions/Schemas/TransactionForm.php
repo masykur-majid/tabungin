@@ -37,7 +37,10 @@ class TransactionForm
 
                 DatePicker::make('tanggal')
                     ->required()
-                    ->maxDate(now()),
+                    ->default(today())
+                    ->maxDate(today())
+                    ->minDate(today())
+                    ->readOnly(),
 
                 TextInput::make('jenis_transaksi')
                     ->required()
