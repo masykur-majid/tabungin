@@ -45,6 +45,7 @@ class CustomerForm
                 ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])
                 ->inline()
                 ->required(),
+               
 
                 ToggleButtons::make('asal_sekolah')
                     ->options([
