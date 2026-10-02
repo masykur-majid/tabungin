@@ -3,17 +3,15 @@
 namespace App\Filament\Resources\Closings\Schemas;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Transaction;
 
@@ -238,26 +236,9 @@ class ClosingForm
                     ->dehydrated()
                     ->required(),
 
-                ToggleButtons::make('status')
-                    ->label('Status')
-                    ->options([
-                        'Buka' => 'Buka',
-                        'Tutup' => 'Tutup',
-                        'Selisih' => 'Selisih',
-                    ])
-                    ->colors([
-                        'Buka' => Color::Emerald,
-                        'Tutup' => Color::Rose,
-                        'Selisih' => Color::Amber,
-                    ])
-                    ->icons([
-                        'Buka' => Heroicon::LockOpen,
-                        'Tutup' => Heroicon::LockClosed,
-                        'Selisih' => Heroicon::ExclamationTriangle,
-                    ])
-                    ->inline()
+                Hidden::make('status')
                     ->default('Buka')
-                    ->required(),
+                    ->dehydrated(),
 
                 Textarea::make('catatan')
                     ->label('Catatan')
