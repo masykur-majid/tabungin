@@ -25,7 +25,8 @@ class CustomersTable
                     'Laki-laki' => 'info',    
                     'Perempuan' => 'danger',
                     default => 'gray',
-                 }),
+                 })
+                 ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('asal_sekolah')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -34,9 +35,11 @@ class CustomersTable
                     default => 'gray',
                  }),
                 TextColumn::make('alamat_rumah')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('no_telepon')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
