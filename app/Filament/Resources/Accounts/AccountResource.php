@@ -28,6 +28,8 @@ class AccountResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static bool $shouldRegisterNavigation = false;
+    
     public static function form(Schema $schema): Schema
     {
         return AccountForm::configure($schema);
@@ -55,8 +57,8 @@ class AccountResource extends Resource
 {
     return [
         'index' => Pages\ListAccounts::route('/'),
-        'create' => Pages\CreateAccount::route('/create'),
-        'edit' => Pages\EditAccount::route('/{record}/edit'),
+        //'create' => Pages\CreateAccount::route('/create'),
+        //'edit' => Pages\EditAccount::route('/{record}/edit'),
     ];
 }
 }

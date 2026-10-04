@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Transactions\Tables;
 
+use App\Filament\Resources\Transactions\TransactionResource;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -9,6 +10,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,6 +19,17 @@ class TransactionsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->emptyStateHeading('Catatan Transaksi Masih Kosong.')
+            ->emptyStateDescription('Belum ada transaksi yang tercatat di sistem.')
+            ->emptyStateIcon('fas-money-bill-transfer')
+            ->emptyStateActions([
+                Action::make('create')
+                    ->label('Catat Transaksi Baru')
+                    ->icon(Heroicon::PencilSquare)
+                    ->url(fn() => TransactionResource::getUrl('create'))
+                    ->button()
+            ])
+
             ->columns([
                 TextColumn::make('account.nomor_rekening')
                     ->label('No. Rekening')

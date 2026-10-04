@@ -1,0 +1,33 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch made-by-akuy2
+# Your branch is up to date with 'origin/made-by-akuy2'.
+#
+# Changes to be committed:
+#	modified:   app/Filament/Resources/Accounts/AccountResource.php
+#	modified:   app/Filament/Resources/Accounts/Schemas/AccountForm.php
+#	modified:   app/Filament/Resources/Accounts/Tables/AccountsTable.php
+#	modified:   app/Filament/Resources/Customers/CustomerResource.php
+#	new file:   app/Filament/Resources/Customers/Pages/CreateCustomerWizard.php
+#	modified:   app/Filament/Resources/Customers/Pages/EditCustomer.php
+#	modified:   app/Filament/Resources/Customers/Pages/ListCustomers.php
+#	modified:   app/Filament/Resources/Customers/RelationManagers/AccountsRelationManager.php
+#	modified:   app/Filament/Resources/Customers/Tables/CustomersTable.php
+#	modified:   app/Filament/Resources/Transactions/Tables/TransactionsTable.php
+#	modified:   app/Filament/Resources/Transactions/TransactionResource.php
+#	modified:   app/Providers/Filament/AdminPanelProvider.php
+#	modified:   composer.json
+#	modified:   composer.lock
+#	modified:   package-lock.json
+#	modified:   package.json
+#	new file:   resources/css/filament/admin/theme.css
+#	new file:   resources/views/filament/resources/customers/pages/create-customer-wizard.blade.php
+#	modified:   vite.config.js
+
+feat(Nasabah): Integrasi pencatatan rekening ke resource nasabah
+- Pembuatan/pencatatan nomor rekening bisa dilakukan melalui menu nasabah
+- Pencatatan nomor rekning baru untuk nasabah yang sudah ada dilakukan di page view nasabah lewat relation manager
+- Resource rekening (account) tetap dipertahankan, hanya disembunyikan saja dari menu
+

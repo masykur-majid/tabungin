@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Customers;
 
 use App\Filament\Resources\Customers\Pages\CreateCustomer;
+use App\Filament\Resources\Customers\Pages\CreateCustomerWizard;
 use App\Filament\Resources\Customers\Pages\EditCustomer;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
 use App\Filament\Resources\Customers\Pages\ViewCustomer;
@@ -24,7 +25,7 @@ class CustomerResource extends Resource
     protected static ?string $pluralModelLabel = 'Nasabah';
     protected static ?string $modelLabel = 'Nasabah';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Identification;
 
     protected static ?int $navigationSort = -2;
 
@@ -54,7 +55,7 @@ class CustomerResource extends Resource
 {
     return [
         'index' => ListCustomers::route('/'),
-        // 'create' => CreateCustomer::route('/create'),
+        'create' => CreateCustomerWizard::route('/create'),
         'view' => ViewCustomer::route('/{record}'),
         'edit' => EditCustomer::route('/{record}/edit'),
     ];

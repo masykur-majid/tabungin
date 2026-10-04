@@ -6,6 +6,7 @@ use App\Filament\Resources\Customers\CustomerResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
+use Override;
 
 class EditCustomer extends EditRecord
 {
@@ -17,5 +18,11 @@ class EditCustomer extends EditRecord
             ViewAction::make(),
             DeleteAction::make(),
         ];
+    }
+
+    #[Override]
+    public function getRelationManagers(): array
+    {
+        return [];
     }
 }

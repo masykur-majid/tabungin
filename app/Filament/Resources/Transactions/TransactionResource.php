@@ -23,7 +23,7 @@ class TransactionResource extends Resource
     protected static ?string $pluralModelLabel = 'Transaksi';
     protected static ?string $modelLabel = 'Transaksi';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'fas-money-bill-transfer';
 
     public static function form(Schema $schema): Schema
     {
