@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Guarded;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,5 +21,12 @@ class Account extends Model
     }
     public function transactions(): HasMany{
         return $this->hasMany(Transaction::class, 'account_id', 'id');
+    }
+
+     protected function  accountLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn(): string => "{$this->nomor_rekening} - {$this->customer?->nama}",
+        );
     }
 }

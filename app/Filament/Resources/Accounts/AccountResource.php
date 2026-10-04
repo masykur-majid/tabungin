@@ -2,17 +2,11 @@
 
 namespace App\Filament\Resources\Accounts;
 
-use App\Filament\Resources\Accounts\Pages\CreateAccount;
-use App\Filament\Resources\Accounts\Pages\EditAccount;
-use App\Filament\Resources\Accounts\Pages\ListAccounts;
-use App\Filament\Resources\Accounts\Pages\ViewAccount;
 use App\Filament\Resources\Accounts\RelationManagers\TransactionsRelationManager;
 use App\Filament\Resources\Accounts\Schemas\AccountForm;
 use App\Filament\Resources\Accounts\Schemas\AccountInfolist;
 use App\Filament\Resources\Accounts\Tables\AccountsTable;
-use App\Filament\Resources\Customers\RelationManagers\AccountsRelationManager;
 use App\Models\Account;
-use App\Models\Transaction;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -28,6 +22,8 @@ class AccountResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static bool $shouldRegisterNavigation = false;
+    
     public static function form(Schema $schema): Schema
     {
         return AccountForm::configure($schema);
@@ -55,8 +51,8 @@ class AccountResource extends Resource
 {
     return [
         'index' => Pages\ListAccounts::route('/'),
-        'create' => Pages\CreateAccount::route('/create'),
-        'edit' => Pages\EditAccount::route('/{record}/edit'),
+        //'create' => Pages\CreateAccount::route('/create'),
+        //'edit' => Pages\EditAccount::route('/{record}/edit'),
     ];
 }
 }

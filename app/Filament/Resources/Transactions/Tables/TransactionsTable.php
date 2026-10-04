@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Transactions\Tables;
 
+use App\Filament\Resources\Transactions\TransactionResource;
+use App\Models\Transaction;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -9,6 +11,9 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
+use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -17,7 +22,23 @@ class TransactionsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->emptyStateHeading('Catatan Transaksi Masih Kosong.')
+            ->emptyStateDescription('Belum ada transaksi yang tercatat di sistem.')
+            ->emptyStateIcon('fas-money-bill-transfer')
+            ->emptyStateActions([
+                Action::make('create')
+                    ->label('Catat Transaksi Baru')
+                    ->icon(Heroicon::PencilSquare)
+                    ->url(fn() => TransactionResource::getUrl('create'))
+                    ->button()
+            ])
+
             ->columns([
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('no_slip')
+                    ->searchable(),
                 TextColumn::make('account.nomor_rekening')
                     ->label('No. Rekening')
                     ->searchable()
@@ -26,11 +47,10 @@ class TransactionsTable
                     ->label('Petugas')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('no_slip')
-                    ->searchable(),
-                TextColumn::make('tanggal')
-                    ->date()
-                    ->sortable(),
+                
+                // TextColumn::make('tanggal')
+                //     ->date()
+                //     ->sortable(),
                 TextColumn::make('jenis_transaksi')
                     ->searchable(),
                 TextColumn::make('jumlah_transaksi')
@@ -38,16 +58,7 @@ class TransactionsTable
                     ->sortable(),
                TextColumn::make('status')
                     ->badge()
-                    ->colors([
-                        'success' => 'sukses',
-                        'warning' => 'pengajuan pembatalan',
-                        'danger' => 'batal',
-                    ])
-                 ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -60,10 +71,42 @@ class TransactionsTable
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
-                Action::make('Ajukan Pembatalan')
-                    ->hidden(fn() => Filament::auth()->user()->hasRole('super_admin')),
                 Action::make('Setujui Pembatalan')
-                    ->hidden(fn() => Filament::auth()->user()->hasRole('petugas')),
+                    ->hidden(fn($record) => Filament::auth()->user()->hasRole('petugas') || $record->status != 'pengajuan pembatalan')
+                    ->icon(Heroicon::Check)
+                    ->color(Color::Green)
+                    ->action(function (Transaction $transaction){
+                        
+                        $transaction->update(['status' => 'dibatalkan']);
+                        $account = $transaction->account;
+                        if($account){
+                            $account->decrement('saldo', $transaction->jumlah_transaksi);
+                            Notification::make()
+                            ->title('Pembatalan Transaksi Berhasil!')
+                            ->success()
+                            ->send();
+                        }else{
+                             Notification::make()
+                                ->title('terjadi kesalahan sistem')
+                                ->success()
+                                ->send();
+                        }
+
+                        
+                    }),
+                Action::make('Ajukan Pembatalan')
+                    ->hidden(fn($record): bool => Filament::auth()->user()->hasRole('super_admin') || $record->status == 'pengajuan pembatalan' || $record->status == 'dibatalkan')
+                    ->icon(Heroicon::XCircle)
+                    ->color(Color::Red)
+                    ->action(function (Transaction $transaction){
+                        
+                        $transaction->update(['status' => 'pengajuan pembatalan']);
+
+                        Notification::make()
+                            ->title('Pengajuan Pembatalan Telah Dikirim!')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
