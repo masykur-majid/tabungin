@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Customers\Pages;
 
 use App\Filament\Resources\Customers\CustomerResource;
 use App\Models\Customer;
-use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -14,7 +13,6 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Utilities\Get;
@@ -24,7 +22,6 @@ use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 
 class CreateCustomerWizard extends Page implements HasForms
 {
