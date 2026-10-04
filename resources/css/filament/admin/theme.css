@@ -1,7 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
+
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+
+
+:root {
+    --font-sans: 'Inter', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+}
+
+.fira-code{
+  font-family: "Fira Code", monospace;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.big-display{
+    font-weight: 700;
+    font-size: 200px !important;
+}
+.margin-nol{
+    margin-bottom: 0 !important;
+}
+.terbilang-wrapper{
+    border-width: 0px !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    padding:0 !important;
+    margin:0 !important;
+}
 
 .input-wrapper-amber .fi-input-wrp-suffix {
     @apply p-0! m-0! border-none! bg-amber-400! flex items-center justify-center overflow-hidden rounded-r-lg;
