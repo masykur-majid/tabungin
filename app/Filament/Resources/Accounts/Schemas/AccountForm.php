@@ -21,7 +21,7 @@ class AccountForm
                     ->prefixIcon('heroicon-m-user')
                     ->required(),
 
-              TextInput::make('nomor_rekening')
+                TextInput::make('nomor_rekening')
                     ->label('Nomor rekening')
                     ->required()
                     ->length(15)
@@ -40,12 +40,12 @@ class AccountForm
                     ]),
 
                Toggle::make('is_active')
-                ->onIcon(Heroicon::Check)
-                ->offIcon(Heroicon::XMark)
-                ->onColor('success')
-                ->offColor('danger')
-                ->required(),
-            ])
-            ->columns(1);
+                    ->onIcon(Heroicon::Check)
+                    ->offIcon(Heroicon::XMark)
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->required(),
+                ])
+                    ->columns(1);
     }
 }
