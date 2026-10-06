@@ -25,7 +25,8 @@ class CustomersTable
                     'Laki-laki' => 'info',    
                     'Perempuan' => 'danger',
                      default => 'gray',
-                 }),
+                 })
+                 ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('asal_sekolah')
                     ->badge()
@@ -34,15 +35,22 @@ class CustomersTable
                     'SMP PARAHYANGAN'    => 'info', 
                     default => 'gray',
                  }),
+                 
+                 
 
                 TextColumn::make('alamat_rumah')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('no_telepon')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()

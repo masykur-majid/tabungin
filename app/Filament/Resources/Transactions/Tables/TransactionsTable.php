@@ -36,6 +36,14 @@ class TransactionsTable
                 TextColumn::make('jumlah_transaksi')
                     ->numeric()
                     ->sortable(),
+               TextColumn::make('status')
+                    ->badge()
+                    ->colors([
+                        'success' => 'sukses',
+                        'warning' => 'pengajuan pembatalan',
+                        'danger' => 'batal',
+                    ])
+                 ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
