@@ -18,7 +18,7 @@ class CustomerInfolist
                     ->color('info'),
                 TextEntry::make('asal_sekolah')
                     ->badge()
-                    ->color('success'),
+                    ->color('warning'),
                 TextEntry::make('alamat_rumah'),
                 TextEntry::make('no_telepon'),
                 TextEntry::make('created_at')

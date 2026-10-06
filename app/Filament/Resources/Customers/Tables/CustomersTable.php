@@ -17,37 +17,32 @@ class CustomersTable
             ->columns([
                 TextColumn::make('nama')
                     ->searchable(),
-
                 TextColumn::make('NISN')
                     ->searchable(),
-
                 TextColumn::make('jenis_kelamin')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                     'Laki-laki' => 'info',    
                     'Perempuan' => 'danger',
-                    default => 'gray',
-                    }),
+                     default => 'gray',
+                 }),
 
                 TextColumn::make('asal_sekolah')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                     'SMKS 1 PARAHYANGAN' => 'warning', 
-                    'SMP PARAHYANGAN'    => 'success', 
+                    'SMP PARAHYANGAN'    => 'info', 
                     default => 'gray',
-                    }),
+                 }),
 
                 TextColumn::make('alamat_rumah')
                     ->searchable(),
-
                 TextColumn::make('no_telepon')
                     ->searchable(),
-
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                    
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
