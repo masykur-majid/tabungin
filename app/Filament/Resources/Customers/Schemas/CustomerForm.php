@@ -46,18 +46,17 @@ class CustomerForm
                 ->inline()
                 ->required(),
                
-
                 ToggleButtons::make('asal_sekolah')
-                    ->options([
+                ->options([
                         'SMKS 1 PARAHYANGAN' => 'SMKS 1 Parahyangan',
                         'SMP PARAHYANGAN' => 'SMP Parahyangan',
                     ])
-                    ->inline()
-                    ->colors([
+                ->inline()
+                ->colors([
                         'SMK 1 PARAHYANGAN' => 'warning',
                         'SMP PARAHYANGAN' => 'info'
                     ])
-                    ->required(),
+                ->required(),
 
                 TextInput::make('alamat_rumah')
                 ->prefixIcon('heroicon-m-home')
@@ -74,7 +73,7 @@ class CustomerForm
                     ]),
                     
             ])
-            ->columns(1);
+                ->columns(1);
             
     }
 }

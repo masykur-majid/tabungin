@@ -21,16 +21,14 @@ class AccountForm
                     ->prefixIcon('heroicon-m-user')
                     ->required(),
 
-              TextInput::make('nomor_rekening')
-                ->label('Nomor rekening')
-                ->required()
-                ->length(15)
-                ->validationMessages([
+                TextInput::make('nomor_rekening')
+                    ->label('Nomor rekening')
+                    ->required()
+                    ->length(15)
+                    ->validationMessages([
                     'required' => 'Nomor rekening wajib diisi.',
-                    'length' => 'Nomor rekening harus 15 digit.',
-                ])
-                ->unique(ignoreRecord: true),
-              
+                    'length' => 'Nomor rekening harus 15 digit.',])
+                    ->unique(ignoreRecord: true),
 
                 TextInput::make('saldo')
                     ->required()
@@ -38,17 +36,16 @@ class AccountForm
                     ->rules(['min:0'])
                     ->numeric()
                     ->validationMessages([
-                    'min' => 'Saldo tidak boleh kurang dari 0.',
-                    
+                    'min' => 'Saldo tidak boleh kurang dari 0.', 
                     ]),
+
                Toggle::make('is_active')
-                ->onIcon(Heroicon::Check)
-                ->offIcon(Heroicon::XMark)
-                ->onColor('success')
-                ->offColor('danger')
-                
-                ->required(),
-            ])
-            ->columns(1);
+                    ->onIcon(Heroicon::Check)
+                    ->offIcon(Heroicon::XMark)
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->required(),
+                ])
+                    ->columns(1);
     }
 }
