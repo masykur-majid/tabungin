@@ -24,23 +24,33 @@ class CustomersTable
                     ->color(fn (string $state): string => match ($state) {
                     'Laki-laki' => 'info',    
                     'Perempuan' => 'danger',
-                    default => 'gray',
-                 }),
+                     default => 'gray',
+                 })
+                 ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('asal_sekolah')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                    'SMKS 1 PARAHYANGAN' => 'gray', 
-                    'SMP PARAHYANGAN'    => 'success', 
+                    'SMKS 1 PARAHYANGAN' => 'warning', 
+                    'SMP PARAHYANGAN'    => 'info', 
                     default => 'gray',
                  }),
+                 
+                 
+
                 TextColumn::make('alamat_rumah')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('no_telepon')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()

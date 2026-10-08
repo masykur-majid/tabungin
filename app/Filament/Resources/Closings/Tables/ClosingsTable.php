@@ -17,28 +17,38 @@ class ClosingsTable
     {
         return $table
             ->columns([
-                TextColumn::make('tanggal')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('total_sistem')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('total_fisik')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('selisih')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('status')
-                    ->badge(),
+                
+                // TANGGAL CLOSING DIBUAT
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Tanggal Dibuat')
+                    ->dateTime('d/m/Y H:i:s')
+                    ->sortable(),
+
+                TextColumn::make('total_sistem')
+                    ->label('Total Sistem')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('total_fisik')
+                    ->label('Total Fisik')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('selisih')
+                    ->label('Selisih')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge(),
+
+                // WAKTU TERAKHIR DATA DIUBAH
                 TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Terakhir Diubah')
+                    ->dateTime('d/m/Y H:i:s')
+                    ->sortable(),
+
             ])
             ->filters([
                 //
@@ -46,7 +56,9 @@ class ClosingsTable
             ->recordActions([
                 ActionGroup::make([
                     ViewAction::make(),
+
                     EditAction::make(),
+
                     DeleteAction::make()
                         ->requiresConfirmation()
                         ->modalHeading('Hapus Data Closing')
@@ -54,7 +66,7 @@ class ClosingsTable
                             'Yakin ingin menghapus data ini?'
                         )
                         ->modalSubmitActionLabel('Ya, Hapus'),
-                ]),     
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
