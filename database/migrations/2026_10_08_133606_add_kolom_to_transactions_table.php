@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('transaksi', function (Blueprint $table) {
-            $table->enum('status', ['sukses', 'pengajuan pembatalan', 'batal'])->default('sukses')->after('jumlah_transaksi');
-
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->string('alasan_pembatalan')
+                ->nullable();
         });
     }
 
@@ -22,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('transaksi', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->dropColumn('alasan_pembatalan');
         });
     }
 };
