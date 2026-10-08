@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Filament\Actions\DeleteAction;
 class CustomersTable
@@ -16,26 +17,27 @@ class CustomersTable
         return $table
             ->columns([
                 TextColumn::make('nama')
-                    ->searchable(),
-                TextColumn::make('NISN')
-                    ->searchable(),
-                TextColumn::make('jenis_kelamin')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                    'Laki-laki' => 'info',    
-                    'Perempuan' => 'danger',
-                     default => 'gray',
-                 })
-                 ->toggleable(isToggledHiddenByDefault: true),
+            ->label('Nama')
+            ->searchable(),
 
-                TextColumn::make('asal_sekolah')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                    'SMKS 1 PARAHYANGAN' => 'warning', 
-                    'SMP PARAHYANGAN'    => 'info', 
-                    default => 'gray',
-                 }),
-                 
+        TextColumn::make('nisn') 
+            ->label('NISN')
+            ->searchable(),
+
+        TextColumn::make('alamat')
+            ->label('Alamat')
+            ->searchable(),
+
+        TextColumn::make('jenis_kelamin')
+            ->label('Jenis Kelamin')
+            ->badge()
+            ->color(fn (string $state): string => match ($state) {
+                'Laki-laki' => 'info',
+                'Perempuan' => 'danger',
+                default => 'gray',
+            })
+                ->toggleable()
+            ->toggleable(isToggledHiddenByDefault: true),
                  
 
                 TextColumn::make('alamat_rumah')
@@ -57,7 +59,7 @@ class CustomersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                
             ])
            
           ->actions([

@@ -46,7 +46,7 @@ class Transaction extends Model
     }
 
     public function account(): BelongsTo
-    {
-        return $this->belongsTo(Account::class, 'account_id', 'id');
-    }
+{
+    return $this->belongsTo(Account::class, 'nomor_rekening', 'id');
+}
 }
