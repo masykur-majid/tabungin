@@ -56,13 +56,25 @@ class TransactionsTable
             ->filters([
                 //
             ])
-            ->recordActions([
+           ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
+                
+                
                 Action::make('Ajukan Pembatalan')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->action(fn ($record) => $record->update(['status' => 'pengajuan pembatalan']))
+                    ->visible(fn ($record) => $record->status === 'sukses')
                     ->hidden(fn() => Filament::auth()->user()->hasRole('super_admin')),
+                
+              
                 Action::make('Setujui Pembatalan')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(fn ($record) => $record->update(['status' => 'batal']))
+                    ->visible(fn ($record) => $record->status === 'pengajuan pembatalan')
                     ->hidden(fn() => Filament::auth()->user()->hasRole('petugas')),
             ])
             ->toolbarActions([
@@ -72,3 +84,4 @@ class TransactionsTable
             ]);
     }
 }
+    

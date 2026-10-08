@@ -16,11 +16,19 @@ class TransactionForm
     {
         return $schema
             ->components([
-                Select::make('account_id')
+               Select::make('account_id')
                     ->label('Nomor Rekening')
                     ->required()
-                    ->relationship('account', 'nomor_rekening'),
-
+                    ->relationship(
+                        name: 'account', 
+                        titleAttribute: 'nomor_rekening', 
+                        modifyQueryUsing: fn ($query) => $query->where('is_active', true)                     
+                    )
+                    ->searchable()
+                    ->preload()
+                    ->validationMessages([
+                        'required' => 'Pilih Nomor Rekening',
+                    ]),
                 Select::make('user_id')
                     ->label('Petugas')
                     ->relationship('user', 'name')
@@ -44,14 +52,19 @@ class TransactionForm
 
                 TextInput::make('jenis_transaksi')
                     ->required()
-                    ->default('setoran'),
+                    ->default('setoran')
+                    ->readOnly(),
 
                 TextInput::make('jumlah_transaksi')
                     ->required()
                     ->prefix('Rp') 
                     ->mask(RawJs::make('$money($input)'))
                     ->stripCharacters(',')
-                    ->numeric(),
+                    ->numeric()
+                    ->minValue(2000)
+                    ->validationMessages([
+                        'min' => 'Setoran Minimal Rp 2.000',
+                    ]),
                     
             ]);
     }
