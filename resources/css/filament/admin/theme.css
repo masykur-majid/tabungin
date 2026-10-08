@@ -34,13 +34,13 @@
 }
 
 .input-wrapper-amber .fi-input-wrp-suffix {
-    @apply p-0! m-0! border-none! bg-amber-400! flex items-center justify-center overflow-hidden rounded-r-lg;
+    @apply p-0! m-0! border-none! bg-blue-600! flex items-center justify-center overflow-hidden rounded-r-lg;
 }
 
 /* 2. Paksa tombol untuk menutupi penuh area kanan wrapper input */
 .input-wrapper-amber .fi-input-wrp-suffix .fi-btn,
 .input-wrapper-amber .fi-input-wrp-suffix button {
-    @apply h-full! w-full! m-0! rounded-none! border-none! shadow-none! bg-amber-400! px-4! flex items-center gap-2;
+    @apply h-full! w-full! m-0! rounded-none! border-blue-600! shadow-none! bg-blue-600! px-4! flex items-center gap-2;
 }
 
 
@@ -49,4 +49,3 @@
 .input-wrapper-amber .fi-input-wrp-suffix button svg {
     @apply fill-current! h-4! w-4!;
 }
-

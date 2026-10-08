@@ -22,7 +22,9 @@ class AccountResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static ?int $navigationSort = 2;
+
+    // protected static bool $shouldRegisterNavigation = false;
     
     public static function form(Schema $schema): Schema
     {

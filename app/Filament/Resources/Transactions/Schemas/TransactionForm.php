@@ -50,10 +50,7 @@ class TransactionForm
                                 'setoran' => 'Setoran',
                                 'penarikan' => 'Penarikan',
                             ])
-                            ->colors([
-                                'setoran' => Color::Green,
-                                'penarikan' => 'warning'
-                            ])
+                            ->colors( Color::Violet)
                             ->default('setoran')
                             ->inline()
                             ->grouped()
@@ -80,7 +77,7 @@ class TransactionForm
 
                         TextInput::make('jumlah_transaksi')
                             ->required()
-                            ->columnSpan(2)
+                            ->columnSpan(3)
                             ->prefix('Rp') 
                             ->mask(RawJs::make('$money($input, \',\')'))
                             ->stripCharacters('.')

@@ -18,12 +18,13 @@ use Filament\Tables\Table;
 
 class ClosingResource extends Resource
 {
-    protected static ?int $navigationSort = 999;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'Tutup Kas';
-    protected static ?string $pluralModelLabel = 'Tutup Kas';
-    protected static ?string $modelLabel = 'Tutup Kas';
 
+    protected static ?string $pluralModelLabel = 'Tutup Kas';
+    
+    protected static ?string $modelLabel = 'Tutup Kas';
 
     protected static ?string $model = Closing::class;
 

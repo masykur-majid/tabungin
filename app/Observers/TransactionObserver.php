@@ -23,12 +23,17 @@ class TransactionObserver
         if (!$account) {
             return;
         }
-
-        match ($transaction->jenis_transaksi) {
-            'setoran'   => $account->increment('saldo', $transaction->jumlah_transaksi),
-            'penarikan' => $account->decrement('saldo', $transaction->jumlah_transaksi),
-            default     => null,
-        };
+        
+        if($transaction->status != 'dibatalkan' || $transaction->status != 'batal'){
+            match ($transaction->jenis_transaksi) {
+                'setoran'   => $account->increment('saldo', $transaction->jumlah_transaksi),
+                'penarikan' => $account->decrement('saldo', $transaction->jumlah_transaksi),
+                default     => null,
+            };
+        }else{
+            return ;
+        }
+        
     }
 
     protected function reverseSaldo(Transaction $transaction): void

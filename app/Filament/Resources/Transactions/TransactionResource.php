@@ -10,21 +10,37 @@ use App\Filament\Resources\Transactions\Schemas\TransactionForm;
 use App\Filament\Resources\Transactions\Schemas\TransactionInfolist;
 use App\Filament\Resources\Transactions\Tables\TransactionsTable;
 use App\Models\Transaction;
+use App\Models\User;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Override;
 
 class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
+    
     protected static ?string $navigationLabel = 'Transaksi';
+
     protected static ?string $pluralModelLabel = 'Transaksi';
+    
     protected static ?string $modelLabel = 'Transaksi';
 
     protected static string|BackedEnum|null $navigationIcon = 'fas-money-bill-transfer';
 
+    protected static ?int $navigationSort = 3;
+
+    #[Override]
+    public static function getNavigationBadge(): ?string
+    {
+         $trx =  static::getModel()::whereDate('created_at', today())->count();
+
+        return (string) $trx;
+    }
+    
     public static function form(Schema $schema): Schema
     {
         return TransactionForm::configure($schema);
@@ -55,5 +71,18 @@ class TransactionResource extends Resource
             'view' => ViewTransaction::route('/{record}'),
             'edit' => EditTransaction::route('/{record}/edit'),
         ];
+    }
+
+     #[Override]
+    public static function getEloquentQuery(): Builder
+    {
+        /** @var User $user */
+        $user = Filament::auth()->user();
+
+        $query = parent::getEloquentQuery();
+        if($user->hasRole('petugas')){
+            $query->where('user_id', $user->id);
+        }
+        return $query;
     }
 }

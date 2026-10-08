@@ -49,10 +49,8 @@ class CreateCustomerWizard extends Page implements HasForms
         return $schema
             ->components([
                 Wizard::make([
-                    Step::make('Data Nasabah')
-                        ->description('Pengisian Data Nasabah')
+                    Step::make('Input Data Nasabah')
                         ->schema([
-                            
                             TextInput::make('customer_id')
                                 ->readOnly()
                                 ->hidden()
@@ -187,8 +185,7 @@ class CreateCustomerWizard extends Page implements HasForms
                                     'required' => 'Nomor telepon wajib diisi.',
                                 ]),
                         ]),
-                    Step::make('Rekening Nasabah')
-                    ->description('Pengisian data rekening nasabah')
+                    Step::make('Input Nomor Rekening')
                     ->schema([
                         TextInput::make('nomor_rekening')
                             ->label('Nomor rekening')

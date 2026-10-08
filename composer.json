@@ -13,7 +13,8 @@
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "owenvoke/blade-fontawesome": "^3.3",
-        "riskihajar/terbilang": "^2.1"
+        "riskihajar/terbilang": "^2.1",
+        "zeeshantariq/filament-sticky-columns": "^1.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

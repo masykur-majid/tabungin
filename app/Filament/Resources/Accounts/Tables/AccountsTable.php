@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Accounts\Tables;
 
 use App\Filament\Resources\Accounts\AccountResource;
+use App\Filament\Resources\Customers\CustomerResource;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -26,7 +27,7 @@ class AccountsTable
                 Action::make('create')
                     ->label('Input Nasabah Baru')
                     ->icon('fas-user-plus')
-                    ->url(fn() => AccountResource::getUrl('create'))
+                    ->url(fn() => CustomerResource::getUrl('create'))
                     ->button()
             ])
             ->columns([

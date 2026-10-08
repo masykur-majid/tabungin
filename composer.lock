@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0abeff6307bc93ac0f39009ab600db21",
+    "content-hash": "db6a24e2b9f27bb8d6a95aa4b5bcf4d3",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -8638,6 +8638,70 @@
                 }
             ],
             "time": "2026-04-26T05:33:54+00:00"
+        },
+        {
+            "name": "zeeshantariq/filament-sticky-columns",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zeeshantariq08/filament-sticky-columns.git",
+                "reference": "5b10b56f013bef75672b0b74bb354ed0df4dcbf3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zeeshantariq08/filament-sticky-columns/zipball/5b10b56f013bef75672b0b74bb354ed0df4dcbf3",
+                "reference": "5b10b56f013bef75672b0b74bb354ed0df4dcbf3",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0 || ^4.0 || ^5.0",
+                "filament/tables": "^3.0 || ^4.0 || ^5.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0 || ^9.0",
+                "pestphp/pest": "^2.0 || ^3.0",
+                "pestphp/pest-plugin-laravel": "^2.0 || ^3.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ZeeshanTariq\\FilamentStickyColumns\\FilamentStickyColumnsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ZeeshanTariq\\FilamentStickyColumns\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zeeshan Tariq"
+                }
+            ],
+            "description": "Sticky / frozen table columns for Filament v3, v4, and v5",
+            "homepage": "https://github.com/zeeshantariq08/filament-sticky-columns",
+            "keywords": [
+                "columns",
+                "filament",
+                "frozen",
+                "laravel",
+                "pinned",
+                "sticky",
+                "table"
+            ],
+            "support": {
+                "issues": "https://github.com/zeeshantariq08/filament-sticky-columns/issues",
+                "source": "https://github.com/zeeshantariq08/filament-sticky-columns/tree/v1.2.0"
+            },
+            "time": "2026-08-11T06:17:26+00:00"
         }
     ],
     "packages-dev": [

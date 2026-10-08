@@ -9,9 +9,12 @@ use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
+use ZeeshanTariq\FilamentStickyColumns\Concerns\InteractsWithStickyableColumns;
 
 class ListTransactions extends ListRecords
 {
+    use InteractsWithStickyableColumns;
+    
     protected static string $resource = TransactionResource::class;
 
     protected function getHeaderActions(): array
