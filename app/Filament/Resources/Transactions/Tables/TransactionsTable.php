@@ -10,6 +10,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Table;
 
 class TransactionsTable
@@ -54,15 +55,53 @@ class TransactionsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                
             ])
-            ->recordActions([
+           ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
+
                 Action::make('Ajukan Pembatalan')
+            ->color('warning')
+            ->requiresConfirmation()
+            ->form([
+        
+                Textarea::make('alasan_pembatalan')
+            ->label('Alasan Pembatalan')
+            ->required()
+            ->placeholder('Masukkan alasan pembatalan transaksi...'),
+            
+            ])
+            ->action(function ($record, array $data) {
+        
+        $record->update([
+            'status' => 'pengajuan pembatalan',
+            'alasan_pembatalan' => $data['alasan_pembatalan'], 
+        ]);
+    })
+                    ->visible(fn ($record) => $record->status === 'sukses')
                     ->hidden(fn() => Filament::auth()->user()->hasRole('super_admin')),
-                Action::make('Setujui Pembatalan')
+              
+              Action::make('Setujui Pembatalan')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['status' => 'batal']);
+
+                        $account = $record->account;
+
+                        if ($account) {
+                            if ($record->jenis_transaksi === 'setoran') {
+                                $account->decrement('saldo', $record->jumlah_transaksi);
+                            } 
+
+                            elseif ($record->jenis_transaksi === 'penarikan') {
+                                $account->increment('saldo', $record->jumlah_transaksi);
+                            }
+                        }
+                    })
+                    ->visible(fn ($record) => $record->status === 'pengajuan pembatalan')
                     ->hidden(fn() => Filament::auth()->user()->hasRole('petugas')),
             ])
             ->toolbarActions([
@@ -72,3 +111,4 @@ class TransactionsTable
             ]);
     }
 }
+    
