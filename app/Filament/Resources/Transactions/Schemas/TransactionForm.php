@@ -29,6 +29,16 @@ class TransactionForm
                     ->validationMessages([
                         'required' => 'Pilih Nomor Rekening',
                     ]),
+                TextInput::make('jumlah_transaksi')
+                    ->required()
+                    ->prefix('Rp') 
+                    ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(',')
+                    ->numeric()
+                    ->minValue(1000)
+                    ->validationMessages([
+                        'min' => 'Setoran Minimal Rp 1.000',
+                    ]),
                 Select::make('user_id')
                     ->label('Petugas')
                     ->relationship('user', 'name')
@@ -54,17 +64,6 @@ class TransactionForm
                     ->required()
                     ->default('setoran')
                     ->readOnly(),
-
-                TextInput::make('jumlah_transaksi')
-                    ->required()
-                    ->prefix('Rp') 
-                    ->mask(RawJs::make('$money($input)'))
-                    ->stripCharacters(',')
-                    ->numeric()
-                    ->minValue(2000)
-                    ->validationMessages([
-                        'min' => 'Setoran Minimal Rp 2.000',
-                    ]),
                     
             ]);
     }

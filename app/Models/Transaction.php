@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Guarded('id')]
 class Transaction extends Model
 {
-    /** @use HasFactory<\Database\Factories\TransactionFactory> */
     use HasFactory;
 
     protected $table = 'transactions';
+
+
+    protected $guarded = ['id'];
 
     protected static function boot()
     {
@@ -28,8 +28,16 @@ class Transaction extends Model
 
     public static function generateNoSlip(): string
     {
-        $lastNumber = self::count() + 1;
-        return $lastNumber . '/' . $lastNumber;
+        $year = date('Y');
+        $month = date('m');
+
+       
+        $count = self::whereYear('created_at', $year)
+                     ->whereMonth('created_at', $month)
+                     ->count();
+
+        $nextNumber = $count + 1;
+        return $nextNumber . '/' . $nextNumber;
     }
 
     public function user(): BelongsTo
