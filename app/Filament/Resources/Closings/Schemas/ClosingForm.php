@@ -3,12 +3,12 @@
 namespace App\Filament\Resources\Closings\Schemas;
 
 use App\Models\Transaction;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -17,10 +17,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ClosingForm
 {
-    /*
-     * Mengambil total transaksi setoran
-     * berdasarkan tanggal tertentu.
-     */
+
     private static function totalTransaksi(?string $tanggal): int
     {
         if (! $tanggal) {
@@ -33,30 +30,41 @@ class ClosingForm
             ->sum('jumlah_transaksi');
     }
 
-    /*
-     * Menghitung total uang fisik dan selisih.
-     */
-    private static function hitungKas(Get $get, Set $set): void
-    {
+    private static function hitungKas(
+        Get $get,
+        Set $set
+    ): void {
         $totalKoin = 0;
 
         foreach (($get('jumlah_uang_koin') ?? []) as $item) {
-            $totalKoin +=
-                (int) ($item['koin'] ?? 0)
-                * max(0, (int) ($item['banyak_koin'] ?? 0));
+            $pecahan = (int) ($item['koin'] ?? 0);
+
+            $jumlah = max(
+                0,
+                (int) ($item['banyak_koin'] ?? 0)
+            );
+
+            $totalKoin += $pecahan * $jumlah;
         }
 
         $totalKertas = 0;
 
         foreach (($get('jumlah_uang_kertas') ?? []) as $item) {
-            $totalKertas +=
-                (int) ($item['kertas'] ?? 0)
-                * max(0, (int) ($item['banyak_kertas'] ?? 0));
+            $pecahan = (int) ($item['kertas'] ?? 0);
+
+            $jumlah = max(
+                0,
+                (int) ($item['banyak_kertas'] ?? 0)
+            );
+
+            $totalKertas += $pecahan * $jumlah;
         }
 
         $totalFisik = $totalKoin + $totalKertas;
 
-        $totalSistem = (int) ($get('total_sistem') ?? 0);
+        $totalSistem = (int) (
+            $get('total_sistem') ?? 0
+        );
 
         $selisih = $totalFisik - $totalSistem;
 
@@ -68,7 +76,12 @@ class ClosingForm
 
     public static function configure(Schema $schema): Schema
     {
-        $defaultKoin = collect([100, 200, 500, 1000])
+        $defaultKoin = collect([
+            100,
+            200,
+            500,
+            1000,
+        ])
             ->map(fn ($nominal) => [
                 'koin' => $nominal,
                 'banyak_koin' => 0,
@@ -94,19 +107,23 @@ class ClosingForm
 
         return $schema->components([
 
-            // =====================================================
-            // INFORMASI TUTUP KAS
-            // =====================================================
 
             Section::make('Informasi Tutup Kas')
+                ->description(
+                    'Informasi waktu dan petugas yang melakukan tutup kas.'
+                )
                 ->schema([
 
                     TextInput::make('created_at')
                         ->label('Tanggal Dibuat')
                         ->formatStateUsing(function ($record) {
                             return $record?->created_at
-                                ? $record->created_at->format('d/m/Y H:i:s')
-                                : now()->format('d/m/Y H:i:s');
+                                ? $record->created_at->format(
+                                    'd/m/Y H:i:s'
+                                )
+                                : now()->format(
+                                    'd/m/Y H:i:s'
+                                );
                         })
                         ->readOnly()
                         ->dehydrated(false),
@@ -115,7 +132,9 @@ class ClosingForm
                         ->label('Terakhir Diubah')
                         ->formatStateUsing(function ($record) {
                             return $record?->updated_at
-                                ? $record->updated_at->format('d/m/Y H:i:s')
+                                ? $record->updated_at->format(
+                                    'd/m/Y H:i:s'
+                                )
                                 : '-';
                         })
                         ->readOnly()
@@ -123,31 +142,26 @@ class ClosingForm
 
                     TextInput::make('user_id')
                         ->label('Nama Petugas')
-                        ->formatStateUsing(fn () => Auth::user()?->name)
-                        ->dehydrated(false)
-                        ->readOnly(),
-
+                        ->formatStateUsing(
+                            fn () => Auth::user()?->name
+                        )
+                        ->readOnly()
+                        ->dehydrated(false),
                 ])
                 ->columns(3)
                 ->columnSpanFull(),
 
-            // =====================================================
-            // PERHITUNGAN UANG FISIK
-            // =====================================================
 
             Section::make('Perhitungan Uang Fisik')
                 ->description(
-                    'Masukkan jumlah lembar atau keping pada setiap pecahan.'
+                    'Masukkan jumlah keping atau lembar pada setiap pecahan.'
                 )
                 ->schema([
 
-                    // =========================
-                    // UANG KOIN
-                    // =========================
 
                     Section::make('Uang Koin')
                         ->description(
-                            'Isi jumlah keping uang koin yang diterima.'
+                            'Masukkan jumlah keping sesuai pecahan.'
                         )
                         ->schema([
 
@@ -174,6 +188,9 @@ class ClosingForm
                                         ->minValue(0)
                                         ->default(0)
                                         ->live(debounce: 400)
+                                        ->extraInputAttributes([
+                                            'onfocus' => 'this.select()',
+                                        ])
                                         ->afterStateUpdated(
                                             function (
                                                 Get $get,
@@ -204,12 +221,16 @@ class ClosingForm
                                         ->default(0)
                                         ->readOnly()
                                         ->dehydrated(),
-
                                 ])
                                 ->live()
                                 ->afterStateUpdated(
-                                    fn (Get $get, Set $set) =>
-                                        self::hitungKas($get, $set)
+                                    fn (
+                                        Get $get,
+                                        Set $set
+                                    ) => self::hitungKas(
+                                        $get,
+                                        $set
+                                    )
                                 )
                                 ->addable(false)
                                 ->deletable(false)
@@ -223,17 +244,13 @@ class ClosingForm
                                 ->default(0)
                                 ->readOnly()
                                 ->dehydrated(),
-
                         ])
                         ->columnSpanFull(),
 
-                    // =========================
-                    // UANG KERTAS
-                    // =========================
 
                     Section::make('Uang Kertas')
                         ->description(
-                            'Isi jumlah lembar uang kertas yang diterima.'
+                            'Masukkan jumlah lembar sesuai pecahan.'
                         )
                         ->schema([
 
@@ -260,6 +277,9 @@ class ClosingForm
                                         ->minValue(0)
                                         ->default(0)
                                         ->live(debounce: 400)
+                                        ->extraInputAttributes([
+                                            'onfocus' => 'this.select()',
+                                        ])
                                         ->afterStateUpdated(
                                             function (
                                                 Get $get,
@@ -283,19 +303,25 @@ class ClosingForm
                                             }
                                         ),
 
-                                    TextInput::make('sub_total_kertas')
+                                    TextInput::make(
+                                        'sub_total_kertas'
+                                    )
                                         ->label('Subtotal')
                                         ->prefix('Rp')
                                         ->numeric()
                                         ->default(0)
                                         ->readOnly()
                                         ->dehydrated(),
-
                                 ])
                                 ->live()
                                 ->afterStateUpdated(
-                                    fn (Get $get, Set $set) =>
-                                        self::hitungKas($get, $set)
+                                    fn (
+                                        Get $get,
+                                        Set $set
+                                    ) => self::hitungKas(
+                                        $get,
+                                        $set
+                                    )
                                 )
                                 ->addable(false)
                                 ->deletable(false)
@@ -309,33 +335,55 @@ class ClosingForm
                                 ->default(0)
                                 ->readOnly()
                                 ->dehydrated(),
-
                         ])
                         ->columnSpanFull(),
-
                 ])
                 ->columnSpanFull(),
 
-            // =====================================================
-            // INFORMASI SALDO KAS
-            // =====================================================
 
             Section::make('Informasi Saldo Kas')
                 ->description(
-                    'Bandingkan uang fisik dengan nominal pada sistem.'
+                    'Perbandingan antara total uang sistem dengan uang fisik.'
                 )
                 ->schema([
 
                     TextInput::make('total_sistem')
                         ->label('Total Uang Sistem')
                         ->helperText(
-                            'Otomatis mengambil total setoran berdasarkan tanggal Closing dibuat.'
+                            'Otomatis mengambil total transaksi setoran pada hari ini.'
                         )
                         ->prefix('Rp')
                         ->numeric()
                         ->default(0)
                         ->readOnly()
                         ->dehydrated()
+                        ->afterStateHydrated(
+                            function (
+                                Get $get,
+                                Set $set,
+                                $record
+                            ): void {
+
+                                $tanggal = $record?->created_at
+                                    ?->toDateString()
+                                    ?? today()->toDateString();
+
+                                $totalSistem =
+                                    self::totalTransaksi(
+                                        $tanggal
+                                    );
+
+                                $set(
+                                    'total_sistem',
+                                    $totalSistem
+                                );
+
+                                self::hitungKas(
+                                    $get,
+                                    $set
+                                );
+                            }
+                        )
                         ->required(),
 
                     TextInput::make('total_fisik')
@@ -356,25 +404,33 @@ class ClosingForm
                         ->dehydrated()
                         ->required(),
 
-                    // =================================================
-                    // PERINGATAN OTOMATIS
-                    // =================================================
-
                     Placeholder::make('peringatan_kas')
-                        ->label('PERINGATAN!!')
-                        ->content(function (Get $get): string {
+                        ->label('Status Pemeriksaan Kas')
+                        ->content(function (
+                            Get $get
+                        ): string {
 
                             $selisih = (int) (
                                 $get('selisih') ?? 0
                             );
 
                             if ($selisih === 0) {
-                                return '✅ KAS SESUAI — Uang fisik sudah sesuai dengan total uang sistem. Tutup kas dapat dilakukan.';
+                                return
+                                    '✅ KAS SESUAI — '
+                                    . 'Uang fisik sudah sesuai '
+                                    . 'dengan total uang sistem. '
+                                    . 'Tutup kas dapat diajukan.';
                             }
 
-                            return '⚠️ TERDAPAT SELISIH KAS — Uang fisik berbeda dengan total uang sistem. Silakan periksa kembali jumlah uang.';
+                            return
+                                '⚠️ TERDAPAT SELISIH KAS — '
+                                . 'Uang fisik berbeda dengan '
+                                . 'total uang sistem. '
+                                . 'Silakan periksa kembali '
+                                . 'jumlah uang.';
                         })
-                        ->live(),
+                        ->live()
+                        ->columnSpanFull(),
 
                     Hidden::make('status')
                         ->default('Buka')
@@ -388,11 +444,9 @@ class ClosingForm
                         ->default('-')
                         ->required()
                         ->columnSpanFull(),
-
                 ])
                 ->columns(3)
                 ->columnSpanFull(),
-
         ]);
     }
 }
