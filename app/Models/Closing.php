@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Guarded('id')]
 class Closing extends Model
 {
-    /** @use HasFactory<\Database\Factories\ClosingFactory> */
     use HasFactory;
 
+    /*
+     * Relasi ke detail uang.
+     */
     public function closingDetails(): HasMany
     {
         return $this->hasMany(
@@ -23,6 +25,9 @@ class Closing extends Model
         );
     }
 
+    /*
+     * Relasi ke user/petugas.
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(
@@ -32,10 +37,19 @@ class Closing extends Model
         );
     }
 
+    /*
+     * Kalau Closing dihapus,
+     * detail uangnya ikut dihapus.
+     */
     protected static function booted(): void
     {
-        static::deleting(function (Closing $closing) {
-            $closing->closingDetails()->delete();
-        });
+        static::deleting(
+            function (Closing $closing) {
+
+                $closing
+                    ->closingDetails()
+                    ->delete();
+            }
+        );
     }
 }

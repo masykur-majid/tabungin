@@ -20,44 +20,60 @@ class ClosingResource extends Resource
 {
     protected static ?int $navigationSort = 999;
 
-    protected static ?string $navigationLabel = 'Tutup Kas';
-    protected static ?string $pluralModelLabel = 'Tutup Kas';
-    protected static ?string $modelLabel = 'Tutup Kas';
+    protected static ?string $navigationLabel =
+        'Tutup Kas';
 
+    protected static ?string $pluralModelLabel =
+        'Tutup Kas';
 
-    protected static ?string $model = Closing::class;
+    protected static ?string $modelLabel =
+        'Tutup Kas';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $model =
+        Closing::class;
 
-    public static function form(Schema $schema): Schema
-    {
+    protected static string|BackedEnum|null
+        $navigationIcon =
+        Heroicon::OutlinedRectangleStack;
+
+    public static function form(
+        Schema $schema
+    ): Schema {
         return ClosingForm::configure($schema);
     }
 
-    public static function infolist(Schema $schema): Schema
-    {
+    public static function infolist(
+        Schema $schema
+    ): Schema {
         return ClosingInfolist::configure($schema);
     }
 
-    public static function table(Table $table): Table
-    {
+    public static function table(
+        Table $table
+    ): Table {
         return ClosingsTable::configure($table);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListClosings::route('/'),
-            'create' => CreateClosing::route('/create'),
-            'view' => ViewClosing::route('/{record}'),
-            'edit' => EditClosing::route('/{record}/edit'),
+
+            'index' =>
+                ListClosings::route('/'),
+
+            'create' =>
+                CreateClosing::route('/create'),
+
+            'view' =>
+                ViewClosing::route('/{record}'),
+
+            'edit' =>
+                EditClosing::route('/{record}/edit'),
         ];
     }
 }
