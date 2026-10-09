@@ -7,6 +7,7 @@ use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -18,7 +19,6 @@ class TransactionService
         int $accountId,
         string $type,
         int $amount,
-        string $trx_number,
         ?int $userId = null,
     ): Transaction
     {
@@ -31,7 +31,7 @@ class TransactionService
             throw new InvalidArgumentException("Jenis transaksi tidak dikenal: {$type}");
         }
 
-        return DB::transaction(function() use ($accountId, $type, $amount, $trx_number, $userId){
+        return DB::transaction(function() use ($accountId, $type, $amount, $userId){
             //get info about the account
             $account = Account::lockForUpdate()->findOrFail($accountId);
 
@@ -51,7 +51,7 @@ class TransactionService
                 'jenis_transaksi' => $type,
                 'jumlah_transaksi' => $amount,
                 'status' => TransactionStatus::Success,
-                'no_slip' => $trx_number,
+                'no_slip' => $this->createReceiptNumber($type),
                 'user_id' => $userId,
             ]);
         });
@@ -127,5 +127,50 @@ class TransactionService
         if(! User::findOrFail($userId)->can($permission)){
             throw new RuntimeException('Anda tidak berhak melakukan aksi ini.');
         }
+    }
+
+    private function createReceiptNumber(string $transactionType){
+        $noSlip = DB::transaction(function() use ($transactionType){
+
+            $transactionType == 'setoran' ? $type = 'DP' : $type = 'WD'; 
+
+            $bulanRomawi = [
+                1 => "I",
+                2 => "II",
+                3 => "III",
+                4 => "IV",
+                5 => "V",
+                6 => "VI",
+                7 => "VII",
+                8 => "VII",
+                9 => "IX",
+                10 => "X",
+                11 => "XI",
+                12 => "XII"
+            ];
+
+            $bulanSaatIni = now()->month;
+            $tahunSaatIni = now()->year;
+
+
+            $transaksiTerakhir = Transaction::whereYear('created_at', $tahunSaatIni)
+                                    ->whereMonth('created_at', $bulanSaatIni)
+                                    ->lockForUpdate()
+                                    ->latest('id')
+                                    ->first();
+            
+            if($transaksiTerakhir && $transaksiTerakhir->no_slip){
+                $split = explode('/', $transaksiTerakhir->no_slip);
+                $nomorUrutTerakhir = (int) $split[0];
+                $nomorUrutBaru = $nomorUrutTerakhir + 1;
+            }else{
+                $nomorUrutBaru = 1;
+            }
+
+
+            return 'TRX-'.Str::padLeft($nomorUrutBaru, 3, '0').'/'.$type.'/'.$bulanRomawi[$bulanSaatIni].'/'.$tahunSaatIni;
+        });
+        
+        return $noSlip;
     }
 }
