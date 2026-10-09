@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Transactions\Pages;
 
+use App\Enums\TransactionStatus;
 use App\Filament\Resources\Transactions\TransactionResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
@@ -29,12 +30,22 @@ class ListTransactions extends ListRecords
         return [
             'all' => Tab::make('All')
                 ->label('Tampilkan Semua'),
-            
-            'pengajuan_pembatalan' => Tab::make('Pengajuan Pembatalan') 
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'pengajuan pembatalan'))
-                ->badge($this->getModel()::where('status', 'pengajuan pembatalan')->count())
+            'today_transaction' => Tab::make('Transaksi Hari Ini') 
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereDate('created_at', today()))
+                ->badge(fn() => $this->getModel()::whereDate('created_at', today())->count())
                 ->icon(Heroicon::PlusCircle)
                 ->badgeColor(Color::Red),
+            'pengajuan_pembatalan' => Tab::make('Pengajuan Pembatalan') 
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', TransactionStatus::PendingCancellation))
+                ->badge(fn() => $this->getModel()::where('status', TransactionStatus::PendingCancellation)->count())
+                ->icon(Heroicon::PlusCircle)
+                ->badgeColor(Color::Red),
+            'dibatalkan' => Tab::make('Dibatalkan') 
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', TransactionStatus::Cancelled))
+                ->badge(fn() => $this->getModel()::where('status', TransactionStatus::Cancelled)->count())
+                ->icon(Heroicon::PlusCircle)
+                ->badgeColor(Color::Red),
+            
         ];
     }
 }
