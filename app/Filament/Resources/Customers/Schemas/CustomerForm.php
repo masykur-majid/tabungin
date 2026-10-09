@@ -22,12 +22,13 @@ class CustomerForm
                 ->label('NISN')
                 ->prefixIcon('heroicon-m-identification')
                 ->required() 
+                ->maxLength(10)
                 ->numeric()
                 ->live(debounce: 500)
                 ->rules([
                     fn () => function (string $attribute, $value, \Closure $fail) {
                         if (strlen((string) $value) !==10) {
-                            $fail('NISN tidak boleh kurang dari 10 digit');
+                            $fail('NISN tidak boleh kurang dan lebih dari 10 digit');
                         }
                     },
                 ])
@@ -66,12 +67,19 @@ class CustomerForm
                 ->prefixIcon('heroicon-m-phone')
                 ->tel()
                 ->required()
-                ->rules(['digits_between:10,13'])
-                ->validationMessages([
-                      'digits_between' => 'Nomor telepon harus 10-13 digit.',
-                      'required' => 'Nomor telepon wajib diisi.',
-                    ]),
-                    
+                ->maxLength(13)
+                ->live(debounce: 500)
+                ->rules([
+                    fn () => function (string $attribute, $value, \Closure $fail) {
+                        $length = strlen((string) $value);
+                        if ($length < 10 || $length > 13) {
+                            $fail('Nomor telepon tidak boleh kurang dan lebih dari 10 sampai 13 digit.');
+                        }
+                    },
+                ])
+                ->afterStateUpdated(function ($livewire, TextInput $component) {
+                    $livewire->validateOnly($component->getStatePath());
+                }),
             ])
                 ->columns(1);
             

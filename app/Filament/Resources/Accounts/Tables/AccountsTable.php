@@ -10,6 +10,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 
 
@@ -27,8 +28,11 @@ class AccountsTable
                 TextColumn::make('saldo')
                     ->numeric()
                     ->sortable(),
-                IconColumn::make('is_active')
-                    ->boolean(),
+                ToggleColumn::make('is_active')
+                    ->label('is_active')
+                    ->onColor('success')
+                    ->offColor('danger'),
+                
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

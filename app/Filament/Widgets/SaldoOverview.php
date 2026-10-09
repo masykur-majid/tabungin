@@ -3,23 +3,36 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Account;
-use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Livewire\Attributes\On;
 
-class SaldoOverview extends StatsOverviewWidget
+class SaldoOverviewWidget extends BaseWidget
 {
+    protected static ?int $sort = 1;
+
+    public $selectedAccountId = null;
+
+    #[On('update-selected-account')]
+    public function updateAccount($accountId = null)
+    {
+        $this->selectedAccountId = $accountId;
+    }
+
     protected function getStats(): array
     {
-        $saldo = Account::sum('saldo');
+        $account = null;
+
+        if ($this->selectedAccountId) {
+            $account = Account::find($this->selectedAccountId);
+        }
+
+        $saldo = $account?->saldo ?? 0;
 
         return [
-            Stat::make(
-                'Saldo Rekening',
-                'Rp ' . number_format($saldo, 0, ',', '.')
-            )
-                ->description('Total saldo rekening')
-                ->icon('heroicon-o-banknotes')
-                ->color('success'),
+            Stat::make('Saldo Rekening Utama', 'Rp ' . number_format($saldo, 0, ',', '.'))
+                ->color('success')
+                ->chart([7, 3, 4, 5, 6, 3, 5, 8]),
         ];
     }
 }
