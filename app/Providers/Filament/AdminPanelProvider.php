@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\CekSaldo;
+use App\Filament\Widgets\CekSaldoWidget;
+use App\Filament\Widgets\SaldoOverview;
+use App\Filament\Widgets\SaldoOverviewWidget;
 use Filament\Http\Middleware\Authenticate;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -30,8 +34,13 @@ class AdminPanelProvider extends PanelProvider
             ->path('/')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Amber
             ])
+            ->widgets([
+                SaldoOverviewWidget::class,
+                CekSaldoWidget::class,
+            ])
+            
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
