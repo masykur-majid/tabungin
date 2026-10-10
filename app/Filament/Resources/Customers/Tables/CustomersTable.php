@@ -24,10 +24,6 @@ class CustomersTable
             ->label('NISN')
             ->searchable(),
 
-        TextColumn::make('alamat')
-            ->label('Alamat')
-            ->searchable(),
-
         TextColumn::make('jenis_kelamin')
             ->label('Jenis Kelamin')
             ->badge()

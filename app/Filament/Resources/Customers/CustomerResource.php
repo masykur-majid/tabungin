@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Customers;
 
 use App\Filament\Resources\Customers\Pages\CreateCustomer;
-use App\Filament\Resources\Customers\Pages\CreateCustomerWizard;
 use App\Filament\Resources\Customers\Pages\EditCustomer;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
 use App\Filament\Resources\Customers\Pages\ViewCustomer;
@@ -24,11 +23,8 @@ class CustomerResource extends Resource
     protected static ?string $navigationLabel = 'Nasabah';
     protected static ?string $pluralModelLabel = 'Nasabah';
     protected static ?string $modelLabel = 'Nasabah';
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
     protected static ?int $navigationSort = -2;
-
     public static function form(Schema $schema): Schema
     {
         return CustomerForm::configure($schema);
@@ -52,11 +48,12 @@ class CustomerResource extends Resource
     }
 
   public static function getPages(): array
-{
-    return [
-        'index'  => Pages\ListCustomers::route('/'),
-        'create' => CreateCustomerWizard::route('/create'), // Arahkan route create ke Wizard
-        'edit'   => Pages\EditCustomer::route('/{record}/edit'),
-    ];
-}
+    {
+        return [
+            'index' => ListCustomers::route('/'),
+            'create' => CreateCustomer::route('/create'),
+            'view' => ViewCustomer::route('/{record}'),
+            'edit' => EditCustomer::route('/{record}/edit'),
+        ];
+    }
 }

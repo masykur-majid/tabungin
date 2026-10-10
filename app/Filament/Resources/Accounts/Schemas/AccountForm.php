@@ -22,14 +22,18 @@ class AccountForm
                     ->required(),
 
                 TextInput::make('nomor_rekening')
-                    ->label('Nomor rekening')
-                    ->required()
-                    ->length(15)
-                    ->validationMessages([
-                    'required' => 'Nomor rekening wajib diisi.',
-                    'length' => 'Nomor rekening harus 15 digit.',])
-                    ->unique(ignoreRecord: true),
-
+                ->label('Nomor rekening')
+                ->required()
+                ->mask('999999999999999')
+                ->inputMode('numeric')
+                ->rules(['digits:15'])
+                ->unique(ignoreRecord: true)
+                ->validationMessages([
+                    'unique' => 'Nomor rekening sudah terdaftar.',
+                ])
+                ->extraInputAttributes([
+                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
+                ]),
                 TextInput::make('saldo')
                     ->required()
                     ->prefix('Rp')
@@ -42,6 +46,7 @@ class AccountForm
                Toggle::make('is_active')
                     ->onIcon(Heroicon::Check)
                     ->offIcon(Heroicon::XMark)
+                    ->default(true)
                     ->onColor('success')
                     ->offColor('danger')
                     ->required(),

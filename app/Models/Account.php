@@ -14,7 +14,7 @@ class Account extends Model
     /** @use HasFactory<\Database\Factories\AccountFactory> */
     use HasFactory;
 
-    //definiskan  relasi
+
     public function customer(): BelongsTo{
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }
