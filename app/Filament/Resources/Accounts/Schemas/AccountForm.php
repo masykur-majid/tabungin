@@ -24,11 +24,24 @@ class AccountForm
                 TextInput::make('nomor_rekening')
                     ->label('Nomor rekening')
                     ->required()
-                    ->length(15)
+                    ->numeric()
+                    ->maxLength(15)
+                    ->live(debounce: 500)
+                    ->rules([
+                        fn () => function (string $attribute, $value, \Closure $fail) {
+                            if (strlen((string) $value) !== 15) {
+                                $fail('Nomor rekening harus 15 digit.');
+                            }
+                        },
+                    ])
+                    ->unique(ignoreRecord: true)
                     ->validationMessages([
-                    'required' => 'Nomor rekening wajib diisi.',
-                    'length' => 'Nomor rekening harus 15 digit.',])
-                    ->unique(ignoreRecord: true),
+                        'required' => 'Nomor rekening wajib diisi.',
+                        'unique' => 'Nomor rekening sudah terdaftar.',
+                    ])
+                    ->afterStateUpdated(function ($livewire, TextInput $component) {
+                        $livewire->validateOnly($component->getStatePath());
+                    }),
 
                 TextInput::make('saldo')
                     ->required()
@@ -42,6 +55,7 @@ class AccountForm
                Toggle::make('is_active')
                     ->onIcon(Heroicon::Check)
                     ->offIcon(Heroicon::XMark)
+                    ->default(true)
                     ->onColor('success')
                     ->offColor('danger')
                     ->required(),
