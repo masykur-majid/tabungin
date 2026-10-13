@@ -14,10 +14,6 @@ class CustomerForm
     {
         return $schema
                 ->components([
-              TextInput::make('nama')
-                ->prefixIcon('heroicon-m-user')
-                ->required(),
-
               TextInput::make('NISN')
                 ->label('NISN')
                 ->prefixIcon('heroicon-m-identification')
@@ -41,6 +37,34 @@ class CustomerForm
                 ->afterStateUpdated(function($livewire, TextInput $component){
                         $livewire->validateOnly($component->getStatePath());
                 }),
+
+                TextInput::make('NIK')
+                ->label('NIK')
+                ->prefixIcon('heroicon-m-identification')
+                ->required() 
+                ->maxLength(16)
+                ->numeric()
+                ->live(debounce: 500)
+                ->rules([
+                    fn () => function (string $attribute, $value, \Closure $fail) {
+                        if (strlen((string) $value) !==16) {
+                            $fail('NIK tidak boleh kurang dan lebih dari 16 digit');
+                        }
+                    },
+                ])
+                ->unique(ignoreRecord: true)
+                ->validationMessages([
+                    'min_digits' => 'NIK harus 10 digit.',
+                    'max_digits' => 'NIK maksimal 10 digit.',
+                    'unique' => 'NIK sudah terdaftar.',
+                ])
+                ->afterStateUpdated(function($livewire, TextInput $component){
+                        $livewire->validateOnly($component->getStatePath());
+                }),
+
+                TextInput::make('nama')
+                ->prefixIcon('heroicon-m-user')
+                ->required(),
 
                 Radio::make('jenis_kelamin')
                 ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])

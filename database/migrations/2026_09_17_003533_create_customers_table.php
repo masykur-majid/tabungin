@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('NISN');
+            $table->string('NIK');
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
             $table->enum('asal_sekolah', ['SMKS 1 PARAHYANGAN', 'SMP PARAHYANGAN']);
             $table->string('alamat_rumah');
             $table->string('no_telepon');
+            $table->unique(['id,NISN,NIK']);
             $table->timestamps();
         });
     }
