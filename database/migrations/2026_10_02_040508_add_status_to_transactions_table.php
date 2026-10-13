@@ -9,10 +9,10 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::table('transaksi', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table) {
             $table->enum('status', ['sukses', 'pengajuan pembatalan', 'batal'])
-                  ->default('sukses')
-                  ->after('kolom_terakhir'); 
+                  ->default('sukses');
+
         });
     }
 

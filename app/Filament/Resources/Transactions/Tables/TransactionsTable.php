@@ -81,11 +81,21 @@ class TransactionsTable
         ]);
     })
                     ->visible(fn ($record) => $record->status === 'sukses')
-                    ->hidden(fn() => Filament::auth()->user()->hasRole('super_admin')),
+                    ->hidden(fn() => Filament::auth()->user()->hasRole('super_visor')),
               
               Action::make('Setujui Pembatalan')
                     ->color('danger')
                     ->requiresConfirmation()
+                     ->form([
+        
+                Textarea::make('alasan_pembatalan')
+                    ->label('Alasan Pembatalan')
+                    ->required()
+                    ->placeholder('Masukkan alasan pembatalan transaksi...')
+                    ->default(fn ($record) => $record->alasan_pembatalan)
+                    ->readOnly(),
+            
+            ])
                     ->action(function ($record) {
                         $record->update(['status' => 'batal']);
 
