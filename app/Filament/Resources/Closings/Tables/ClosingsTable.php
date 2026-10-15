@@ -13,62 +13,73 @@ use Filament\Tables\Table;
 
 class ClosingsTable
 {
-    public static function configure(Table $table): Table
-    {
+    public static function configure(
+        Table $table
+    ): Table {
+
         return $table
             ->columns([
-                
-                // TANGGAL CLOSING DIBUAT
+
                 TextColumn::make('created_at')
                     ->label('Tanggal Dibuat')
                     ->dateTime('d/m/Y H:i:s')
                     ->sortable(),
 
-                TextColumn::make('total_sistem')
-                    ->label('Total Sistem')
-                    ->numeric()
-                    ->sortable(),
-
-                TextColumn::make('total_fisik')
-                    ->label('Total Fisik')
-                    ->numeric()
-                    ->sortable(),
-
-                TextColumn::make('selisih')
-                    ->label('Selisih')
-                    ->numeric()
-                    ->sortable(),
-
-                TextColumn::make('status')
-                    ->label('Status')
-                    ->badge(),
-
-                // WAKTU TERAKHIR DATA DIUBAH
                 TextColumn::make('updated_at')
                     ->label('Terakhir Diubah')
                     ->dateTime('d/m/Y H:i:s')
                     ->sortable(),
 
+                TextColumn::make('total_sistem')
+                    ->label('Total Uang Sistem')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('total_fisik')
+                    ->label('Total Uang Fisik')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('selisih')
+                    ->label('Selisih Kas')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->sortable(),
             ])
+
             ->filters([
                 //
             ])
+
             ->recordActions([
+
                 ActionGroup::make([
+
                     ViewAction::make(),
 
                     EditAction::make(),
 
                     DeleteAction::make()
                         ->requiresConfirmation()
-                        ->modalHeading('Hapus Data Closing')
-                        ->modalDescription(
-                            'Yakin ingin menghapus data ini?'
+                        ->modalHeading(
+                            'Hapus Data Closing'
                         )
-                        ->modalSubmitActionLabel('Ya, Hapus'),
+                        ->modalDescription(
+                            'Yakin ingin menghapus data closing ini?'
+                        )
+                        ->modalSubmitActionLabel(
+                            'Ya, Hapus'
+                        ),
+
                 ]),
             ])
+
             ->toolbarActions([
+
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
