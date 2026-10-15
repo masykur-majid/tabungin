@@ -17,8 +17,10 @@ class CustomersTable
             ->columns([
                 TextColumn::make('nama')
                     ->searchable(),
+                    
                 TextColumn::make('NISN')
                     ->searchable(),
+
                 TextColumn::make('jenis_kelamin')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -36,8 +38,6 @@ class CustomersTable
                     default => 'gray',
                  }),
                  
-                 
-
                 TextColumn::make('alamat_rumah')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\CekSaldo;
 use App\Filament\Widgets\CekSaldoWidget;
+use App\Filament\Widgets\RingkasanHarian;
 use App\Filament\Widgets\SaldoOverview;
 use App\Filament\Widgets\SaldoOverviewWidget;
 use Filament\Http\Middleware\Authenticate;
@@ -37,8 +38,8 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber
             ])
             ->widgets([
-                SaldoOverviewWidget::class,
-                CekSaldoWidget::class,
+                RingkasanHarian::class,
+                CekSaldo::class,
             ])
             
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
@@ -48,8 +49,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                //AccountWidget::class,
+                //FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -14,31 +14,7 @@ class CustomerForm
     {
         return $schema
                 ->components([
-              TextInput::make('NISN')
-                ->label('NISN')
-                ->prefixIcon('heroicon-m-identification')
-                ->required() 
-                ->maxLength(10)
-                ->numeric()
-                ->live(debounce: 500)
-                ->rules([
-                    fn () => function (string $attribute, $value, \Closure $fail) {
-                        if (strlen((string) $value) !==10) {
-                            $fail('NISN tidak boleh kurang dan lebih dari 10 digit');
-                        }
-                    },
-                ])
-                ->unique(ignoreRecord: true)
-                ->validationMessages([
-                    'min_digits' => 'NISN harus 10 digit.',
-                    'max_digits' => 'NISN maksimal 10 digit.',
-                    'unique' => 'NISN sudah terdaftar.',
-                ])
-                ->afterStateUpdated(function($livewire, TextInput $component){
-                        $livewire->validateOnly($component->getStatePath());
-                }),
-
-                TextInput::make('NIK')
+              TextInput::make('NIK')
                 ->label('NIK')
                 ->prefixIcon('heroicon-m-identification')
                 ->required() 
@@ -54,8 +30,8 @@ class CustomerForm
                 ])
                 ->unique(ignoreRecord: true)
                 ->validationMessages([
-                    'min_digits' => 'NIK harus 10 digit.',
-                    'max_digits' => 'NIK maksimal 10 digit.',
+                    'min_digits' => 'NIK harus 16 digit.',
+                    'max_digits' => 'NIK maksimal 16 digit.',
                     'unique' => 'NIK sudah terdaftar.',
                 ])
                 ->afterStateUpdated(function($livewire, TextInput $component){
@@ -75,11 +51,13 @@ class CustomerForm
                 ->options([
                         'SMKS 1 PARAHYANGAN' => 'SMKS 1 Parahyangan',
                         'SMP PARAHYANGAN' => 'SMP Parahyangan',
+                        'GURU Parahyangan' => 'GURU Parahyangan'
                     ])
                 ->inline()
                 ->colors([
                         'SMK 1 PARAHYANGAN' => 'warning',
-                        'SMP PARAHYANGAN' => 'info'
+                        'SMP PARAHYANGAN' => 'info',
+                        'GURU Parahyangan' => 'succes'
                     ])
                 ->required(),
 

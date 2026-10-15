@@ -12,7 +12,7 @@ class CustomerInfolist
         return $schema
             ->components([
                 TextEntry::make('nama'),
-                TextEntry::make('NISN'),
+                TextEntry::make('NIK'),
                 TextEntry::make('jenis_kelamin')
                     ->badge()
                     ->color('info'),
