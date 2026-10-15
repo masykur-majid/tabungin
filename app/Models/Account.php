@@ -14,7 +14,12 @@ class Account extends Model
     /** @use HasFactory<\Database\Factories\AccountFactory> */
     use HasFactory;
 
-
+    protected static function booted(): void
+    {
+        static::deleting(function (Account $account) {
+            $account->transactions()->delete();
+        });
+    }
     public function customer(): BelongsTo{
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
     }

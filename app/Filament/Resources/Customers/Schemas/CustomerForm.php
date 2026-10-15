@@ -7,9 +7,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
+use Filament\Support\RawJs;
+use Filament\Schemas\Components\Utilities\Set;  
 
 class CustomerForm
 {
@@ -30,44 +33,51 @@ class CustomerForm
                                     'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
                                 ]),
 
-                            TextInput::make('nisn')
-                                ->label('NISN')
-                                ->prefixIcon('heroicon-m-identification')
-                                ->required()
-                                ->live(debounce: 500)
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)",
+                            ToggleButtons::make('asal_sekolah')
+                                ->label('Asal sekolah')
+                                ->options([
+                                    'SMKS 1 PARAHYANGAN' => 'SMKS 1 PARAHYANGAN',
+                                    'SMP PARAHYANGAN' => 'SMP PARAHYANGAN',
+                                    'GURU PARAHYANGAN' => 'GURU PARAHYANGAN',
                                 ])
-                                ->rules([
-                                    fn () => function (string $attribute, $value, \Closure $fail) {
-                                        if (strlen((string) $value) !== 10) {
-                                            $fail('NISN na kudu aya 10 digit.');
-                                        }
-                                    },
+                                ->colors([
+                                    'SMKS 1 PARAHYANGAN' => 'warning',
+                                    'SMP PARAHYANGAN' => 'info',
+                                    'GURU PARAHYANGAN' => 'success',
                                 ])
-                                ->unique(ignoreRecord: true)
-                                ->validationMessages([
-                                    'unique' => 'NISN atos kadaftar.',
-                                ])
-                                ->afterStateUpdated(function ($livewire, TextInput $component) {
-                                    $livewire->validateOnly($component->getStatePath());
-                                }),
+                                ->inline()
+                                ->live()
+                                ->afterStateUpdated(function (Set $set) {
+                                    $set('nik', null);
+                                })
+                                ->required(),
+
+                           TextInput::make('nik')
+                            ->label('NIK')
+                            ->required()
+                            ->live(debounce: 500)
+                            ->maxLength(16)
+                            ->extraInputAttributes([
+                                'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)",
+                            ])
+                            ->rules([
+                                fn () => function (string $attribute, $value, \Closure $fail) {
+                                    if (strlen((string) $value) !== 16) {
+                                        $fail('NIK harus 16 digit.');
+                                    }
+                                },
+                            ])
+                            ->unique(ignoreRecord: true)
+                            ->validationMessages([
+                                'unique' => 'NIK sudah terdaftar.',
+                            ])
+                            ->afterStateUpdated(function ($livewire, TextInput $component) {
+                                $livewire->validateOnly($component->getStatePath());
+                            }),
 
                             Radio::make('jenis_kelamin')
                                 ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])
                                 ->inline()
-                                ->required(),
-
-                            ToggleButtons::make('asal_sekolah')
-                                ->options([
-                                    'SMKS 1 PARAHYANGAN' => 'SMKS 1 Parahyangan',
-                                    'SMP PARAHYANGAN' => 'SMP Parahyangan',
-                                ])
-                                ->inline()
-                                ->colors([
-                                    'SMKS 1 PARAHYANGAN' => 'warning',
-                                    'SMP PARAHYANGAN' => 'info',
-                                ])
                                 ->required(),
 
                             TextInput::make('alamat_rumah')
@@ -103,34 +113,36 @@ class CustomerForm
                                 ->relationship('account')
                                 ->schema([
                                     TextInput::make('nomor_rekening')
-                                ->label('Nomor rekening')
-                                ->prefixIcon('heroicon-m-credit-card')
-                                ->required()
-                                ->maxLength(15)
-                                ->live(debounce: 500)
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
-                                ])
-                                ->rules([
-                                    fn () => function (string $attribute, $value, \Closure $fail) {
-                                        if (strlen((string) $value) < 10 || strlen((string) $value) > 15) {
-                                            $fail('Nomor rekening maksimal 15 digit.');
-                                        }
-                                    },
-                                ])
-                                ->unique(table: 'accounts', column: 'nomor_rekening')
-                                ->validationMessages([
-                                    'unique' => 'Nomor rekening sudah terdaftar.',
-                                ])
-                                ->afterStateUpdated(function ($livewire, TextInput $component) {
-                                    $livewire->validateOnly($component->getStatePath());
-                                }),
+                                        ->label('Nomor rekening')
+                                        ->prefixIcon('heroicon-m-credit-card')
+                                        ->required()
+                                        ->maxLength(15)
+                                        ->live(debounce: 500)
+                                        ->extraInputAttributes([
+                                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
+                                        ])
+                                        ->rules([
+                                            fn () => function (string $attribute, $value, \Closure $fail) {
+                                                if (strlen((string) $value) < 10 || strlen((string) $value) > 15) {
+                                                    $fail('Nomor rekening maksimal 15 digit.');
+                                                }
+                                            },
+                                        ])
+                                        ->unique(table: 'accounts', column: 'nomor_rekening')
+                                        ->validationMessages([
+                                            'unique' => 'Nomor rekening sudah terdaftar.',
+                                        ])
+                                        ->afterStateUpdated(function ($livewire, TextInput $component) {
+                                            $livewire->validateOnly($component->getStatePath());
+                                        }),
 
                                     TextInput::make('saldo')
                                         ->label('Saldo')
                                         ->numeric()
                                         ->prefix('Rp')
+                                        ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
                                         ->minValue(1000)
+                                        ->stripCharacters('.')
                                         ->required(),
 
                                     Toggle::make('is_active')
