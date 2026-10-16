@@ -25,20 +25,6 @@ class AccountForm
                     ->required(),
 
                 TextInput::make('nomor_rekening')
-<<<<<<< HEAD
-                ->label('Nomor rekening')
-                ->required()
-                ->mask('999999999999999')
-                ->inputMode('numeric')
-                ->rules(['digits:15'])
-                ->unique(ignoreRecord: true)
-                ->validationMessages([
-                    'unique' => 'Nomor rekening sudah terdaftar.',
-                ])
-                ->extraInputAttributes([
-                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
-                ]),
-=======
                     ->label('Nomor rekening')
                     ->required()
                     ->numeric()
@@ -60,7 +46,6 @@ class AccountForm
                         $livewire->validateOnly($component->getStatePath());
                     }),
 
->>>>>>> main
                 TextInput::make('saldo')
                 ->label('Saldo')
                 ->required()
