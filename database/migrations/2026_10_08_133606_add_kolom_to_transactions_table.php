@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->string('alasan_pembatalan')
-                ->nullable();
+            $table->enum('status', ['sukses', 'pengajuan pembatalan', 'batal'])->default('sukses')->after('jumlah_transaksi');
+
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('alasan_pembatalan');
+            $table->dropColumn('status');
         });
     }
 };

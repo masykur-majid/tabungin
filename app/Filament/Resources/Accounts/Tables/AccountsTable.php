@@ -12,6 +12,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use App\Filament\Resources\Customers\CustomerResource;
 
 
 class AccountsTable
@@ -21,18 +22,31 @@ class AccountsTable
         return $table
             ->columns([
                TextColumn::make('customer.nama')
+                    ->label('Nasabah')
                     ->sortable(),
 
-                TextColumn::make('nomor_rekening'),
-                
+                TextColumn::make('nomor_rekening')
+                    ->copyable()
+                    ->copyMessage('Nomor rekening disalin')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->iconColor('blue')
+                    ->iconPosition('after'),
                 TextColumn::make('saldo')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->numeric(decimalPlaces: 0, decimalSeparator: ',', thousandsSeparator: '.'),
                 ToggleColumn::make('is_active')
+<<<<<<< HEAD
+                ->onIcon('heroicon-m-check')
+                ->offIcon('heroicon-m-x-mark')
+                ->onColor('success')
+                ->offColor('danger'),
+=======
                     ->label('is_active')
                     ->onColor('success')
                     ->offColor('danger'),
                 
+>>>>>>> main
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -46,8 +60,6 @@ class AccountsTable
                 //
             ])
             
-            
-
           ->actions([
                 ViewAction::make()
                     ->hiddenLabel()

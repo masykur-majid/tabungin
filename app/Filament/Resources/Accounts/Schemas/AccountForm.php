@@ -8,6 +8,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Support\Icons\Heroicon;
+use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Support\RawJs;
 
 class AccountForm
 {
@@ -16,12 +18,27 @@ class AccountForm
         return $schema
             ->components([
                 Select::make('customer_id')
-                    ->label('Customer')
+                    ->label('Nasabah')
                     ->relationship('customer', 'nama')
+                    ->placeholder('Pilih nasabah')
                     ->prefixIcon('heroicon-m-user')
                     ->required(),
 
                 TextInput::make('nomor_rekening')
+<<<<<<< HEAD
+                ->label('Nomor rekening')
+                ->required()
+                ->mask('999999999999999')
+                ->inputMode('numeric')
+                ->rules(['digits:15'])
+                ->unique(ignoreRecord: true)
+                ->validationMessages([
+                    'unique' => 'Nomor rekening sudah terdaftar.',
+                ])
+                ->extraInputAttributes([
+                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
+                ]),
+=======
                     ->label('Nomor rekening')
                     ->required()
                     ->numeric()
@@ -43,16 +60,21 @@ class AccountForm
                         $livewire->validateOnly($component->getStatePath());
                     }),
 
+>>>>>>> main
                 TextInput::make('saldo')
-                    ->required()
-                    ->prefix('Rp')
-                    ->rules(['min:0'])
-                    ->numeric()
-                    ->validationMessages([
-                    'min' => 'Saldo tidak boleh kurang dari 0.', 
-                    ]),
+                ->label('Saldo')
+                ->required()
+                ->prefix('Rp')
+                ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
+                ->stripCharacters('.')
+                ->numeric()
+                ->rules(['min:1000'])
+                ->validationMessages([
+                    'min' => 'Saldo tidak boleh kurang dari 1000.',
+                ]),
 
                Toggle::make('is_active')
+                    ->label('Status Aktif')
                     ->onIcon(Heroicon::Check)
                     ->offIcon(Heroicon::XMark)
                     ->default(true)

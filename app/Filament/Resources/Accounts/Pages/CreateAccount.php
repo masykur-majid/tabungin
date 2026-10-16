@@ -11,6 +11,6 @@ class CreateAccount extends CreateRecord
 
     public function getMaxContentWidth(): ?string
     {
-        return '2xl';
+        return '7x1';
     }
 }
