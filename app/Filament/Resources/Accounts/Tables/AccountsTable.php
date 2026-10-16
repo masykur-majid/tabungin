@@ -30,10 +30,17 @@ class AccountsTable
                     ->numeric()
                     ->sortable(),
                 ToggleColumn::make('is_active')
+<<<<<<< HEAD
                 ->onIcon('heroicon-m-check')
                 ->offIcon('heroicon-m-x-mark')
                 ->onColor('success')
                 ->offColor('danger'),
+=======
+                    ->label('is_active')
+                    ->onColor('success')
+                    ->offColor('danger'),
+                
+>>>>>>> main
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -30,28 +30,29 @@ class CustomerForm
                                     'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
                                 ]),
 
-                            TextInput::make('nisn')
-                                ->label('NISN')
-                                ->prefixIcon('heroicon-m-identification')
-                                ->required()
-                                ->live(debounce: 500)
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)",
-                                ])
-                                ->rules([
-                                    fn () => function (string $attribute, $value, \Closure $fail) {
-                                        if (strlen((string) $value) !== 10) {
-                                            $fail('NISN na kudu aya 10 digit.');
-                                        }
-                                    },
-                                ])
-                                ->unique(ignoreRecord: true)
-                                ->validationMessages([
-                                    'unique' => 'NISN atos kadaftar.',
-                                ])
-                                ->afterStateUpdated(function ($livewire, TextInput $component) {
-                                    $livewire->validateOnly($component->getStatePath());
-                                }),
+              TextInput::make('NISN')
+                ->label('NISN')
+                ->prefixIcon('heroicon-m-identification')
+                ->required() 
+                ->maxLength(10)
+                ->numeric()
+                ->live(debounce: 500)
+                ->rules([
+                    fn () => function (string $attribute, $value, \Closure $fail) {
+                        if (strlen((string) $value) !==10) {
+                            $fail('NISN tidak boleh kurang dan lebih dari 10 digit');
+                        }
+                    },
+                ])
+                ->unique(ignoreRecord: true)
+                ->validationMessages([
+                    'min_digits' => 'NISN harus 10 digit.',
+                    'max_digits' => 'NISN maksimal 10 digit.',
+                    'unique' => 'NISN sudah terdaftar.',
+                ])
+                ->afterStateUpdated(function($livewire, TextInput $component){
+                        $livewire->validateOnly($component->getStatePath());
+                }),
 
                             Radio::make('jenis_kelamin')
                                 ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])
@@ -74,74 +75,23 @@ class CustomerForm
                                 ->prefixIcon('heroicon-m-home')
                                 ->required(),
 
-                            TextInput::make('no_telepon')
-                                ->prefixIcon('heroicon-m-phone')
-                                ->tel()
-                                ->required()
-                                ->maxLength(13)
-                                ->live(debounce: 500)
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 13)",
-                                ])
-                                ->rules([
-                                    fn () => function (string $attribute, $value, \Closure $fail) {
-                                        if (strlen((string) $value) < 10 || strlen((string) $value) > 13) {
-                                            $fail('Nomor telepon harus berisi antara 10 hingga 13 digit.');
-                                        }
-                                    },
-                                ])
-                                ->afterStateUpdated(function ($livewire, TextInput $component) {
-                                    $livewire->validateOnly($component->getStatePath());
-                                }),
-                        ]),
-
-                    Step::make('Rekening')
-                        ->icon('heroicon-m-credit-card')
-                        ->visibleOn('create')
-                        ->schema([
-                            Group::make()
-                                ->relationship('account')
-                                ->schema([
-                                    TextInput::make('nomor_rekening')
-                                ->label('Nomor rekening')
-                                ->prefixIcon('heroicon-m-credit-card')
-                                ->required()
-                                ->maxLength(15)
-                                ->live(debounce: 500)
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
-                                ])
-                                ->rules([
-                                    fn () => function (string $attribute, $value, \Closure $fail) {
-                                        if (strlen((string) $value) < 10 || strlen((string) $value) > 15) {
-                                            $fail('Nomor rekening maksimal 15 digit.');
-                                        }
-                                    },
-                                ])
-                                ->unique(table: 'accounts', column: 'nomor_rekening')
-                                ->validationMessages([
-                                    'unique' => 'Nomor rekening sudah terdaftar.',
-                                ])
-                                ->afterStateUpdated(function ($livewire, TextInput $component) {
-                                    $livewire->validateOnly($component->getStatePath());
-                                }),
-
-                                    TextInput::make('saldo')
-                                        ->label('Saldo')
-                                        ->numeric()
-                                        ->prefix('Rp')
-                                        ->minValue(1000)
-                                        ->required(),
-
-                                    Toggle::make('is_active')
-                                        ->label('Is active')
-                                        ->onColor('success')
-                                        ->offColor('danger')
-                                        ->default(true),
-                                ]),
-                        ]),
-
-                ])->columnSpanFull(),
+                TextInput::make('no_telepon')
+                ->prefixIcon('heroicon-m-phone')
+                ->tel()
+                ->required()
+                ->maxLength(13)
+                ->live(debounce: 500)
+                ->rules([
+                    fn () => function (string $attribute, $value, \Closure $fail) {
+                        $length = strlen((string) $value);
+                        if ($length < 10 || $length > 13) {
+                            $fail('Nomor telepon tidak boleh kurang dan lebih dari 10 sampai 13 digit.');
+                        }
+                    },
+                ])
+                ->afterStateUpdated(function ($livewire, TextInput $component) {
+                    $livewire->validateOnly($component->getStatePath());
+                }),
             ])
             ->columns(1);
     }
