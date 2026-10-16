@@ -19,7 +19,13 @@ return new class extends Migration
             $table->date('tanggal');
             $table->string('jenis_transaksi')->default('setoran');
             $table->decimal('jumlah_transaksi', 9, 2);
-            $table->timestamps();            
+            $table->string('status');
+            $table->timestamp('tanggal_pengajuan_batal');
+            $table->string('alasan_batal');
+            $table->timestamp('tanggal_dibatalkan');
+            $table->foreignId('penyetuju_pembatalan')->constrained();
+            $table->boolean('is_closed')->default(false);
+            $table->timestamps();          
         });
     }
     

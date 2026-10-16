@@ -83,10 +83,10 @@ class TransactionsTable
                     ->visible(fn ($record) => $record->status === 'sukses')
                     ->hidden(fn() => Filament::auth()->user()->hasRole('super_visor')),
               
-              Action::make('Setujui Pembatalan')
+                Action::make('Setujui Pembatalan')
                     ->color('danger')
                     ->requiresConfirmation()
-                     ->form([
+                    ->form([
         
                 Textarea::make('alasan_pembatalan')
                     ->label('Alasan Pembatalan')
