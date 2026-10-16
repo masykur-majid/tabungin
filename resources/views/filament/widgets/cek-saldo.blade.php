@@ -1,38 +1,40 @@
 <x-filament-widgets::widget>
-    <x-filament::section>
-        <div class="p-2">
+    <x-filament::section
+        icon="heroicon-o-banknotes"
+        icon-color="primary"
+        heading="Cek Saldo"
+        description="Cari nasabah berdasarkan nama atau nomor rekening"
+    >
+        <x-filament::input.wrapper prefix-icon="heroicon-m-magnifying-glass">
+            <x-filament::input
+                type="text"
+                wire:model.live.debounce.500ms="search"
+                placeholder="Cari nama atau no. rekening"
+            />
+        </x-filament::input.wrapper>
 
-            {{-- Input Select Pencarian Nasabah --}}
-            <div class="w-full mb-3">
-                {{ $this->form }}
+        @forelse ($this->accounts as $account)
+            <div style="margin-top:1rem; padding:1.25rem; border-radius:0.75rem; color:white; background:#1e293b; border:1px solid #334155;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:.875rem; opacity:.85;">Saldo rekening</span>
+                    <span style="font-size:0.75rem; font-weight:600; padding:0.125rem 0.6rem; border-radius:9999px; background-color:#16a34a; color:white;">Aktif</span>
+                </div>
+
+                <div style="font-size:2rem; font-weight:700; margin:.5rem 0 1rem;">
+                    Rp {{ number_format($account->saldo, 0, ',', '.') }}
+                </div>
+
+                <div style="display:flex; justify-content:space-between; font-size:.875rem; opacity:.9;">
+                    <span>{{ $account->customer->nama }}</span>
+                    <span style="letter-spacing:.1em;">{{ $account->nomor_rekening }}</span>
+                </div>
             </div>
-
-            {{-- Kotakan Card Hasil Data Nasabah (Tanda Beureum) --}}
-            @if($account)
-                <div class="w-full p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm text-left">
-                    <div class="flex items-center justify-between pb-2 mb-3 border-b border-gray-100 dark:border-gray-800">
-                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Detail Rekening</span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                            Aktif
-                        </span>
-                    </div>
-
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-500 dark:text-gray-400">Nomor Rekening</span>
-                            <span class="text-sm font-mono font-bold text-gray-800 dark:text-gray-200">{{ $account->nomor_rekening }}</span>
-                        </div>
-
-                        <div class="flex justify-between items-center pt-1">
-                            <span class="text-xs text-gray-500 dark:text-gray-400">Total Saldo</span>
-                            <span class="text-lg font-extrabold text-primary-600 dark:text-primary-400">
-                                Rp {{ number_format($account->saldo ?? 0, 0, ',', '.') }}
-                            </span>
-                        </div>
-                    </div>
+        @empty
+            @if (filled($search))
+                <div style="margin-top:1.25rem; text-align:center; opacity:.7;">
+                    Rekening tidak ditemukan.
                 </div>
             @endif
-
-        </div>
+        @endforelse
     </x-filament::section>
 </x-filament-widgets::widget>

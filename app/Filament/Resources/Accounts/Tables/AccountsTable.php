@@ -22,13 +22,19 @@ class AccountsTable
         return $table
             ->columns([
                TextColumn::make('customer.nama')
+                    ->label('Nasabah')
                     ->sortable(),
 
-                TextColumn::make('nomor_rekening'),
-                
+                TextColumn::make('nomor_rekening')
+                    ->copyable()
+                    ->copyMessage('Nomor rekening disalin')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->iconColor('blue')
+                    ->iconPosition('after'),
                 TextColumn::make('saldo')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->numeric(decimalPlaces: 0, decimalSeparator: ',', thousandsSeparator: '.'),
                 ToggleColumn::make('is_active')
 <<<<<<< HEAD
                 ->onIcon('heroicon-m-check')

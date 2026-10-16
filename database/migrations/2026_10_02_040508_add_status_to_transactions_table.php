@@ -6,14 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     public function up(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->enum('status', ['sukses', 'pengajuan pembatalan', 'batal'])
-                  ->default('sukses');
-
-        });
+        if (!Schema::hasColumn('transactions', 'status')) {
+            Schema::table('transactions', function (Blueprint $table) {
+                $table->enum('status', ['sukses', 'pengajuan pembatalan', 'batal'])
+                      ->default('sukses');
+            });
+        }
     }
 
     public function down(): void
