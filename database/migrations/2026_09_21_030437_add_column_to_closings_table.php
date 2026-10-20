@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('closings', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained();
-            $table->enum('jenis_pecahan', ['koin', 'kertas']);
+            if (! Schema::hasColumn('closings', 'user_id')) {
+                $table->foreignId('user_id')->constrained();
+            }
+
+            if (! Schema::hasColumn('closings', 'jenis_pecahan')) {
+                $table->enum('jenis_pecahan', ['koin', 'kertas']);
+            }
         });
     }
 

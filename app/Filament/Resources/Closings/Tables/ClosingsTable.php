@@ -47,6 +47,11 @@ class ClosingsTable
 
                 TextColumn::make('status')
                     ->label('Status')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'pengajuan_tutup' => 'Pengajuan Tutup',
+                        'tutup' => 'Tutup',
+                        default => $state,
+                    })
                     ->badge()
                     ->sortable(),
             ])
