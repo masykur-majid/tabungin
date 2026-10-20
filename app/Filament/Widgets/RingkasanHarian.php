@@ -9,11 +9,12 @@ use Filament\Widgets\Widget;
 
 class RingkasanHarian extends Widget
 {
-    protected string $view = 'filament.widgets.ringkasan-harian';
+    protected static string $view = 'filament.widgets.ringkasan-harian';
 
     protected static ?int $sort = -10;
 
-    protected int | string | array $columnSpan = 'full';
+    // Pastikan menggunakan kata kunci 'static'
+    protected static int|string|array $columnSpan = 'full';
 
     public function getRingkasanProperty(): array
     {

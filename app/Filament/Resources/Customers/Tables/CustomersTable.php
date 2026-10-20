@@ -7,8 +7,12 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Filament\Actions\DeleteAction;
+use App\Models\Account;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
 class CustomersTable
 {
     public static function configure(Table $table): Table
@@ -16,28 +20,37 @@ class CustomersTable
         return $table
             ->columns([
                 TextColumn::make('nama')
-                    ->searchable(),
-                    
-                TextColumn::make('NISN')
-                    ->searchable(),
+            ->label('Nama')
+            ->searchable(),
 
-                TextColumn::make('jenis_kelamin')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                    'Laki-laki' => 'info',    
-                    'Perempuan' => 'danger',
-                     default => 'gray',
-                 })
-                 ->toggleable(isToggledHiddenByDefault: true),
+       TextColumn::make('nik')
+            ->label('NIK')
+            ->placeholder('-')
+            ->searchable(),
 
-                TextColumn::make('asal_sekolah')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                    'SMKS 1 PARAHYANGAN' => 'warning', 
-                    'SMP PARAHYANGAN'    => 'info', 
+        TextColumn::make('asal_sekolah')
+            ->label('Asal sekolah')
+            ->badge()
+            ->color(fn (?string $state): string => match (true) {
+                    str_contains(strtolower((string) $state), 'smk') => 'warning',
+                    str_contains(strtolower((string) $state), 'smp') => 'info',
+                    str_contains(strtolower((string) $state), 'guru') => 'success', 
                     default => 'gray',
-                 }),
+                })
+            ->searchable(),
+
+        TextColumn::make('jenis_kelamin')
+            ->label('Jenis Kelamin')
+            ->badge()
+            ->color(fn (?string $state): string => match (true) {
+                str_contains(strtolower((string) $state), 'perempuan') => 'danger',
+                str_contains(strtolower((string) $state), 'laki')      => 'info', 
+                default => 'gray',
+            })
+                ->toggleable()
+            ->toggleable(isToggledHiddenByDefault: true),
                  
+
                 TextColumn::make('alamat_rumah')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -57,7 +70,7 @@ class CustomersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                
             ])
            
           ->actions([
@@ -73,7 +86,18 @@ class CustomersTable
 
                 DeleteAction::make()
                     ->hiddenLabel()
-                    ->tooltip('Delete'),
+                    ->tooltip('Delete')
+                    ->before(function (DeleteAction $action, $record) {
+                        if (Account::where('customer_id', $record->id)->exists()) {
+                            Notification::make()
+                                ->title('Nasabah tidak bisa dihapus')
+                                ->body('Hapus rekening nasabah ini terlebih dahulu.')
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }  
+        }),
             ])
                 
             
