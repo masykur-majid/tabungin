@@ -25,7 +25,6 @@ class AccountForm
                     ->required(),
 
                 TextInput::make('nomor_rekening')
-<<<<<<< HEAD
                 ->label('Nomor rekening')
                 ->required()
                 ->mask('999999999999999')
@@ -38,29 +37,6 @@ class AccountForm
                 ->extraInputAttributes([
                     'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
                 ]),
-=======
-                    ->label('Nomor rekening')
-                    ->required()
-                    ->numeric()
-                    ->maxLength(15)
-                    ->live(debounce: 500)
-                    ->rules([
-                        fn () => function (string $attribute, $value, \Closure $fail) {
-                            if (strlen((string) $value) !== 15) {
-                                $fail('Nomor rekening harus 15 digit.');
-                            }
-                        },
-                    ])
-                    ->unique(ignoreRecord: true)
-                    ->validationMessages([
-                        'required' => 'Nomor rekening wajib diisi.',
-                        'unique' => 'Nomor rekening sudah terdaftar.',
-                    ])
-                    ->afterStateUpdated(function ($livewire, TextInput $component) {
-                        $livewire->validateOnly($component->getStatePath());
-                    }),
-
->>>>>>> main
                 TextInput::make('saldo')
                 ->label('Saldo')
                 ->required()

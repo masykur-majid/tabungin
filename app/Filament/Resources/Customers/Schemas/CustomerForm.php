@@ -134,7 +134,7 @@ class CustomerForm
                                         ])
                                         ->afterStateUpdated(function ($livewire, TextInput $component) {
                                             $livewire->validateOnly($component->getStatePath());
-                                        }),
+                                          }),
 
                                     TextInput::make('saldo')
                                         ->label('Saldo')
