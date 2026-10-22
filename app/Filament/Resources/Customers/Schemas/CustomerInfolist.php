@@ -11,8 +11,6 @@ class CustomerInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('nama'),
-                TextEntry::make('nisn'),
                 TextEntry::make('nik')
                 ->label('NIK'),
                 TextEntry::make('jenis_kelamin')
@@ -23,6 +21,8 @@ class CustomerInfolist
                     str_contains(strtolower((string) $state), 'laki')      => 'info',  
                     default => 'gray',
                 }),
+                TextEntry::make('nama'),
+                TextEntry::make('nisn'),
                TextEntry::make('asal_sekolah')
                 ->label('Asal sekolah')
                 ->badge()

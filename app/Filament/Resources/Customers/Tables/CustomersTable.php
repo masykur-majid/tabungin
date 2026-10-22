@@ -19,36 +19,36 @@ class CustomersTable
     {
         return $table
             ->columns([
+                TextColumn::make('nik')
+                ->label('NIK')
+                ->placeholder('-')
+                ->searchable(),
+
                 TextColumn::make('nama')
-            ->label('Nama')
-            ->searchable(),
+                ->label('Nama')
+                ->searchable(),
 
-       TextColumn::make('nik')
-            ->label('NIK')
-            ->placeholder('-')
-            ->searchable(),
+                TextColumn::make('asal_sekolah')
+                ->label('Asal sekolah')
+                ->badge()
+                ->color(fn (?string $state): string => match (true) {
+                        str_contains(strtolower((string) $state), 'smk') => 'warning',
+                        str_contains(strtolower((string) $state), 'smp') => 'info',
+                        str_contains(strtolower((string) $state), 'guru') => 'success', 
+                        default => 'gray',
+                    })
+                ->searchable(),
 
-        TextColumn::make('asal_sekolah')
-            ->label('Asal sekolah')
-            ->badge()
-            ->color(fn (?string $state): string => match (true) {
-                    str_contains(strtolower((string) $state), 'smk') => 'warning',
-                    str_contains(strtolower((string) $state), 'smp') => 'info',
-                    str_contains(strtolower((string) $state), 'guru') => 'success', 
-                    default => 'gray',
-                })
-            ->searchable(),
-
-        TextColumn::make('jenis_kelamin')
-            ->label('Jenis Kelamin')
-            ->badge()
-            ->color(fn (?string $state): string => match (true) {
-                str_contains(strtolower((string) $state), 'perempuan') => 'danger',
-                str_contains(strtolower((string) $state), 'laki')      => 'info', 
-                default => 'gray',
-            })
+                TextColumn::make('jenis_kelamin')
+                ->label('Jenis Kelamin')
+                ->badge()
+                ->color(fn (?string $state): string => match (true) {
+                        str_contains(strtolower((string) $state), 'perempuan') => 'danger',
+                        str_contains(strtolower((string) $state), 'laki')      => 'info', 
+                        default => 'gray',
+                    })
                 ->toggleable()
-            ->toggleable(isToggledHiddenByDefault: true),
+                ->toggleable(isToggledHiddenByDefault: true),
                  
 
                 TextColumn::make('alamat_rumah')
