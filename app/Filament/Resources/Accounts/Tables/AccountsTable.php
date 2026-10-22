@@ -31,10 +31,12 @@ class AccountsTable
                     ->icon('heroicon-o-document-duplicate')
                     ->iconColor('blue')
                     ->iconPosition('after'),
+
                 TextColumn::make('saldo')
                     ->numeric()
                     ->sortable()
                     ->numeric(decimalPlaces: 0, decimalSeparator: ',', thousandsSeparator: '.'),
+
                 ToggleColumn::make('is_active')
                     ->label('is_active')
                     ->onColor('success')
@@ -44,6 +46,7 @@ class AccountsTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
