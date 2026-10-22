@@ -12,32 +12,31 @@ class Transaction extends Model
 
     protected $table = 'transactions';
 
-
     protected $guarded = ['id'];
 
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
-        static::creating(function ($transaction) {
+        static::creating(function (Transaction $transaction): void {
             if (empty($transaction->no_slip)) {
-                $transaction->no_slip = self::generateNoSlip();
+                $transaction->no_slip = static::generateNoSlip();
             }
         });
     }
 
     public static function generateNoSlip(): string
     {
-        $year = date('Y');
-        $month = date('m');
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
 
-       
-        $count = self::whereYear('created_at', $year)
-                     ->whereMonth('created_at', $month)
-                     ->count();
+        $terakhir = static::where('no_slip', 'like', "%/{$bulan}/{$tahun}")
+            ->orderByDesc('id')
+            ->value('no_slip');
 
-        $nextNumber = $count + 1;
-        return $nextNumber . '/' . $nextNumber;
+        $urut = $terakhir ? ((int) explode('/', $terakhir)[0]) + 1 : 1;
+
+        return sprintf('%03d/%s/%s', $urut, $bulan, $tahun);
     }
 
     public function user(): BelongsTo
@@ -46,7 +45,7 @@ class Transaction extends Model
     }
 
     public function account(): BelongsTo
-{
-    return $this->belongsTo(Account::class, 'nomor_rekening', 'id');
-}
+    {
+        return $this->belongsTo(Account::class, 'account_id', 'id');
+    }
 }

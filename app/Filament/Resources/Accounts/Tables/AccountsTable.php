@@ -31,19 +31,23 @@ class AccountsTable
                     ->icon('heroicon-o-document-duplicate')
                     ->iconColor('blue')
                     ->iconPosition('after'),
+
                 TextColumn::make('saldo')
                     ->numeric()
                     ->sortable()
                     ->numeric(decimalPlaces: 0, decimalSeparator: ',', thousandsSeparator: '.'),
+
                 ToggleColumn::make('is_active')
-                ->onIcon('heroicon-m-check')
-                ->offIcon('heroicon-m-x-mark')
-                ->onColor('success')
-                ->offColor('danger'),
+                    ->onIcon('heroicon-m-check')
+                    ->offIcon('heroicon-m-x-mark')
+                    ->onColor('success')
+                    ->offColor('danger'),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
