@@ -38,10 +38,11 @@ class AccountsTable
                     ->numeric(decimalPlaces: 0, decimalSeparator: ',', thousandsSeparator: '.'),
 
                 ToggleColumn::make('is_active')
-                    ->label('is_active')
+                    ->onIcon('heroicon-m-check')
+                    ->offIcon('heroicon-m-x-mark')
                     ->onColor('success')
                     ->offColor('danger'),
-                
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

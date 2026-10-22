@@ -6,9 +6,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Support\Icons\Heroicon;
-use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
 use Filament\Support\RawJs;
 
 class AccountForm
@@ -22,51 +20,47 @@ class AccountForm
                     ->relationship('customer', 'nama')
                     ->placeholder('Pilih nasabah')
                     ->prefixIcon('heroicon-m-user')
+                    ->searchable()
+                    ->preload()
                     ->required(),
 
                 TextInput::make('nomor_rekening')
-                    ->label('Nomor rekening')
+                    ->label('Nomor Rekening')
                     ->required()
                     ->numeric()
-                    ->maxLength(15)
-                    ->live(debounce: 500)
-                    ->rules([
-                        fn () => function (string $attribute, $value, \Closure $fail) {
-                            if (strlen((string) $value) !== 15) {
-                                $fail('Nomor rekening harus 15 digit.');
-                            }
-                        },
-                    ])
+                    ->mask('999999999999999')
+                    ->inputMode('numeric')
+                    ->rules(['digits:15'])
                     ->unique(ignoreRecord: true)
                     ->validationMessages([
-                        'required' => 'Nomor rekening wajib diisi.',
                         'unique' => 'Nomor rekening sudah terdaftar.',
+                        'digits' => 'Nomor rekening harus berjumlah 15 digit.',
                     ])
-                    ->afterStateUpdated(function ($livewire, TextInput $component) {
-                        $livewire->validateOnly($component->getStatePath());
-                    }),
+                    ->extraInputAttributes([
+                        'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
+                    ]),
 
                 TextInput::make('saldo')
-                ->label('Saldo')
-                ->required()
-                ->prefix('Rp')
-                ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
-                ->stripCharacters('.')
-                ->numeric()
-                ->rules(['min:1000'])
-                ->validationMessages([
-                    'min' => 'Saldo tidak boleh kurang dari 1000.',
-                ]),
+                    ->label('Saldo')
+                    ->required()
+                    ->prefix('Rp')
+                    ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
+                    ->stripCharacters('.')
+                    ->numeric()
+                    ->minValue(1000)
+                    ->validationMessages([
+                        'min' => 'Saldo tidak boleh kurang dari Rp 1.000.',
+                    ]),
 
-               Toggle::make('is_active')
+                Toggle::make('is_active')
                     ->label('Status Aktif')
                     ->onIcon(Heroicon::Check)
                     ->offIcon(Heroicon::XMark)
-                    ->default(true)
                     ->onColor('success')
                     ->offColor('danger')
+                    ->default(true)
                     ->required(),
-                ])
-                    ->columns(1);
+            ])
+            ->columns(1);
     }
 }
