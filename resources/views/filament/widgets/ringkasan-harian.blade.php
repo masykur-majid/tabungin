@@ -1,7 +1,5 @@
 <x-filament-widgets::widget>
     <div style="padding: .5rem .25rem;">
-
-        {{-- Header Logo & Ucapan --}}
         <div style="display: flex; align-items: center; gap: .875rem;">
             <img src="{{ asset('images/logo-smk.png') }}"
                  alt="Logo SMK 1 Parahyangan"
@@ -46,6 +44,7 @@
                             background: rgba(239, 68, 68, .12); color: #ef4444;">
                     <x-filament::icon icon="heroicon-o-credit-card" style="width: 1.25rem; height: 1.25rem;" />
                 </div>
+                
                 <div>
                     <div style="font-size: 2rem; font-weight: 500; line-height: 1.1;">
                         {{ number_format($this->ringkasan['rekening_aktif'] ?? 0, 0, ',', '.') }}

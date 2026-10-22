@@ -10,9 +10,13 @@ use Illuminate\Support\Carbon;
 
 class RingkasanHarian extends Widget
 {
-    protected static ?int $sort = -2 ;
+    // Keduanya HARUS non-static (tanpa kata kunci 'static')
+    protected string $view = 'filament.widgets.ringkasan-harian';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
+
+    // Hanya $sort yang menggunakan static
+    protected static ?int $sort = -10;
 
     protected string $view = 'filament.widgets.ringkasan-harian';
 
@@ -30,9 +34,8 @@ class RingkasanHarian extends Widget
 
         return [
             'nasabah' => Customer::count(),
-            'rekening_aktif' => Account::count(),
-            'transaksi_hari_ini' => Transaction::whereDate('created_at', Carbon::today())->count(),
-            'uang_terkumpul_hari_ini' => $totalSetoran - $totalPenarikan,
+            'rekening_aktif' => Account::where('is_active', true)->count(),
+            'transaksi_hari_ini' => Transaction::whereDate('created_at', today())->count(),
         ];
     }
 }

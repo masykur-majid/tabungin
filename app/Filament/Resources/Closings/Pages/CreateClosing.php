@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\Closings\Pages;
 
 use App\Filament\Resources\Closings\ClosingResource;
+use App\Enums\Enums\ClosingStatus;
 use App\Models\Closing;
 use App\Models\Transaction;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CreateClosing extends CreateRecord
@@ -20,96 +22,92 @@ class CreateClosing extends CreateRecord
             ->label('Ajukan Tutup Kas');
     }
 
-    protected function mutateFormDataBeforeCreate(
-        array $data
-    ): array {
-  
-        $sudahAda = Closing::query()
-            ->whereDate('created_at', today())
-            ->exists();
-
-        if ($sudahAda) {
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        if (Closing::query()->whereDate('created_at', today())->exists()) {
             Notification::make()
                 ->danger()
                 ->title('Tutup Kas Sudah Dibuat')
-                ->body(
-                    'Tutup Kas hanya boleh dibuat satu kali sehari. ' .
-                    'Data hari ini sudah tersedia.'
-                )
+                ->body('Tutup kas hanya boleh dibuat satu kali sehari.')
                 ->persistent()
                 ->send();
 
             throw ValidationException::withMessages([
-                'created_at' =>
-                    'Tutup Kas untuk hari ini sudah pernah dibuat.',
+                'created_at' => 'Tutup kas hari ini sudah pernah dibuat.',
             ]);
         }
 
-        $data['user_id'] = auth()->id();
+        $tanggal = today()->toDateString();
 
-        $data['total_sistem'] = (int) Transaction::query()
-            ->whereDate('tanggal', today())
+        $totalSistem = (int) Transaction::query()
+            ->whereDate('tanggal', $tanggal)
             ->where('jenis_transaksi', 'setoran')
             ->sum('jumlah_transaksi');
 
         $totalFisik = (int) ($data['total_fisik'] ?? 0);
+        $selisih = $totalFisik - $totalSistem;
 
-        $data['selisih'] =
-            $totalFisik - $data['total_sistem'];
-
-        if ((int) $data['selisih'] !== 0) {
+        if ($selisih !== 0) {
             throw ValidationException::withMessages([
-                'selisih' =>
-                    'Tutup Kas tidak dapat diajukan karena masih terdapat selisih kas. Periksa kembali uang fisik.',
+                'selisih' => 'Tutup kas tidak dapat diajukan karena terdapat selisih kas.',
             ]);
         }
 
-        $data['status'] = 'Pending';
+        // Field form yang bukan kolom tabel closings.
+        unset(
+            $data['jumlah_uang_koin'],
+            $data['jumlah_uang_kertas'],
+            $data['total_uang_koin'],
+            $data['total_uang_kertas'],
+            $data['peringatan_kas'],
+            $data['created_at'],
+            $data['updated_at'],
+        );
+
+        $data['user_id'] = auth()->id();
+        $data['total_sistem'] = $totalSistem;
+        $data['total_fisik'] = $totalFisik;
+        $data['selisih'] = $selisih;
+        $data['status'] = ClosingStatus::Pending;
+        $data['is_approved'] = false;
 
         return $data;
     }
 
     protected function afterCreate(): void
     {
-        $this->simpanDetailUang();
-    }
-
-    private function simpanDetailUang(): void
-    {
         $data = $this->form->getState();
 
-        $this->record->closingDetails()->delete();
+        DB::transaction(function () use ($data): void {
+            $this->record->closingDetails()->delete();
 
-        $details = [];
+            $details = [];
 
-        foreach (($data['jumlah_uang_koin'] ?? []) as $item) {
-            $nominal = (int) ($item['koin'] ?? 0);
-            $jumlah = max(
-                0,
-                (int) ($item['banyak_koin'] ?? 0)
-            );
+            foreach (($data['jumlah_uang_koin'] ?? []) as $item) {
+                $nominal = (int) ($item['koin'] ?? 0);
+                $jumlah = max(0, (int) ($item['banyak_koin'] ?? 0));
 
-            $details[] = [
-                'nominal_pecahan' => $nominal,
-                'jumlah_pecahan' => $jumlah,
-                'subtotal' => $nominal * $jumlah,
-            ];
-        }
+                $details[] = [
+                    'jenis' => 'koin',
+                    'nominal_pecahan' => $nominal,
+                    'jumlah_pecahan' => $jumlah,
+                    'subtotal' => $nominal * $jumlah,
+                ];
+            }
 
-        foreach (($data['jumlah_uang_kertas'] ?? []) as $item) {
-            $nominal = (int) ($item['kertas'] ?? 0);
-            $jumlah = max(
-                0,
-                (int) ($item['banyak_kertas'] ?? 0)
-            );
+            foreach (($data['jumlah_uang_kertas'] ?? []) as $item) {
+                $nominal = (int) ($item['kertas'] ?? 0);
+                $jumlah = max(0, (int) ($item['banyak_kertas'] ?? 0));
 
-            $details[] = [
-                'nominal_pecahan' => $nominal,
-                'jumlah_pecahan' => $jumlah,
-                'subtotal' => $nominal * $jumlah,
-            ];
-        }
+                $details[] = [
+                    'jenis' => 'kertas',
+                    'nominal_pecahan' => $nominal,
+                    'jumlah_pecahan' => $jumlah,
+                    'subtotal' => $nominal * $jumlah,
+                ];
+            }
 
-        $this->record->closingDetails()->createMany($details);
+            $this->record->closingDetails()->createMany($details);
+        });
     }
 }

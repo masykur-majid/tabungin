@@ -11,10 +11,9 @@ class CustomerInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('nama'),
-                TextEntry::make('nisn'),
                 TextEntry::make('nik')
                 ->label('NIK'),
+
                 TextEntry::make('jenis_kelamin')
                 ->label('Jenis kelamin')
                 ->badge()
@@ -23,7 +22,10 @@ class CustomerInfolist
                     str_contains(strtolower((string) $state), 'laki')      => 'info',  
                     default => 'gray',
                 }),
-               TextEntry::make('asal_sekolah')
+
+                TextEntry::make('nama'),
+                TextEntry::make('nisn'),
+                TextEntry::make('asal_sekolah')
                 ->label('Asal sekolah')
                 ->badge()
                 ->color(fn (?string $state): string => match (true) {
@@ -32,6 +34,7 @@ class CustomerInfolist
                     str_contains(strtolower((string) $state), 'guru') => 'success',
                     default => 'gray',
                 }),
+                
                 TextEntry::make('alamat_rumah'),
                 TextEntry::make('no_telepon'),
                 TextEntry::make('created_at')

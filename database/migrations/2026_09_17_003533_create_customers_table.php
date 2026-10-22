@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('NIK')->unique;
+            $table->string('nik')->unique();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
-            $table->enum('asal_sekolah', ['SMKS 1 PARAHYANGAN', 'SMP PARAHYANGAN']);
+            $table->enum('asal_sekolah', ['SMKS 1 PARAHYANGAN', 'SMP PARAHYANGAN', 'GURU PARAHYANGAN']);
             $table->string('alamat_rumah');
             $table->string('no_telepon');
             $table->timestamps();
