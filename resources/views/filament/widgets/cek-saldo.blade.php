@@ -1,10 +1,10 @@
 <x-filament-widgets::widget>
     <x-filament::section
-        icon="heroicon-o-banknotes"
-        icon-color="primary"
-        heading="Cek Saldo"
-        description="Cari nasabah berdasarkan nama atau nomor rekening"
-    >
+                icon="heroicon-o-banknotes"
+                icon-color="primary"
+                heading="Cek Saldo"
+                description="Cari nasabah berdasarkan nama atau nomor rekening"
+            >
         <x-filament::input.wrapper prefix-icon="heroicon-m-magnifying-glass">
             <x-filament::input
                 type="text"
