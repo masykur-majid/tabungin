@@ -23,7 +23,7 @@ class ClosingForm
         }
 
         return (int) Transaction::query()
-            ->whereDate('tanggal', $tanggal)
+            ->whereDate('created_at', $tanggal)
             ->where('jenis_transaksi', 'setoran')
             ->sum('jumlah_transaksi');
     }
