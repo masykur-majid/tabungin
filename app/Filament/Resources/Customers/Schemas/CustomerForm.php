@@ -25,6 +25,28 @@ class CustomerForm
                     Step::make('Data Nasabah')
                         ->icon('heroicon-m-user')
                         ->schema([
+
+                            TextInput::make('nik')
+                                ->label('NIK')
+                                ->required()
+                                ->live(debounce: 500)
+                                ->maxLength(16)
+                                ->extraInputAttributes([
+                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)",
+                                ])
+                                ->rules([
+                                    fn () => function (string $attribute, $value, Closure $fail): void {
+                                        if (strlen((string) $value) !== 16) {
+                                            $fail('NIK harus 16 digit.');
+                                        }
+                                    },
+                                ])
+                                ->unique(ignoreRecord: true)
+                                ->validationMessages([
+                                    'unique' => 'NIK sudah terdaftar.',
+                                ])
+                                ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
+
                             TextInput::make('nama')
                                 ->label('Nama Lengkap')
                                 ->prefixIcon('heroicon-m-user')
@@ -51,65 +73,14 @@ class CustomerForm
                                 ->afterStateUpdated(fn (Set $set) => $set('nik', null))
                                 ->required(),
 
-                            TextInput::make('nik')
-                                ->label('NIK')
-                                ->required()
-                                ->live(debounce: 500)
-                                ->maxLength(16)
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)",
-                                ])
-                                ->rules([
-                                    fn () => function (string $attribute, $value, Closure $fail): void {
-                                        if (strlen((string) $value) !== 16) {
-                                            $fail('NIK harus 16 digit.');
-                                        }
-                                    },
-                                ])
-                                ->unique(ignoreRecord: true)
-                                ->validationMessages([
-                                    'unique' => 'NIK sudah terdaftar.',
-                                ])
-                                ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
-
-                ToggleButtons::make('asal_sekolah')
-                            ->label('Asal sekolah')
-                            ->options([
-                                    'SMKS 1 PARAHYANGAN' => 'SMKS 1 PARAHYANGAN',
-                                    'SMP PARAHYANGAN' => 'SMP PARAHYANGAN',
-                                    'GURU PARAHYANGAN' => 'GURU PARAHYANGAN',
-                                ])
-                            ->colors([
-                                    'SMKS 1 PARAHYANGAN' => 'warning',
-                                    'SMP PARAHYANGAN' => 'info',
-                                    'GURU PARAHYANGAN' => 'success',
-                                ])
-                            ->inline()
-                            ->live()
-                            ->afterStateUpdated(function (Set $set) {
-                                $set('nik', null);
-                            })
-                            ->required(),
-
-                Step::make('Data Nasabah')
-                            ->icon('heroicon-m-user')
-                            ->schema([
-                TextInput::make('nama')
-                            ->label('Nama lengkap')
-                            ->prefixIcon('heroicon-m-user')
-                            ->required()
-                            ->extraInputAttributes([
-                                'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
-                                ]),
-
                             Radio::make('jenis_kelamin')
                                 ->label('Jenis Kelamin')
+                                ->inline()
+                                ->required()
                                 ->options([
                                     'Laki-laki' => 'Laki-laki',
                                     'Perempuan' => 'Perempuan',
-                                ])
-                                ->inline()
-                                ->required(),
+                                ]),
 
                             TextInput::make('alamat_rumah')
                                 ->label('Alamat Rumah')
@@ -181,10 +152,9 @@ class CustomerForm
                                         ->onColor('success')
                                         ->offColor('danger')
                                         ->default(true),
-                                ]),
+                               ]),
                         ]),
-                ])
-                    ->columnSpanFull(),
+                ])->columnSpanFull(),
             ])
             ->columns(1);
     }
