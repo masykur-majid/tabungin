@@ -1,60 +1,55 @@
 <?php
 
-namespace App\Filament\Resources\Transactions\Tables;
+namespace App\Filament\Resources\Transactions\Schemas;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\StateCasts\StripCharactersStateCast;
+use Filament\Support\RawJs;
+use Filament\Schemas\Schema;
 
-class TransactionsTable
+class TransactionForm
 {
-    public static function configure(Table $table): Table
+    public static function configure(Schema $schema): Schema
     {
-        return $table
-            ->columns([
-                TextColumn::make('account.nomor_rekening')
-                    ->label('No. Rekening')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('user.name')
+        return $schema
+            ->components([
+                Select::make('account_id')
+                    ->label('Nomor Rekening')
+                    ->required()
+                    ->relationship('account', 'nomor_rekening'),
+
+                Select::make('user_id')
                     ->label('Petugas')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('no_slip')
-                    ->searchable(),
-                TextColumn::make('tanggal')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('jenis_transaksi')
-                    ->searchable(),
-                TextColumn::make('jumlah_transaksi')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                    ->relationship('user', 'name')
+                    ->prefixIcon('heroicon-o-user')
+                    ->default(auth()->id())
+                    ->disabled()
+                    ->dehydrated(),
+
+                TextInput::make('no_slip')
+                    ->label('No Slip')
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->required(false),
+
+                DatePicker::make('tanggal')
+                    ->required()
+                    ->maxDate(now()),
+
+                TextInput::make('jenis_transaksi')
+                    ->required()
+                    ->default('setoran'),
+
+                TextInput::make('jumlah_transaksi')
+                    ->required()
+                    ->prefix('Rp') 
+                    ->mask(RawJs::make('$money($input)'))
+                    ->stripCharacters(',')
+                    ->numeric(),
+                    
             ]);
     }
 }
