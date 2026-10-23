@@ -18,6 +18,8 @@ class RingkasanHarian extends Widget
     // Hanya $sort yang menggunakan static
     protected static ?int $sort = -10;
 
+
+
     public function getRingkasanProperty(): array
     {
         $totalSetoran = Transaction::whereDate('created_at', Carbon::today())
