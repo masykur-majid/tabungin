@@ -18,7 +18,7 @@ class RingkasanHarian extends Widget
     // Hanya $sort yang menggunakan static
     protected static ?int $sort = -10;
 
-    protected string $view = 'filament.widgets.ringkasan-harian';
+
 
     public function getRingkasanProperty(): array
     {
