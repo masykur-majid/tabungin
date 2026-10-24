@@ -26,8 +26,8 @@ class AccountResource extends Resource
     protected static ?string $pluralModelLabel = 'Rekening';
     protected static ?string $modelLabel = 'Rekening';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Users;
+    
     public static function form(Schema $schema): Schema
     {
         return AccountForm::configure($schema);
@@ -46,17 +46,18 @@ class AccountResource extends Resource
     public static function getRelations(): array
     {
         return [
-            TransactionsRelationManager::class,
+            
 
         ];
     }
 
-    public static function getPages(): array
+public static function getPages(): array
 {
     return [
-        'index' => Pages\ListAccounts::route('/'),
+        'index'  => Pages\ListAccounts::route('/'),
         'create' => Pages\CreateAccount::route('/create'),
-        'edit' => Pages\EditAccount::route('/{record}/edit'),
+        'view'   => Pages\ViewAccount::route('/{record}'),
+        'edit'   => Pages\EditAccount::route('/{record}/edit'),
     ];
 }
 }

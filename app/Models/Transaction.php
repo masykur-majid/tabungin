@@ -2,33 +2,41 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Guarded('id')]
 class Transaction extends Model
 {
-    /** @use HasFactory<\Database\Factories\TransactionFactory> */
     use HasFactory;
 
-    protected static function boot()
+    protected $table = 'transactions';
+
+    protected $guarded = ['id'];
+
+    protected static function boot(): void
     {
         parent::boot();
 
-        static::creating(function ($transaction) {
+        static::creating(function (Transaction $transaction): void {
             if (empty($transaction->no_slip)) {
-                $transaction->no_slip = self::generateNoSlip();
+                $transaction->no_slip = static::generateNoSlip();
             }
         });
     }
 
     public static function generateNoSlip(): string
     {
-        $lastNumber = self::count() + 1;
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
 
-        return $lastNumber . '/' . $lastNumber;
+        $terakhir = static::where('no_slip', 'like', "%/{$bulan}/{$tahun}")
+            ->orderByDesc('id')
+            ->value('no_slip');
+
+        $urut = $terakhir ? ((int) explode('/', $terakhir)[0]) + 1 : 1;
+
+        return sprintf('%03d/%s/%s', $urut, $bulan, $tahun);
     }
 
     public function user(): BelongsTo

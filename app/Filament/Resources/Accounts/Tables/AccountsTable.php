@@ -10,7 +10,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use App\Filament\Resources\Customers\CustomerResource;
 
 
 class AccountsTable
@@ -20,19 +22,32 @@ class AccountsTable
         return $table
             ->columns([
                TextColumn::make('customer.nama')
+                    ->label('Nasabah')
                     ->sortable(),
 
-                TextColumn::make('nomor_rekening'),
+                TextColumn::make('nomor_rekening')
+                    ->copyable()
+                    ->copyMessage('Nomor rekening disalin')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->iconColor('blue')
+                    ->iconPosition('after'),
 
                 TextColumn::make('saldo')
                     ->numeric()
-                    ->sortable(),
-                IconColumn::make('is_active')
-                    ->boolean(),
+                    ->sortable()
+                    ->numeric(decimalPlaces: 0, decimalSeparator: ',', thousandsSeparator: '.'),
+
+                ToggleColumn::make('is_active')
+                    ->onIcon('heroicon-m-check')
+                    ->offIcon('heroicon-m-x-mark')
+                    ->onColor('success')
+                    ->offColor('danger'),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                    
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -42,8 +57,6 @@ class AccountsTable
                 //
             ])
             
-            
-
           ->actions([
                 ViewAction::make()
                     ->hiddenLabel()
@@ -60,7 +73,7 @@ class AccountsTable
             
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
                 ]),
             ]);
     }

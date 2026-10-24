@@ -11,8 +11,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Guarded('id')]
 class Closing extends Model
 {
-    /** @use HasFactory<\Database\Factories\ClosingFactory> */
     use HasFactory;
+
+    protected function casts(): array
+    {
+        return [
+            'is_approved' => 'boolean',
+        ];
+    }
 
     public function closingDetails(): HasMany
     {

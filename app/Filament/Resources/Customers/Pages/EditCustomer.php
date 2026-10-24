@@ -18,4 +18,10 @@ class EditCustomer extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    // TAMBAHKAN DARI SINI:
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
 }

@@ -13,50 +13,78 @@ use Filament\Tables\Table;
 
 class ClosingsTable
 {
-    public static function configure(Table $table): Table
-    {
+    public static function configure(
+        Table $table
+    ): Table {
+
         return $table
             ->columns([
-                TextColumn::make('tanggal')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('total_sistem')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('total_fisik')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('selisih')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('status')
-                    ->badge(),
+
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Tanggal Dibuat')
+                    ->dateTime('d/m/Y H:i:s')
+                    ->sortable(),
+
                 TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Terakhir Diubah')
+                    ->dateTime('d/m/Y H:i:s')
+                    ->sortable(),
+
+                TextColumn::make('total_sistem')
+                    ->label('Total Uang Sistem')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('total_fisik')
+                    ->label('Total Uang Fisik')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('selisih')
+                    ->label('Selisih Kas')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'pengajuan_tutup' => 'Pengajuan Tutup',
+                        'tutup' => 'Tutup',
+                        default => $state,
+                    })
+                    ->badge()
+                    ->sortable(),
             ])
+
             ->filters([
                 //
             ])
+
             ->recordActions([
+
                 ActionGroup::make([
+
                     ViewAction::make(),
+
                     EditAction::make(),
+
                     DeleteAction::make()
                         ->requiresConfirmation()
-                        ->modalHeading('Hapus Data Closing')
-                        ->modalDescription(
-                            'Yakin ingin menghapus data ini?'
+                        ->modalHeading(
+                            'Hapus Data Closing'
                         )
-                        ->modalSubmitActionLabel('Ya, Hapus'),
-                ]),     
+                        ->modalDescription(
+                            'Yakin ingin menghapus data closing ini?'
+                        )
+                        ->modalSubmitActionLabel(
+                            'Ya, Hapus'
+                        ),
+
+                ]),
             ])
+
             ->toolbarActions([
+
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

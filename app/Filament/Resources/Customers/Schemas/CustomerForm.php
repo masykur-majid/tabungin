@@ -2,78 +2,163 @@
 
 namespace App\Filament\Resources\Customers\Schemas;
 
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Schemas\Schema;
+use Closure;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Wizard;
+use Filament\Schemas\Components\Wizard\Step;
+use Filament\Schemas\Schema;
+use Filament\Support\RawJs;
+use Illuminate\Support\Str;
 
 class CustomerForm
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
-                ->components([
-              TextInput::make('nama')
-                ->prefixIcon('heroicon-m-user')
-                ->required(),
+            ->components([
+                Wizard::make([
+                    Step::make('Data Nasabah')
+                        ->icon('heroicon-m-user')
+                        ->schema([
+                            TextInput::make('nama')
+                                ->label('Nama Lengkap')
+                                ->prefixIcon('heroicon-m-user')
+                                ->dehydrateStateUsing(fn ($state) => Str::title($state))
+                                ->required()
+                                ->extraInputAttributes([
+                                    'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
+                                ]),
 
-              TextInput::make('NISN')
-                ->label('NISN')
-                ->prefixIcon('heroicon-m-identification')
-                ->required() 
-                ->numeric()
-                ->live(debounce: 500)
-                ->rules([
-                    fn () => function (string $attribute, $value, \Closure $fail) {
-                        if (strlen((string) $value) !==10) {
-                            $fail('NISN tidak boleh kurang dari 10 digit');
-                        }
-                    },
+
+                            TextInput::make('nik')
+                                ->label('NIK')
+                                ->required()
+                                ->live(debounce: 500)
+                                ->maxLength(16)
+                                ->extraInputAttributes([
+                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)",
+                                ])
+                                ->rules([
+                                    fn () => function (string $attribute, $value, Closure $fail): void {
+                                        if (strlen((string) $value) !== 16) {
+                                            $fail('NIK harus 16 digit.');
+                                        }
+                                    },
+                                ])
+                                ->unique(ignoreRecord: true)
+                                ->validationMessages([
+                                    'unique' => 'NIK sudah terdaftar.',
+                                ])
+                                ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
+
+                           
+                            ToggleButtons::make('asal_sekolah')
+                                ->label('Asal Sekolah')
+                                ->options([
+                                    'SMKS 1 PARAHYANGAN' => 'SMKS 1 PARAHYANGAN',
+                                    'SMP PARAHYANGAN' => 'SMP PARAHYANGAN',
+                                    'GURU PARAHYANGAN' => 'GURU PARAHYANGAN',
+                                ])
+                                ->colors([
+                                    'SMKS 1 PARAHYANGAN' => 'warning',
+                                    'SMP PARAHYANGAN' => 'info',
+                                    'GURU PARAHYANGAN' => 'success',
+                                ])
+                                ->inline()
+                                ->live()
+                                ->required(),
+
+                            
+                            Radio::make('jenis_kelamin')
+                                ->label('Jenis Kelamin')
+                                ->options([
+                                    'Laki-laki' => 'Laki-laki',
+                                    'Perempuan' => 'Perempuan',
+                                ])
+                                ->inline()
+                                ->required(),
+
+                            
+                            TextInput::make('alamat_rumah')
+                                ->label('Alamat Rumah')
+                                ->prefixIcon('heroicon-m-home')
+                                ->required(),
+
+                           
+                            TextInput::make('no_telepon')
+                                ->label('Nomor Telepon')
+                                ->prefixIcon('heroicon-m-phone')
+                                ->tel()
+                                ->required()
+                                ->maxLength(13)
+                                ->live(debounce: 500)
+                                ->extraInputAttributes([
+                                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 13)",
+                                ])
+                                ->rules([
+                                    fn () => function (string $attribute, $value, Closure $fail): void {
+                                        $length = strlen((string) $value);
+                                        if ($length < 10 || $length > 13) {
+                                            $fail('Nomor telepon harus berisi antara 10 hingga 13 digit.');
+                                        }
+                                    },
+                                ])
+                                ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
+                        ]),
+
+                    Step::make('Rekening')
+                        ->icon('heroicon-m-credit-card')
+                        ->visibleOn('create')
+                        ->schema([
+                            Group::make()
+                                ->relationship('account')
+                                ->schema([
+                                    TextInput::make('nomor_rekening')
+                                        ->label('Nomor Rekening')
+                                        ->prefixIcon('heroicon-m-credit-card')
+                                        ->required()
+                                        ->maxLength(15)
+                                        ->live(debounce: 500)
+                                        ->extraInputAttributes([
+                                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
+                                        ])
+                                        ->rules([
+                                            fn () => function (string $attribute, $value, Closure $fail): void {
+                                                $length = strlen((string) $value);
+                                                if ($length < 10 || $length > 15) {
+                                                    $fail('Nomor rekening harus berisi antara 10 hingga 15 digit.');
+                                                }
+                                            },
+                                        ])
+                                        ->unique(table: 'accounts', column: 'nomor_rekening')
+                                        ->validationMessages([
+                                            'unique' => 'Nomor rekening sudah terdaftar.',
+                                        ])
+                                        ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
+
+                                    TextInput::make('saldo')
+                                        ->label('Saldo')
+                                        ->numeric()
+                                        ->prefix('Rp')
+                                        ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
+                                        ->minValue(1000)
+                                        ->stripCharacters('.')
+                                        ->required(),
+
+                                    Toggle::make('is_active')
+                                        ->label('Status Aktif')
+                                        ->onColor('success')
+                                        ->offColor('danger')
+                                        ->default(true),
+                                ]),
+                        ]),
                 ])
-                ->unique(ignoreRecord: true)
-                ->validationMessages([
-                    'min_digits' => 'NISN harus 10 digit.',
-                    'max_digits' => 'NISN maksimal 10 digit.',
-                    'unique' => 'NISN sudah terdaftar.',
-                ])
-                ->afterStateUpdated(function($livewire, TextInput $component){
-                        $livewire->validateOnly($component->getStatePath());
-                }),
-
-                Radio::make('jenis_kelamin')
-                ->options(['Laki-laki' => 'Laki laki', 'Perempuan' => 'Perempuan'])
-                ->inline()
-                ->required(),
-
-                ToggleButtons::make('asal_sekolah')
-                    ->options([
-                        'SMKS 1 PARAHYANGAN' => 'SMKS 1 Parahyangan',
-                        'SMP PARAHYANGAN' => 'SMP Parahyangan',
-                    ])
-                    ->inline()
-                    ->colors([
-                        'SMK 1 PARAHYANGAN' => 'warning',
-                        'SMP PARAHYANGAN' => 'info'
-                    ])
-                    ->required(),
-
-                TextInput::make('alamat_rumah')
-                ->prefixIcon('heroicon-m-home')
-                ->required(),
-
-                TextInput::make('no_telepon')
-                ->prefixIcon('heroicon-m-phone')
-                ->tel()
-                ->required()
-                ->rules(['digits_between:10,13'])
-                ->validationMessages([
-                      'digits_between' => 'Nomor telepon harus 10-13 digit.',
-                      'required' => 'Nomor telepon wajib diisi.',
-                    ]),
-                    
+                    ->columnSpanFull(),
             ])
             ->columns(1);
-            
     }
 }

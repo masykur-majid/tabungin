@@ -4,18 +4,34 @@ namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
+use Override;
 
 class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
 
-    protected function getHeaderActions(): array
+    #[Override]
+    public function getHeading(): string|Htmlable|null
     {
-        return [
-            ViewAction::make(),
-            DeleteAction::make(),
-        ];
+        return '';
+    }
+    
+    #[Override]
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
+    public function getMaxContentWidth(): ?string
+    {
+        return '2xl';
+    }
+
+    #[Override]
+    protected function getRedirectUrl(): ?string
+    {
+        return $this->getResource()::getUrl('index');
     }
 }
