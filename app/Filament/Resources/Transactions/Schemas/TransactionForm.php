@@ -33,9 +33,12 @@ class TransactionForm
                             ->orWhereHas('customer', fn ($q) => $q->where('nama', 'like', "%{$search}%"))
                             ->limit(50)
                             ->get()
-                            ->mapWithKeys(fn (Account $a) => [
+                            ->mapWithKeys(
+                            /** @param \App\Models\Account $a */
+                            fn ($a) => [
                                 $a->id => $a->nomor_rekening . ' - ' . ($a->customer?->nama ?? '-'),
-                            ])
+                            ]
+                        )
                             ->all();
                     })
                     ->searchable()
