@@ -53,7 +53,6 @@ class CreateClosing extends CreateRecord
             ]);
         }
 
-        // Field form yang bukan kolom tabel closings.
         unset(
             $data['jumlah_uang_koin'],
             $data['jumlah_uang_kertas'],
