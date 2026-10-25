@@ -55,9 +55,10 @@ class CustomersTable
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('no_telepon')
+               TextColumn::make('no_telepon')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn ($state) => preg_replace('/(\d{4})(\d{4})(\d+)/', '$1-$2-$3', $state)),
 
                 TextColumn::make('created_at')
                     ->dateTime()

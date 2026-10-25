@@ -103,7 +103,7 @@ class CustomerForm
                                     fn () => function (string $attribute, $value, Closure $fail): void {
                                         $length = strlen((string) $value);
                                         if ($length < 10 || $length > 13) {
-                                            $fail('Nomor telepon harus berisi antara 10 hingga 13 digit.');
+                                            $fail('Nomor Telepon harus 13 Digit.');
                                         }
                                     },
                                 ])
