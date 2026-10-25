@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Transactions\Tables;
 
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -70,25 +71,6 @@ class TransactionsTable
 
                 EditAction::make()->iconButton(),
 
-                Action::make('cetak')
-                    ->icon('heroicon-o-printer')
-                    ->iconButton()
-                    ->tooltip('Bukti Transaksi')
-                    ->modalHeading('Bukti Transaksi')
-                    ->modalWidth('md')
-                    ->modalContent(fn ($record) => view('filament.bukti-transaksi-modal', [
-                        'transaction' => $record->load(['account.customer', 'user']),
-                    ]))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Tutup')
-                    ->extraModalFooterActions(fn ($record) => [
-                        Action::make('cetakBukti')
-                            ->label('Cetak')
-                            ->icon('heroicon-o-printer')
-                            ->url(route('transaksi.bukti', $record))
-                            ->openUrlInNewTab(),
-                    ]),
-
                 Action::make('Ajukan Pembatalan')
                     ->icon('heroicon-o-x-circle')
                     ->iconButton()
@@ -133,6 +115,27 @@ class TransactionsTable
                     })
                     ->visible(fn ($record) => $record->status === 'pengajuan pembatalan'
                         && ! Filament::auth()->user()->hasRole('petugas')),
+
+                Action::make('cetak')
+                    ->icon('heroicon-o-printer')
+                    ->iconButton()
+                    ->tooltip('Bukti Transaksi')
+                    ->modalHeading('Bukti Transaksi')
+                    ->modalWidth('md')
+                    ->modalContent(fn ($record) => view('filament.bukti-transaksi-modal', [
+                        'transaction' => $record->load(['account.customer', 'user']),
+                    ]))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup')
+                    ->extraModalFooterActions(fn ($record) => [
+                        Action::make('cetakBukti')
+                            ->label('Cetak')
+                            ->icon('heroicon-o-printer')
+                            ->url(route('transaksi.bukti', $record))
+                            ->openUrlInNewTab(),
+                    ]),
+
+                DeleteAction::make()->iconButton(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
