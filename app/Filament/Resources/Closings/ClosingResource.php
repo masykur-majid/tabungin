@@ -35,7 +35,7 @@ class ClosingResource extends Resource
 
     protected static string|BackedEnum|null
         $navigationIcon =
-        Heroicon::OutlinedRectangleStack;
+        Heroicon::OutlinedClipboardDocumentList;
 
     public static function form(
         Schema $schema

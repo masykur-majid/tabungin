@@ -74,12 +74,12 @@ class CustomerForm
                             
                             Radio::make('jenis_kelamin')
                                 ->label('Jenis Kelamin')
+                                ->inline()
+                                ->required()
                                 ->options([
                                     'Laki-laki' => 'Laki-laki',
                                     'Perempuan' => 'Perempuan',
-                                ])
-                                ->inline()
-                                ->required(),
+                                ]),
 
                             
                             TextInput::make('alamat_rumah')
@@ -153,10 +153,9 @@ class CustomerForm
                                         ->onColor('success')
                                         ->offColor('danger')
                                         ->default(true),
-                                ]),
+                               ]),
                         ]),
-                ])
-                    ->columnSpanFull(),
+                ])->columnSpanFull(),
             ])
             ->columns(1);
     }

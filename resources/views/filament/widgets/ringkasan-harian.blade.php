@@ -44,7 +44,6 @@
                             background: rgba(239, 68, 68, .12); color: #ef4444;">
                     <x-filament::icon icon="heroicon-o-credit-card" style="width: 1.25rem; height: 1.25rem;" />
                 </div>
-                
                 <div>
                     <div style="font-size: 2rem; font-weight: 500; line-height: 1.1;">
                         {{ number_format($this->ringkasan['rekening_aktif'] ?? 0, 0, ',', '.') }}
@@ -77,7 +76,7 @@
                 </div>
                 <div>
                     <div style="font-size: 1.5rem; font-weight: 500; line-height: 1.1;">
-                        Rp {{ number_format($this->ringkasan['uang_terkumpul_hari_ini'] ?? 0, 0, ',', '.') }}
+                        Rp {{ number_format($this->ringkasan['uang_terkumpul'] ?? 0, 0, ',', '.') }}
                     </div>
                     <div style="font-size: .8125rem; opacity: .65; margin-top: .25rem;">uang terkumpul hari ini</div>
                 </div>

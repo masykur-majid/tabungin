@@ -28,7 +28,7 @@ class PendingCancellationTable extends BaseWidget
                 Tables\Columns\TextColumn::make('jenis_transaksi'),
                 Tables\Columns\TextColumn::make('jumlah_transaksi')
                     ->label('Jumlah Transaksi')
-                    ->formatStateUsing(fn () => 'Rp ***.***'),
+                    ->money('IDR', locale: 'id'),
                 Tables\Columns\TextColumn::make('alasan_pembatalan')->label('Alasan'),
             ])
             ->actions([
