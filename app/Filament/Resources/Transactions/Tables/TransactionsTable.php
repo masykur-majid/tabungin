@@ -13,6 +13,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Models\Transaction;
 
 class TransactionsTable
 {
@@ -69,7 +70,8 @@ class TransactionsTable
             ->recordActions([
                 ViewAction::make()->iconButton(),
 
-                EditAction::make()->iconButton(),
+                EditAction::make()->iconButton()
+                ->hidden(fn (Transaction $record): bool => $record->status === 'sukses'),
 
                 Action::make('Ajukan Pembatalan')
                     ->icon('heroicon-o-x-circle')
