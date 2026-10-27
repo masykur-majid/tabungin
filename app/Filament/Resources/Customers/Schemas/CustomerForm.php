@@ -21,11 +21,12 @@ class CustomerForm
         return $schema
             ->components([
                 Wizard::make([
-                    Step::make('Data Nasabah')
+                    Step::make('Data Nasabah')      
                         ->icon('heroicon-m-user')
                         ->schema([
                             TextInput::make('nik')
                                 ->label('NIK')
+                               ->prefixIcon('heroicon-o-identification')
                                 ->required()
                                 ->live(debounce: 500)
                                 ->maxLength(16)
