@@ -19,15 +19,15 @@ class CustomersTable
     {
         return $table
             ->columns([
-                  TextColumn::make('nama')
-                ->label('Nama')
-                ->searchable(),
-                
                  TextColumn::make('nik')
                 ->label('NIK')
                 ->placeholder('-')
                 ->searchable(),
 
+                TextColumn::make('nama')
+                ->label('Nama')
+                ->searchable(),
+                
                 TextColumn::make('asal_sekolah')
                 ->label('Asal sekolah')
                 ->badge()
