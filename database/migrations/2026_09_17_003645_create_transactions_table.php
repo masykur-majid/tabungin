@@ -16,14 +16,13 @@ return new class extends Migration
             $table->foreignId('account_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->string('no_slip');
-            $table->date('tanggal');
             $table->string('jenis_transaksi')->default('setoran');
             $table->decimal('jumlah_transaksi', 9, 2);
             $table->string('status');
-            $table->timestamp('tanggal_pengajuan_batal');
-            $table->string('alasan_batal');
-            $table->timestamp('tanggal_dibatalkan');
-            $table->foreignId('penyetuju_pembatalan')->constrained();
+            $table->timestamp('tanggal_pengajuan_batal')->nullable();
+            $table->string('alasan_batal')->nullable();
+            $table->timestamp('tanggal_dibatalkan')->nullable();
+            $table->foreignId('approver')->constrained('users', 'id')->nullable();
             $table->boolean('is_closed')->default(false);
             $table->timestamps();          
         });

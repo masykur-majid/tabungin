@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id();
             $table->decimal('total_sistem', 12, 2);
             $table->decimal('total_fisik', 12, 2);
-            $table->decimal('selisih', 12, 2);
             $table->string('status');
-            $table->text('catatan')->nullable();
             $table->boolean('is_approved')->default(false);
+            $table->foreignId('approver')->constrained('users', 'id');
             $table->timestamps();
         });
     }
