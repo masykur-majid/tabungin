@@ -25,7 +25,6 @@ class CustomerForm
                         ->icon('heroicon-m-user')
                         ->schema([
                             TextInput::make('nik')
-                                ->label('Nomor Induk Kependudukan (NIK)')
                                 ->required()
                                 ->live(debounce: 500)
                                 ->maxLength(16)
