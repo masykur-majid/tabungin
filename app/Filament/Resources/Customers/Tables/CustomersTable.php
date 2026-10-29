@@ -17,7 +17,8 @@ class CustomersTable
             ->columns([
                 TextColumn::make('nama')
                     ->searchable(),
-                TextColumn::make('NISN')
+                TextColumn::make('nik')
+                    ->label('NIK')
                     ->searchable(),
                 TextColumn::make('jenis_kelamin')
                     ->badge()
@@ -32,6 +33,7 @@ class CustomersTable
                     ->color(fn (string $state): string => match ($state) {
                     'SMKS 1 PARAHYANGAN' => 'warning', 
                     'SMP PARAHYANGAN'    => 'info',
+                    'GURU PARAHYANGAN'   => 'success',
                     
                     default => 'gray',
                  }),

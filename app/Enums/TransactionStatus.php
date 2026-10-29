@@ -30,3 +30,4 @@ enum TransactionStatus: string implements HasLabel, HasColor
         };
     }
 }
+ 
