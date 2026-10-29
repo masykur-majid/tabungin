@@ -53,4 +53,12 @@ class TransactionObserver
 
         $this->updateSaldo($transaction);
     }
+     public function update(Transaction $transaction): void
+     {
+        $original = $transaction->getOriginal();
+        $oldTransaction = new Transaction($original);
+        $this->reverseSaldo($oldTransaction);
+
+        $this->updateSaldo($transaction);
+     }
 }

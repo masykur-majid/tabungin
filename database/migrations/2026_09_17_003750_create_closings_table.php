@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('closings', function (Blueprint $table) {
             $table->id();
-            $table->date('tanggal')->unique();
             $table->decimal('total_sistem', 12, 2);
             $table->decimal('total_fisik', 12, 2);
             $table->decimal('selisih', 12, 2);
-            $table->enum('status', ['Selisih', 'Buka', 'Tutup'])->default('Buka');
-            $table->text('catatan');
+            $table->string('status');
+            $table->text('catatan')->nullable();
+            $table->boolean('is_approved')->default(false);
             $table->timestamps();
         });
     }

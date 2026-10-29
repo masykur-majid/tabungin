@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ClosingResource extends Resource
 {
@@ -34,7 +35,7 @@ class ClosingResource extends Resource
 
     protected static string|BackedEnum|null
         $navigationIcon =
-        Heroicon::OutlinedRectangleStack;
+        Heroicon::OutlinedClipboardDocumentList;
 
     public static function form(
         Schema $schema
@@ -59,10 +60,20 @@ class ClosingResource extends Resource
         return [];
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()?->hasRole(['super_admin', 'supervisor'])) {
+            return $query;
+        }
+
+        return $query->where('user_id', auth()->id());
+    }
+
     public static function getPages(): array
     {
         return [
-
             'index' =>
                 ListClosings::route('/'),
 

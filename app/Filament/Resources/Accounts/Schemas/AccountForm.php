@@ -27,7 +27,7 @@ class AccountForm
                 TextInput::make('nomor_rekening')
                     ->label('Nomor Rekening')
                     ->required()
-                    ->numeric()
+                    ->inputmode('numeric')
                     ->mask('999999999999999')
                     ->inputMode('numeric')
                     ->rules(['digits:15'])
@@ -48,6 +48,7 @@ class AccountForm
                     ->stripCharacters('.')
                     ->numeric()
                     ->minValue(1000)
+                    ->formatStateUsing(fn ($state) => $state !== null ? (int) $state : null)
                     ->validationMessages([
                         'min' => 'Saldo tidak boleh kurang dari Rp 1.000.',
                     ]),

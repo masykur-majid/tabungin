@@ -8,12 +8,11 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 use Filament\Support\RawJs;
+use Illuminate\Support\Str;
 
 class CustomerForm
 {
@@ -25,34 +24,8 @@ class CustomerForm
                     Step::make('Data Nasabah')
                         ->icon('heroicon-m-user')
                         ->schema([
-                            TextInput::make('nama')
-                                ->label('Nama Lengkap')
-                                ->prefixIcon('heroicon-m-user')
-                                 ->dehydrateStateUsing(fn ($state) => Str::title($state))
-                                ->required()
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
-                                ]),
-
-                            ToggleButtons::make('asal_sekolah')
-                                ->label('Asal Sekolah')
-                                ->options([
-                                    'SMKS 1 PARAHYANGAN' => 'SMKS 1 PARAHYANGAN',
-                                    'SMP PARAHYANGAN' => 'SMP PARAHYANGAN',
-                                    'GURU PARAHYANGAN' => 'GURU PARAHYANGAN',
-                                ])
-                                ->colors([
-                                    'SMKS 1 PARAHYANGAN' => 'warning',
-                                    'SMP PARAHYANGAN' => 'info',
-                                    'GURU PARAHYANGAN' => 'success',
-                                ])
-                                ->inline()
-                                ->live()
-                                ->afterStateUpdated(fn (Set $set) => $set('nik', null))
-                                ->required(),
-
                             TextInput::make('nik')
-                                ->label('NIK')
+                                ->label('Nomor Induk Kependudukan (NIK)')
                                 ->required()
                                 ->live(debounce: 500)
                                 ->maxLength(16)
@@ -72,20 +45,48 @@ class CustomerForm
                                 ])
                                 ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
 
+                            TextInput::make('nama')
+                                ->label('Nama Lengkap')
+                                ->prefixIcon('heroicon-m-user')
+                                ->dehydrateStateUsing(fn ($state) => Str::title($state))
+                                ->required()
+                                ->extraInputAttributes([
+                                    'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
+                                ]),
+
+                            ToggleButtons::make('asal_sekolah')
+                                ->label('Asal Sekolah')
+                                ->options([
+                                    'SMKS 1 PARAHYANGAN' => 'SMKS 1 PARAHYANGAN',
+                                    'SMP PARAHYANGAN' => 'SMP PARAHYANGAN',
+                                    'GURU PARAHYANGAN' => 'GURU PARAHYANGAN',
+                                ])
+                                ->colors([
+                                    'SMKS 1 PARAHYANGAN' => 'warning',
+                                    'SMP PARAHYANGAN' => 'info',
+                                    'GURU PARAHYANGAN' => 'success',
+                                ])
+                                ->inline()
+                                ->live()
+                                ->required(),
+
+                            
                             Radio::make('jenis_kelamin')
                                 ->label('Jenis Kelamin')
+                                ->inline()
+                                ->required()
                                 ->options([
                                     'Laki-laki' => 'Laki-laki',
                                     'Perempuan' => 'Perempuan',
-                                ])
-                                ->inline()
-                                ->required(),
+                                ]),
 
+                            
                             TextInput::make('alamat_rumah')
                                 ->label('Alamat Rumah')
                                 ->prefixIcon('heroicon-m-home')
                                 ->required(),
 
+                           
                             TextInput::make('no_telepon')
                                 ->label('Nomor Telepon')
                                 ->prefixIcon('heroicon-m-phone')
@@ -151,10 +152,9 @@ class CustomerForm
                                         ->onColor('success')
                                         ->offColor('danger')
                                         ->default(true),
-                                ]),
+                               ]),
                         ]),
-                ])
-                    ->columnSpanFull(),
+                ])->columnSpanFull(),
             ])
             ->columns(1);
     }

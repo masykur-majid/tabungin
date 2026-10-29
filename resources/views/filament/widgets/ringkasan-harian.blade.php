@@ -1,7 +1,5 @@
 <x-filament-widgets::widget>
     <div style="padding: .5rem .25rem;">
-
-        {{-- Header Logo & Ucapan --}}
         <div style="display: flex; align-items: center; gap: .875rem;">
             <img src="{{ asset('images/logo-smk.png') }}"
                  alt="Logo SMK 1 Parahyangan"
@@ -78,7 +76,7 @@
                 </div>
                 <div>
                     <div style="font-size: 1.5rem; font-weight: 500; line-height: 1.1;">
-                        Rp {{ number_format($this->ringkasan['uang_terkumpul_hari_ini'] ?? 0, 0, ',', '.') }}
+                        Rp {{ number_format($this->ringkasan['uang_terkumpul'] ?? 0, 0, ',', '.') }}
                     </div>
                     <div style="font-size: .8125rem; opacity: .65; margin-top: .25rem;">uang terkumpul hari ini</div>
                 </div>
