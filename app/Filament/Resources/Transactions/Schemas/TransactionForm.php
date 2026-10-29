@@ -67,7 +67,7 @@ class TransactionForm
                     ->disabled()
                     ->dehydrated(false),
 
-                DatePicker::make('tanggal')
+                DatePicker::make('created_et')
                     ->required()
                     ->default(today())
                     ->maxDate(today())
