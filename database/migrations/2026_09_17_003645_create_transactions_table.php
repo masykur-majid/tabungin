@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('jumlah_transaksi', 9, 2);
             $table->string('status');
             $table->timestamp('tanggal_pengajuan_batal')->nullable();
-            $table->string('alasan_batal');
+            $table->string('alasan_batal')->nullable();
             $table->timestamp('tanggal_dibatalkan')->nullable();
             $table->foreignId('approver')->constrained('users', 'id')->nullable();
             $table->boolean('is_closed')->default(false);
