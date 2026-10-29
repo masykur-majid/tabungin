@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('closing_id')->constrained();
             $table->integer('nominal_pecahan');
+            $table->enum('jenis_pecahan', ['koin', 'kertas']);
             $table->integer('jumlah_pecahan');
             $table->decimal('subtotal', 12, 2);
             $table->timestamps();
