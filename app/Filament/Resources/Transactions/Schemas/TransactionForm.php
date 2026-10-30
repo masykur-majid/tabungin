@@ -29,8 +29,9 @@ class TransactionForm
                     ->getSearchResultsUsing(function (string $search) {
                         return Account::query()
                             ->with('customer')
-                            ->where('nomor_rekening', 'like', "%{$search}%")
-                            ->orWhereHas('customer', fn ($q) => $q->where('nama', 'like', "%{$search}%"))
+                            ->where(fn ($q) => $q
+                                ->where('nomor_rekening', 'like', "%{$search}%")
+                                ->orWhereHas('customer', fn ($c) => $c->where('nama', 'like', "%{$search}%")))
                             ->limit(50)
                             ->get()
                             ->mapWithKeys(fn ($a) => [
@@ -43,14 +44,15 @@ class TransactionForm
                     ->required(),
 
                 TextInput::make('jumlah_transaksi')
+                    ->label('Jumlah')
                     ->required()
                     ->prefix('Rp')
-                    ->mask(RawJs::make('$money($input)'))
-                    ->stripCharacters(',')
+                    ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
+                    ->stripCharacters('.')
                     ->numeric()
                     ->minValue(1000)
                     ->validationMessages([
-                        'min' => 'Jumlah Minimal Rp 1.000',
+                        'min' => 'Jumlah minimal Rp 1.000',
                     ]),
 
                 Select::make('user_id')
@@ -59,7 +61,7 @@ class TransactionForm
                     ->prefixIcon('heroicon-o-user')
                     ->default(auth()->id())
                     ->disabled()
-                    ->dehydrated(),
+                    ->dehydrated(false),
 
                 TextInput::make('no_slip')
                     ->label('No. Slip')
@@ -68,11 +70,9 @@ class TransactionForm
                     ->dehydrated(false),
 
                 DatePicker::make('tanggal')
-                    ->required()
                     ->default(today())
-                    ->maxDate(today())
-                    ->minDate(today())
-                    ->readOnly(),
+                    ->disabled()
+                    ->dehydrated(false),
 
                 ToggleButtons::make('jenis_transaksi')
                     ->label('Jenis Transaksi')
