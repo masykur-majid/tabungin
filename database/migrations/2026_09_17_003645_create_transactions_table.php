@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('no_slip');
             $table->string('jenis_transaksi')->default('setoran');
             $table->decimal('jumlah_transaksi', 9, 2);
-           $table->string('status')->default('selesai');
+           $table->string('status')->default('sukses');
             $table->timestamp('tanggal_pengajuan_batal')->nullable();
             $table->string('alasan_batal')->nullable();
             $table->timestamp('tanggal_dibatalkan')->nullable();

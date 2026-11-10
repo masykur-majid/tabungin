@@ -34,8 +34,9 @@ class TransactionsTable
                 TextColumn::make('no_slip')
                     ->searchable(),
 
-                TextColumn::make('tanggal')
-                    ->date()
+                TextColumn::make('created_at')
+                    ->label('Tanggal')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
 
                 TextColumn::make('jenis_transaksi')
@@ -54,11 +55,6 @@ class TransactionsTable
                         default => 'gray',
                     }),
 
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -70,8 +66,8 @@ class TransactionsTable
             ->recordActions([
                 ViewAction::make()->iconButton(),
 
-                EditAction::make()->iconButton()
-                ->hidden(fn (Transaction $record): bool => $record->status === 'sukses'),
+            EditAction::make()->iconButton()
+                ->hidden(fn (Transaction $record): bool => in_array($record->status, ['sukses', 'dibatalkan'])),
 
                 Action::make('Ajukan Pembatalan')
                     ->icon('heroicon-o-x-circle')
@@ -80,7 +76,7 @@ class TransactionsTable
                     ->color('warning')
                     ->requiresConfirmation()
                     ->form([
-                        Textarea::make('alasan_pembatalan')
+                        Textarea::make('alasan_batal')
                             ->label('Alasan Pembatalan')
                             ->placeholder('Masukkan alasan pembatalan transaksi...')
                             ->required(),
@@ -88,7 +84,8 @@ class TransactionsTable
                     ->action(function ($record, array $data) {
                         $record->update([
                             'status' => 'pengajuan pembatalan',
-                            'alasan_pembatalan' => $data['alasan_pembatalan'],
+                            'alasan_batal' => $data['alasan_batal'],
+                            'tanggal_pengajuan_batal' => now(),
                         ]);
 
                         Notification::make()
@@ -106,9 +103,13 @@ class TransactionsTable
                     ->color('danger')
                     ->requiresConfirmation()
                     ->modalHeading('Setujui Pembatalan Transaksi')
-                    ->modalDescription(fn ($record) => 'Alasan: ' . $record->alasan_pembatalan)
+                    ->modalDescription(fn ($record) => 'Alasan: ' . $record->alasan_batal)
                     ->action(function ($record) {
-                        $record->update(['status' => 'dibatalkan']);
+                        $record->update([
+                            'status' => 'dibatalkan',
+                            'tanggal_dibatalkan' => now(),
+                            'approver' => Filament::auth()->id(),
+                        ]);
 
                         Notification::make()
                             ->title('Pembatalan transaksi disetujui')
@@ -137,12 +138,9 @@ class TransactionsTable
                             ->openUrlInNewTab(),
                     ]),
 
-                DeleteAction::make()->iconButton(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+               DeleteAction::make()->iconButton()
+                ->visible(fn (Transaction $record): bool => $record->status === 'dibatalkan'
+                    && Filament::auth()->user()->hasRole('admin')),
             ]);
     }
 }
