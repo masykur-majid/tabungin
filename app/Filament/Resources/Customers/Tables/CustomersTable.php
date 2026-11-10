@@ -1,142 +1,107 @@
 <?php
 
-namespace App\Filament\Resources\Transactions\Tables;
+namespace App\Filament\Resources\Customers\Tables;
 
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Facades\Filament;
-use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-
-class TransactionsTable
+use Filament\Actions\DeleteAction;
+use App\Models\Account;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Collection;
+class CustomersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('account.nomor_rekening')
-                    ->label('No. Rekening')
-                    ->searchable()
-                    ->sortable(),
+                 TextColumn::make('nik')
+                ->label('NIK')
+                ->placeholder('-')
+                ->searchable(),
 
-                TextColumn::make('user.name')
-                    ->label('Petugas')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('no_slip')
-                    ->searchable(),
-
-                TextColumn::make('tanggal')
-                    ->date()
-                    ->sortable(),
-
-                TextColumn::make('jenis_transaksi')
-                    ->searchable(),
-
-                TextColumn::make('jumlah_transaksi')
-                    ->numeric()
-                    ->sortable(),
-
-                TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'sukses' => 'success',
-                        'pengajuan pembatalan' => 'warning',
-                        'dibatalkan' => 'danger',
+                TextColumn::make('nama')
+                ->label('Nama')
+                ->searchable(),
+                
+                TextColumn::make('asal_sekolah')
+                ->label('Asal sekolah')
+                ->badge()
+                ->color(fn (?string $state): string => match (true) {
+                        str_contains(strtolower((string) $state), 'smk') => 'warning',
+                        str_contains(strtolower((string) $state), 'smp') => 'info',
+                        str_contains(strtolower((string) $state), 'guru') => 'success', 
                         default => 'gray',
-                    }),
+                    })
+                ->searchable(),
+
+                TextColumn::make('jenis_kelamin')
+                ->label('Jenis Kelamin')
+                ->badge()
+                ->color(fn (?string $state): string => match (true) {
+                        str_contains(strtolower((string) $state), 'perempuan') => 'danger',
+                        str_contains(strtolower((string) $state), 'laki')      => 'info', 
+                        default => 'gray',
+                    })
+                ->toggleable()
+                ->toggleable(isToggledHiddenByDefault: true),
+                 
+
+                TextColumn::make('alamat_rumah')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+               TextColumn::make('no_telepon')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->formatStateUsing(fn ($state) => preg_replace('/(\d{4})(\d{4})(\d+)/', '$1-$2-$3', $state)),
 
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
+                    
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                
             ])
-            ->recordActions([
-                ViewAction::make()->iconButton(),
+           
+          ->actions([
+                ViewAction::make()
+                    ->hiddenLabel()
+                    ->tooltip('View')
+                    ->slideOver(),
 
-                EditAction::make()->iconButton(),
+                EditAction::make()
+                    ->hiddenLabel()
+                    ->tooltip('Edit')
+                    ->slideOver(),
 
-                DeleteAction::make()->iconButton(),
+                DeleteAction::make()
+                    ->hiddenLabel()
+                    ->tooltip('Delete')
+                    ->before(function (DeleteAction $action, $record) {
+                        if (Account::where('customer_id', $record->id)->exists()) {
+                            Notification::make()
+                                ->title('Nasabah tidak bisa dihapus')
+                                ->body('Hapus rekening nasabah ini terlebih dahulu.')
+                                ->danger()
+                                ->send();
 
-                Action::make('cetak')
-                    ->icon('heroicon-o-printer')
-                    ->iconButton()
-                    ->tooltip('Bukti Transaksi')
-                    ->modalHeading('Bukti Transaksi')
-                    ->modalWidth('md')
-                    ->modalContent(fn ($record) => view('filament.bukti-transaksi-modal', [
-                        'transaction' => $record->load(['account.customer', 'user']),
-                    ]))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Tutup')
-                    ->extraModalFooterActions(fn ($record) => [
-                        Action::make('cetakBukti')
-                            ->label('Cetak')
-                            ->icon('heroicon-o-printer')
-                            ->url(route('transaksi.bukti', $record))
-                            ->openUrlInNewTab(),
-                    ]),
-
-                Action::make('Ajukan Pembatalan')
-                    ->icon('heroicon-o-x-circle')
-                    ->iconButton()
-                    ->tooltip('Ajukan Pembatalan')
-                    ->color('warning')
-                    ->requiresConfirmation()
-                    ->form([
-                        Textarea::make('alasan_pembatalan')
-                            ->label('Alasan Pembatalan')
-                            ->placeholder('Masukkan alasan pembatalan transaksi...')
-                            ->required(),
-                    ])
-                    ->action(function ($record, array $data) {
-                        $record->update([
-                            'status' => 'pengajuan pembatalan',
-                            'alasan_pembatalan' => $data['alasan_pembatalan'],
-                        ]);
-
-                        Notification::make()
-                            ->title('Pengajuan pembatalan berhasil dikirim')
-                            ->warning()
-                            ->send();
-                    })
-                    ->visible(fn ($record) => $record->status === 'sukses'
-                        && ! Filament::auth()->user()->hasRole('super_visor')),
-
-                Action::make('Setujui Pembatalan')
-                    ->icon('heroicon-o-check-circle')
-                    ->iconButton()
-                    ->tooltip('Setujui Pembatalan')
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->modalHeading('Setujui Pembatalan Transaksi')
-                    ->modalDescription(fn ($record) => 'Alasan: ' . $record->alasan_pembatalan)
-                    ->action(function ($record) {
-                        $record->update(['status' => 'dibatalkan']);
-
-                        Notification::make()
-                            ->title('Pembatalan transaksi disetujui')
-                            ->success()
-                            ->send();
-                    })
-                    ->visible(fn ($record) => $record->status === 'pengajuan pembatalan'
-                        && ! Filament::auth()->user()->hasRole('petugas')),
+                            $action->cancel();
+                        }  
+        }),
             ])
+                
+            
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

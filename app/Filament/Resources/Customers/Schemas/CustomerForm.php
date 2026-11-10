@@ -34,8 +34,8 @@ class CustomerForm
                                 ]),
 
 
-                            TextInput::make('NIK')
-                                ->label('Nomor Induk Kependudukan (NIK)')
+                            TextInput::make('nik')
+                                ->label('NIK')
                                 ->required()
                                 ->live(debounce: 500)
                                 ->maxLength(16)

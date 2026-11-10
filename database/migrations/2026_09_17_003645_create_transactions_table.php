@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('no_slip');
             $table->string('jenis_transaksi')->default('setoran');
             $table->decimal('jumlah_transaksi', 9, 2);
-            $table->string('status');
+           $table->string('status')->default('selesai');
             $table->timestamp('tanggal_pengajuan_batal')->nullable();
             $table->string('alasan_batal')->nullable();
             $table->timestamp('tanggal_dibatalkan')->nullable();
-            $table->foreignId('approver')->constrained('users', 'id')->nullable();
+           $table->foreignId('approver')->nullable()->constrained('users', 'id');
             $table->boolean('is_closed')->default(false);
             $table->timestamps();          
         });
