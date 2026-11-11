@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('total_fisik', 12, 2);
             $table->string('status');
             $table->boolean('is_approved')->default(false);
-            $table->foreignId('approver')->constrained('users', 'id');
+            $table->foreignId('approver')->nullable()->constrained('users', 'id');
             $table->timestamps();
         });
     }

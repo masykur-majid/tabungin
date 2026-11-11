@@ -60,6 +60,10 @@ class CustomersTable
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->formatStateUsing(fn ($state) => preg_replace('/(\d{4})(\d{4})(\d+)/', '$1-$2-$3', $state)),
 
+                TextColumn::make('alamat_rumah')
+                    ->searchable(),
+                TextColumn::make('no_telepon')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -109,3 +113,4 @@ class CustomersTable
             ]);
     }
 }
+
