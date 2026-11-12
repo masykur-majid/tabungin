@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Transactions\Tables;
 
+use App\Enums\TransactionStatus;
+use App\Models\Transaction;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -13,7 +15,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use App\Models\Transaction;
 
 class TransactionsTable
 {
@@ -23,7 +24,14 @@ class TransactionsTable
             ->columns([
                 TextColumn::make('account.nomor_rekening')
                     ->label('No. Rekening')
-                    ->searchable()
+                    ->description(fn ($record) => $record->account?->customer?->nama)
+                    ->fontFamily('mono')
+                    ->searchable(query: function ($query, string $search) {
+                        $query->whereHas('account', function ($q) use ($search) {
+                            $q->where('nomor_rekening', 'like', "%{$search}%")
+                                ->orWhereHas('customer', fn ($c) => $c->where('nama', 'like', "%{$search}%"));
+                        });
+                    })
                     ->sortable(),
 
                 TextColumn::make('user.name')
@@ -50,8 +58,8 @@ class TransactionsTable
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'sukses' => 'success',
-                        'pengajuan pembatalan' => 'warning',
-                        'dibatalkan' => 'danger',
+                        'pengajuan_pembatalan' => 'warning',
+                        'batal' => 'danger',
                         default => 'gray',
                     }),
 
@@ -116,7 +124,7 @@ class TransactionsTable
                             ->success()
                             ->send();
                     })
-                    ->visible(fn ($record) => $record->status === 'pengajuan pembatalan'
+                    ->visible(fn ($record) => $record->status === TransactionStatus::PendingCancellation->value
                         && ! Filament::auth()->user()->hasRole('petugas')),
 
                 Action::make('cetak')
