@@ -87,7 +87,7 @@ class CreateClosing extends CreateRecord
                 $jumlah = max(0, (int) ($item['banyak_koin'] ?? 0));
 
                 $details[] = [
-                    'jenis' => 'koin',
+                    'jenis_pecahan' => 'koin',
                     'nominal_pecahan' => $nominal,
                     'jumlah_pecahan' => $jumlah,
                     'subtotal' => $nominal * $jumlah,
@@ -99,7 +99,7 @@ class CreateClosing extends CreateRecord
                 $jumlah = max(0, (int) ($item['banyak_kertas'] ?? 0));
 
                 $details[] = [
-                    'jenis' => 'kertas',
+                    'jenis_pecahan' => 'kertas',
                     'nominal_pecahan' => $nominal,
                     'jumlah_pecahan' => $jumlah,
                     'subtotal' => $nominal * $jumlah,

@@ -70,7 +70,7 @@ class EditClosing extends EditRecord
         );
 
         $totalSistem = (int) Transaction::query()
-            ->whereDate('tanggal', $this->record->created_at->toDateString())
+            ->whereDate('created_at', $this->record->created_at->toDateString())
             ->where('jenis_transaksi', 'setoran')
             ->sum('jumlah_transaksi');
 
@@ -88,7 +88,7 @@ class EditClosing extends EditRecord
     protected function mutateFormDataBeforeSave(array $data): array
     {
         $totalSistem = (int) Transaction::query()
-            ->whereDate('tanggal', $this->record->created_at->toDateString())
+            ->whereDate('created_at', $this->record->created_at->toDateString())
             ->where('jenis_transaksi', 'setoran')
             ->sum('jumlah_transaksi');
 
