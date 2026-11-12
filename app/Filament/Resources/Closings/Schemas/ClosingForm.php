@@ -120,7 +120,8 @@ class ClosingForm
                     TextInput::make('user_id')
                         ->label('Nama Petugas')
                         ->formatStateUsing(
-                            fn () => Auth::user()?->name
+                            fn ($record) => $record?->user?->name
+                                ?? Auth::user()?->name
                         )
                         ->readOnly()
                         ->dehydrated(false),

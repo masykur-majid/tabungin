@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Closings\Tables;
 
+use App\Enums\ClosingStatus;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -13,13 +13,10 @@ use Filament\Tables\Table;
 
 class ClosingsTable
 {
-    public static function configure(
-        Table $table
-    ): Table {
-
+    public static function configure(Table $table): Table
+    {
         return $table
             ->columns([
-
                 TextColumn::make('created_at')
                     ->label('Tanggal Dibuat')
                     ->dateTime('d/m/Y H:i:s')
@@ -42,52 +39,56 @@ class ClosingsTable
 
                 TextColumn::make('selisih')
                     ->label('Selisih Kas')
-                    ->numeric()
-                    ->sortable(),
+                    ->numeric(),
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->formatStateUsing(fn ($state) => match ($state) {
+                        ClosingStatus::Pending,
                         'pengajuan_tutup' => 'Pengajuan Tutup',
+
+                        ClosingStatus::Close,
                         'tutup' => 'Tutup',
-                        default => $state,
+
+                        default => $state instanceof ClosingStatus
+                            ? $state->getLabel()
+                            : $state,
                     })
                     ->badge()
                     ->sortable(),
             ])
-
-            ->filters([
-                //
-            ])
-
+            ->filters([])
             ->recordActions([
-
                 ActionGroup::make([
-
                     ViewAction::make(),
 
-                    EditAction::make(),
+                    EditAction::make()
+                        ->visible(fn ($record): bool =>
+                            $record->status === ClosingStatus::Pending
+                            || auth()->user()?->hasRole([
+                                'super_admin',
+                                'supervisor',
+                            ])
+                        ),
 
                     DeleteAction::make()
-                        ->requiresConfirmation()
-                        ->modalHeading(
-                            'Hapus Data Closing'
+                        ->visible(fn ($record): bool =>
+                            $record->status === ClosingStatus::Pending
+                            || auth()->user()?->hasRole([
+                                'super_admin',
+                                'supervisor',
+                            ])
                         )
+                        ->requiresConfirmation()
+                        ->modalHeading('Hapus Data Closing')
                         ->modalDescription(
                             'Yakin ingin menghapus data closing ini?'
                         )
-                        ->modalSubmitActionLabel(
-                            'Ya, Hapus'
-                        ),
-
+                        ->modalSubmitActionLabel('Ya, Hapus'),
                 ]),
             ])
-
             ->toolbarActions([
-
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 }

@@ -17,6 +17,7 @@ class Closing extends Model
     {
         return [
             'is_approved' => 'boolean',
+            'status' => \App\Enums\ClosingStatus::class,
         ];
     }
 
@@ -36,6 +37,11 @@ class Closing extends Model
             'user_id',
             'id'
         );
+    }
+
+    public function getSelisihAttribute(): int
+    {
+        return (int) $this->total_fisik - (int) $this->total_sistem;
     }
 
     protected static function booted(): void

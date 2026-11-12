@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Closings\Pages;
 
-use App\Filament\Resources\Closings\ClosingResource;
 use App\Enums\ClosingStatus;
+use App\Filament\Resources\Closings\ClosingResource;
 use App\Models\Closing;
 use App\Models\Transaction;
 use Filament\Actions\Action;
@@ -59,6 +59,7 @@ class CreateClosing extends CreateRecord
             $data['total_uang_koin'],
             $data['total_uang_kertas'],
             $data['peringatan_kas'],
+            $data['selisih'],
             $data['created_at'],
             $data['updated_at'],
         );
@@ -66,7 +67,6 @@ class CreateClosing extends CreateRecord
         $data['user_id'] = auth()->id();
         $data['total_sistem'] = $totalSistem;
         $data['total_fisik'] = $totalFisik;
-        $data['selisih'] = $selisih;
         $data['status'] = ClosingStatus::Pending;
         $data['is_approved'] = false;
 
