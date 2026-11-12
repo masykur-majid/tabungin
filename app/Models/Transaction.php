@@ -48,4 +48,10 @@ class Transaction extends Model
     {
         return $this->belongsTo(Account::class, 'account_id', 'id');
     }
+
+        public function approverUser()
+    {
+        return $this->belongsTo(User::class, 'approver');
+    }
+
 }
