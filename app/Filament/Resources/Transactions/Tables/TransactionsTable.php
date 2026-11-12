@@ -58,8 +58,8 @@ class TransactionsTable
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'sukses' => 'success',
-                        'pengajuan_pembatalan' => 'warning',
-                        'batal' => 'danger',
+                        'pengajuan pembatalan' => 'warning',
+                        'batal', 'dibatalkan' => 'danger',
                         default => 'gray',
                     }),
 
@@ -74,8 +74,8 @@ class TransactionsTable
             ->recordActions([
                 ViewAction::make()->iconButton(),
 
-            EditAction::make()->iconButton()
-                ->hidden(fn (Transaction $record): bool => in_array($record->status, ['sukses', 'dibatalkan'])),
+                EditAction::make()->iconButton()
+                    ->hidden(fn (Transaction $record): bool => in_array($record->status, ['sukses', 'dibatalkan'])),
 
                 Action::make('Ajukan Pembatalan')
                     ->icon('heroicon-o-x-circle')
@@ -146,9 +146,14 @@ class TransactionsTable
                             ->openUrlInNewTab(),
                     ]),
 
-               DeleteAction::make()->iconButton()
-                ->visible(fn (Transaction $record): bool => $record->status === 'dibatalkan'
-                    && Filament::auth()->user()->hasRole('admin')),
+                DeleteAction::make()->iconButton()
+                    ->visible(fn (): bool => Filament::auth()->user()->hasAnyRole(['admin', 'super_admin'])),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
+                        ->visible(fn (): bool => Filament::auth()->user()->hasAnyRole(['admin', 'super_admin'])),
+                ]),
             ]);
     }
 }

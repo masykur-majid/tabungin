@@ -55,15 +55,6 @@ class CustomerForm
                                 ])
                                 ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
 
-                            TextInput::make('nama')
-                                ->label('Nama Lengkap')
-                                ->prefixIcon('heroicon-m-user')
-                                ->dehydrateStateUsing(fn ($state) => Str::title($state))
-                                ->required()
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
-                                ]),
-
                             ToggleButtons::make('asal_sekolah')
                                 ->label('Asal Sekolah')
                                 ->options([
@@ -111,7 +102,7 @@ class CustomerForm
                                     fn () => function (string $attribute, $value, Closure $fail): void {
                                         $length = strlen((string) $value);
                                         if ($length < 10 || $length > 13) {
-                                            $fail('Nomor telepon harus berisi antara 10 hingga 13 digit.');
+                                            $fail('Nomor telepon harus 13 digit.');
                                         }
                                     },
                                 ])
@@ -138,7 +129,7 @@ class CustomerForm
                                             fn () => function (string $attribute, $value, Closure $fail): void {
                                                 $length = strlen((string) $value);
                                                 if ($length < 10 || $length > 15) {
-                                                    $fail('Nomor rekening harus berisi antara 10 hingga 15 digit.');
+                                                    $fail('Nomor rekening harus berisi 15 digit.');
                                                 }
                                             },
                                         ])

@@ -19,6 +19,14 @@ class Transaction extends Model
         parent::boot();
 
         static::creating(function (Transaction $transaction): void {
+            if ($transaction->jenis_transaksi === 'penarikan') {
+            $saldo = (float) Account::find($transaction->account_id)?->saldo;
+
+            if ((float) $transaction->jumlah_transaksi > $saldo) {
+                throw new \RuntimeException('Saldo tidak cukup.');
+            }
+        }
+
             if (empty($transaction->no_slip)) {
                 $transaction->no_slip = static::generateNoSlip();
             }
@@ -49,9 +57,8 @@ class Transaction extends Model
         return $this->belongsTo(Account::class, 'account_id', 'id');
     }
 
-        public function approverUser()
+    public function approverUser()
     {
         return $this->belongsTo(User::class, 'approver');
     }
-
 }
