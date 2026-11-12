@@ -24,7 +24,18 @@ class CustomerForm
                     Step::make('Data Nasabah')
                         ->icon('heroicon-m-user')
                         ->schema([
+                            TextInput::make('nama')
+                                ->label('Nama Lengkap')
+                                ->prefixIcon('heroicon-m-user')
+                                ->dehydrateStateUsing(fn ($state) => Str::title($state))
+                                ->required()
+                                ->extraInputAttributes([
+                                    'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
+                                ]),
+
+
                             TextInput::make('nik')
+                                ->label('NIK')
                                 ->required()
                                 ->live(debounce: 500)
                                 ->maxLength(16)
@@ -43,15 +54,6 @@ class CustomerForm
                                     'unique' => 'NIK sudah terdaftar.',
                                 ])
                                 ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
-
-                            TextInput::make('nama')
-                                ->label('Nama Lengkap')
-                                ->prefixIcon('heroicon-m-user')
-                                ->dehydrateStateUsing(fn ($state) => Str::title($state))
-                                ->required()
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
-                                ]),
 
                             ToggleButtons::make('asal_sekolah')
                                 ->label('Asal Sekolah')

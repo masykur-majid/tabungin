@@ -3,10 +3,13 @@
 namespace App\Filament\Resources\Transactions\Schemas;
 
 use App\Models\Account;
+use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\RawJs;
 
@@ -41,6 +44,7 @@ class TransactionForm
                     })
                     ->searchable()
                     ->preload()
+                    ->live()
                     ->required(),
 
                 TextInput::make('jumlah_transaksi')
@@ -53,6 +57,27 @@ class TransactionForm
                     ->minValue(1000)
                     ->validationMessages([
                         'min' => 'Jumlah minimal Rp 1.000',
+                    ])
+                    ->rules([
+                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                            if ($get('jenis_transaksi') !== 'penarikan' || ! $get('account_id')) {
+                                return;
+                            }
+
+                            $saldo = (float) Account::find($get('account_id'))?->saldo;
+
+                            $jumlah = (float) str_replace('.', '', (string) $value);
+
+                            if ($jumlah > $saldo) {
+                                Notification::make()
+                                    ->title('Saldo tidak cukup')
+                                    ->body('Saldo saat ini: Rp ' . number_format($saldo, 0, ',', '.'))
+                                    ->danger()
+                                    ->send();
+
+                                $fail('Saldo tidak cukup.');
+                            }
+                        },
                     ]),
 
                 Select::make('user_id')
@@ -69,7 +94,8 @@ class TransactionForm
                     ->disabled()
                     ->dehydrated(false),
 
-                DatePicker::make('tanggal')
+                DatePicker::make('created_et')
+                    ->required()
                     ->default(today())
                     ->disabled()
                     ->dehydrated(false),
@@ -89,6 +115,7 @@ class TransactionForm
                         'penarikan' => 'danger',
                     ])
                     ->grouped()
+                    ->live()
                     ->required()
                     ->default('setoran'),
             ]);

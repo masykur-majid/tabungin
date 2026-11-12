@@ -18,4 +18,14 @@ class EditTransaction extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+        public function mount(int | string $record): void
+    {
+        parent::mount($record);
+
+        if (in_array($this->record->status, ['sukses', 'dibatalkan'])) {
+            $this->redirect(TransactionResource::getUrl('view', ['record' => $this->record]));
+        }
+    }
+
 }
