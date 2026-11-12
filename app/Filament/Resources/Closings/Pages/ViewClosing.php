@@ -23,7 +23,10 @@ class ViewClosing extends ViewRecord
                 ->color('success')
                 ->visible(fn (): bool =>
                     $this->record->status === ClosingStatus::Pending
-                    && auth()->user()?->hasRole('supervisor')
+                    && auth()->user()?->hasRole([
+                        'supervisor',
+                        'super_admin',
+                    ])
                 )
                 ->requiresConfirmation()
                 ->modalHeading('Setujui Penutupan Kas')
@@ -33,7 +36,10 @@ class ViewClosing extends ViewRecord
                 ->modalSubmitActionLabel('Ya, Setujui Penutupan')
                 ->action(function (): void {
                     abort_unless(
-                        auth()->user()?->hasRole('supervisor'),
+                        auth()->user()?->hasRole([
+                            'supervisor',
+                            'super_admin',
+                        ]),
                         403
                     );
 
@@ -60,11 +66,19 @@ class ViewClosing extends ViewRecord
             EditAction::make()
                 ->visible(fn (): bool =>
                     $this->record->status === ClosingStatus::Pending
+                    || auth()->user()?->hasRole([
+                        'super_admin',
+                        'supervisor',
+                    ])
                 ),
 
             DeleteAction::make()
                 ->visible(fn (): bool =>
                     $this->record->status === ClosingStatus::Pending
+                    || auth()->user()?->hasRole([
+                        'super_admin',
+                        'supervisor',
+                    ])
                 )
                 ->requiresConfirmation()
                 ->modalHeading('Hapus Data Closing')
