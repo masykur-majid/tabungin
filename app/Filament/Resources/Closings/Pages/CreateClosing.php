@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Closings\Pages;
 
 use App\Filament\Resources\Closings\ClosingResource;
-use App\Enums\Enums\ClosingStatus;
+use App\Enums\ClosingStatus;
 use App\Models\Closing;
 use App\Models\Transaction;
 use Filament\Actions\Action;
@@ -40,7 +40,7 @@ class CreateClosing extends CreateRecord
         $tanggal = today()->toDateString();
 
         $totalSistem = (int) Transaction::query()
-            ->whereDate('tanggal', $tanggal)
+            ->whereDate('created_at', $tanggal)
             ->where('jenis_transaksi', 'setoran')
             ->sum('jumlah_transaksi');
 
