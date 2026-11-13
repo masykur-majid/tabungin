@@ -57,11 +57,23 @@ class ViewClosing extends ViewRecord
                         $closing->update([
                             'status' => ClosingStatus::Close,
                             'is_approved' => true,
+                            'approver' => auth()->id(),
                         ]);
                     });
 
                     $this->record->refresh();
                 }),
+
+            Action::make('cetakLaporan')
+                ->label('Cetak Laporan')
+                ->icon('heroicon-o-printer')
+                ->color('gray')
+                ->visible(fn (): bool =>
+                    $this->record->status === ClosingStatus::Close
+                    && $this->record->is_approved
+                )
+                ->url(fn () => route('closing.cetak', $this->record))
+                ->openUrlInNewTab(),
 
             EditAction::make()
                 ->visible(fn (): bool =>

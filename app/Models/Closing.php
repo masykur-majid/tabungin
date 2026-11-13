@@ -39,6 +39,15 @@ class Closing extends Model
         );
     }
 
+    public function approverUser(): BelongsTo
+    {
+        return $this->belongsTo(
+            User::class,
+            'approver',
+            'id'
+        );
+    }
+
     public function getSelisihAttribute(): int
     {
         return (int) $this->total_fisik - (int) $this->total_sistem;

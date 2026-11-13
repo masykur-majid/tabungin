@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -72,6 +73,7 @@ class EditClosing extends EditRecord
         $totalSistem = (int) Transaction::query()
             ->whereDate('created_at', $this->record->created_at->toDateString())
             ->where('jenis_transaksi', 'setoran')
+            ->where('status', 'sukses')
             ->sum('jumlah_transaksi');
 
         $data['jumlah_uang_koin'] = $defaultKoin;
@@ -87,9 +89,32 @@ class EditClosing extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        $tanggal = $this->record->created_at->toDateString();
+
+        // Cek ulang pembatalan tertunda sebelum menyimpan Closing.
+        $adaPembatalanTertunda = Transaction::query()
+            ->whereDate('created_at', $tanggal)
+            ->where('status', 'pengajuan pembatalan')
+            ->exists();
+
+        if ($adaPembatalanTertunda) {
+            Notification::make()
+                ->danger()
+                ->title('Tutup Kas Belum Dapat Dilakukan')
+                ->body('Masih ada transaksi yang menunggu persetujuan pembatalan. Selesaikan persetujuan pembatalan terlebih dahulu.')
+                ->persistent()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'selisih' => 'Tutup kas tidak dapat diajukan karena masih ada pembatalan transaksi yang belum disetujui.',
+            ]);
+        }
+
+        // Hanya transaksi setoran yang sukses dihitung.
         $totalSistem = (int) Transaction::query()
-            ->whereDate('created_at', $this->record->created_at->toDateString())
+            ->whereDate('created_at', $tanggal)
             ->where('jenis_transaksi', 'setoran')
+            ->where('status', 'sukses')
             ->sum('jumlah_transaksi');
 
         $totalFisik = (int) ($data['total_fisik'] ?? 0);

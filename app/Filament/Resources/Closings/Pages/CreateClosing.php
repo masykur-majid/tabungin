@@ -39,9 +39,12 @@ class CreateClosing extends CreateRecord
 
         $tanggal = today()->toDateString();
 
+        $this->cekPembatalanTertunda($tanggal);
+
         $totalSistem = (int) Transaction::query()
             ->whereDate('created_at', $tanggal)
             ->where('jenis_transaksi', 'setoran')
+            ->where('status', 'sukses')
             ->sum('jumlah_transaksi');
 
         $totalFisik = (int) ($data['total_fisik'] ?? 0);
@@ -71,6 +74,27 @@ class CreateClosing extends CreateRecord
         $data['is_approved'] = false;
 
         return $data;
+    }
+
+    private function cekPembatalanTertunda(string $tanggal): void
+    {
+        $adaPembatalanTertunda = Transaction::query()
+            ->whereDate('created_at', $tanggal)
+            ->where('status', 'pengajuan pembatalan')
+            ->exists();
+
+        if ($adaPembatalanTertunda) {
+            Notification::make()
+                ->danger()
+                ->title('Tutup Kas Belum Dapat Dilakukan')
+                ->body('Masih ada transaksi yang menunggu persetujuan pembatalan. Selesaikan persetujuan pembatalan terlebih dahulu.')
+                ->persistent()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'selisih' => 'Tutup kas tidak dapat diajukan karena masih ada pembatalan transaksi yang belum disetujui.',
+            ]);
+        }
     }
 
     protected function afterCreate(): void

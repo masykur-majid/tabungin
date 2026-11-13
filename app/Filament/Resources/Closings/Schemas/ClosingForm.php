@@ -24,6 +24,7 @@ class ClosingForm
         return (int) Transaction::query()
             ->whereDate('created_at', $tanggal)
             ->where('jenis_transaksi', 'setoran')
+            ->where('status', 'sukses')
             ->sum('jumlah_transaksi');
     }
 
