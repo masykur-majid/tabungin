@@ -31,16 +31,38 @@ Route::get('/laporan-closing/{closing}', function (Closing $closing) {
 
     $tanggal = $closing->created_at->toDateString();
 
-    $transactions = Transaction::query()
-        ->with(['account.customer'])
+    $transaksiSetoran = Transaction::query()
         ->whereDate('created_at', $tanggal)
         ->where('jenis_transaksi', 'setoran')
-        ->where('status', 'sukses')
-        ->orderBy('created_at')
-        ->get();
+        ->where('status', 'sukses');
+
+    $transaksiPenarikan = Transaction::query()
+        ->whereDate('created_at', $tanggal)
+        ->where('jenis_transaksi', 'penarikan')
+        ->where('status', 'sukses');
+
+    $transaksiVoid = Transaction::query()
+        ->whereDate('created_at', $tanggal)
+        ->where('status', 'batal');
+
+    $rekap = [
+        'jumlah_setoran' => (clone $transaksiSetoran)->count(),
+        'jumlah_penarikan' => (clone $transaksiPenarikan)->count(),
+
+        'total_setoran' => (clone $transaksiSetoran)
+            ->sum('jumlah_transaksi'),
+
+        'total_penarikan' => (clone $transaksiPenarikan)
+            ->sum('jumlah_transaksi'),
+
+        'jumlah_void' => (clone $transaksiVoid)->count(),
+
+        'total_void' => (clone $transaksiVoid)
+            ->sum('jumlah_transaksi'),
+    ];
 
     return view('laporan-closing', compact(
         'closing',
-        'transactions'
+        'rekap'
     ));
 })->middleware('auth')->name('closing.cetak');

@@ -1,17 +1,13 @@
-@php
-    \Carbon\Carbon::setLocale('id');
-@endphp
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Penutupan Kas Harian</title>
+    <title>Laporan Penutupan Kas</title>
 
     <style>
         @page {
             size: A4 portrait;
-            margin: 12mm;
+            margin: 15mm 16mm;
         }
 
         * {
@@ -19,465 +15,457 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            font-size: 10px;
-            color: #000;
-            background: #e5e7eb;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 10pt;
+            color: #111;
             margin: 0;
-            padding: 30px 0;
-        }
-
-        .paper {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto 25px;
-            padding: 12mm;
-            background: white;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-        }
-
-        h2, h3, p {
-            margin: 0;
+            line-height: 1.4;
         }
 
         .header {
             text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
             margin-bottom: 18px;
+            border-bottom: 2px solid #111;
         }
 
         .header h2 {
-            font-size: 20px;
+            font-size: 16pt;
+            margin: 0 0 5px;
+            letter-spacing: 0.5px;
         }
 
         .header p {
-            margin-top: 5px;
+            margin: 0;
+            font-size: 10pt;
         }
 
-        .info {
-            margin-bottom: 15px;
-            line-height: 1.8;
+        .identity {
+            margin-bottom: 18px;
+            font-size: 10pt;
         }
 
-        .info table {
-            width: 100%;
-            border-collapse: collapse;
+        .identity div {
+            display: flex;
+            margin-bottom: 4px;
         }
 
-        .info td {
-            padding: 4px;
+        .identity span:first-child {
+            width: 145px;
+        }
+
+        .identity span:nth-child(2) {
+            width: 15px;
+        }
+
+        .section {
+            margin-top: 16px;
+            page-break-inside: avoid;
         }
 
         .section-title {
-            font-size: 12px;
-            margin: 12px 0 7px;
-            break-after: avoid;
-            page-break-after: avoid;
+            font-size: 10.5pt;
+            font-weight: bold;
+            padding: 6px 8px;
+            background: #eaeaea;
+            border: 1px solid #333;
+            margin-bottom: 7px;
         }
 
-        table.data {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 12px;
-            table-layout: fixed;
+            margin-bottom: 8px;
         }
 
-        table.data th,
-        table.data td {
-            border: 1px solid #000;
-            padding: 5px;
-            overflow-wrap: break-word;
+        th, td {
+            border: 1px solid #555;
+            padding: 6px 8px;
+            vertical-align: middle;
         }
 
-        table.data th {
-            background: #eee;
-            text-align: center;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .total-row {
+        th {
+            background: #f0f0f0;
             font-weight: bold;
-        }
-
-        .summary td {
-            padding: 7px;
-        }
-
-        .signatures {
-            display: flex;
-            justify-content: space-around;
             text-align: center;
-            margin-top: 35px;
-            padding-top: 0;
-            break-inside: avoid;
+        }
+
+        .number {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .total-row td {
+            font-weight: bold;
+            background: #f0f0f0;
+        }
+
+        .result-table td:first-child {
+            width: 55%;
+        }
+
+        .result-highlight {
+            font-weight: bold;
+            font-size: 11pt;
+        }
+
+        .sub-title {
+            font-weight: bold;
+            margin: 10px 0 5px;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .signature-area {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            margin-top: 40px;
             page-break-inside: avoid;
         }
 
         .signature {
-            width: 40%;
-            break-inside: avoid;
-            page-break-inside: avoid;
+            width: 42%;
         }
 
-        .signature-space {
-            height: 65px;
+        .signature .space {
+            height: 70px;
         }
 
-        .signature-name {
+        .signature .name {
             font-weight: bold;
             text-decoration: underline;
         }
 
-        .page-title {
-            text-align: center;
-            margin-bottom: 18px;
-        }
-
-        .page-title h3 {
-            font-size: 15px;
-            margin-bottom: 5px;
-        }
-
-        .page-info {
-            text-align: left;
-            margin-bottom: 18px;
-            line-height: 1.8;
-        }
-
-        .page-number {
-            text-align: right;
-            margin-top: auto;
-            padding-top: 20px;
-            font-size: 9px;
-        }
-
-        .no-print {
-            text-align: center;
-            margin: 25px 0;
-        }
-
-        button {
-            padding: 10px 25px;
+        .print-button {
+            display: block;
+            margin: 20px auto;
+            padding: 9px 22px;
+            border: none;
+            background: #222;
+            color: white;
             cursor: pointer;
+            font-size: 10pt;
+            border-radius: 4px;
         }
 
         @media print {
+            .print-button {
+                display: none;
+            }
+
             body {
-                background: white;
-                padding: 0;
-            }
-
-            .paper {
-                width: auto;
-                min-height: 0;
-                height: 273mm;
-                margin: 0;
-                padding: 0;
-                box-shadow: none;
-            }
-
-            .page-one {
-                break-after: page;
-                page-break-after: always;
-            }
-
-            .page-two {
-                break-before: page;
-                page-break-before: always;
-            }
-
-            .no-print {
-                display: none !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
         }
     </style>
 </head>
 
 <body>
+@php
+    \Carbon\Carbon::setLocale('id');
 
-    <!-- HALAMAN 1: DATA CLOSING DAN TRANSAKSI -->
+    $formatRupiah = fn ($nilai) =>
+        'Rp ' . number_format((float) $nilai, 0, ',', '.');
 
-    <div class="paper page-one">
+    $formatTanggal = $closing->created_at
+        ? $closing->created_at->translatedFormat('d F Y')
+        : '-';
 
-        <div class="header">
-            <h2>TABUNGAN SEKOLAH</h2>
-            <p>LAPORAN PENUTUPAN KAS HARIAN</p>
-            <p>Bukti Penutupan Kas</p>
+    $koin = [100, 200, 500, 1000];
+    $kertas = [1000, 2000, 5000, 10000, 20000, 50000, 100000];
+
+    $ambilDetail = function ($jenis, $nominal) use ($closing) {
+        $detail = $closing->closingDetails->first(
+            fn ($item) =>
+                $item->jenis_pecahan === $jenis
+                && (int) $item->nominal_pecahan === $nominal
+        );
+
+        return [
+            'jumlah' => (int) ($detail?->jumlah_pecahan ?? 0),
+            'subtotal' => (float) ($detail?->subtotal ?? 0),
+        ];
+    };
+
+    $totalKoin = 0;
+    $totalKertas = 0;
+    $jumlahKoin = 0;
+    $jumlahKertas = 0;
+
+    foreach ($koin as $nominal) {
+        $detail = $ambilDetail('koin', $nominal);
+        $totalKoin += $detail['subtotal'];
+        $jumlahKoin += $detail['jumlah'];
+    }
+
+    foreach ($kertas as $nominal) {
+        $detail = $ambilDetail('kertas', $nominal);
+        $totalKertas += $detail['subtotal'];
+        $jumlahKertas += $detail['jumlah'];
+    }
+
+    $totalFisik = $totalKoin + $totalKertas;
+    $selisih = (float) $closing->selisih;
+    $statusCocok = abs($selisih) < 0.01;
+@endphp
+
+    {{-- HALAMAN 1 --}}
+    <div class="header">
+        <h2>LAPORAN PENUTUPAN KAS</h2>
+        <p>SMKS 1 PARAHYANGAN & SMP PARAHYANGAN</p>
+    </div>
+
+    <div class="identity">
+        <div>
+            <span>Tanggal</span>
+            <span>:</span>
+            <span>{{ $formatTanggal }}</span>
         </div>
 
-        <div class="info">
-            <table>
-                <tr>
-                    <td width="25%">Instansi Sekolah</td>
-                    <td>: SMKS 1 PARAHYANGAN & SMP PARAHYANGAN</td>
-                </tr>
-                <tr>
-                    <td>Hari / Tanggal</td>
-                    <td>: {{ $closing->created_at->translatedFormat('l, d F Y') }}</td>
-                </tr>
-                <tr>
-                    <td>Petugas</td>
-                    <td>: {{ $closing->user?->name ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <td>Pemeriksa</td>
-                    <td>: {{ $closing->approverUser?->name ?? '-' }}</td>
-                </tr>
-            </table>
+        <div>
+            <span>Petugas</span>
+            <span>:</span>
+            <span>{{ $closing->user?->name ?? '-' }}</span>
         </div>
 
-        <h3 class="section-title">A. Rincian Uang Masuk</h3>
+        <div>
+            <span>Penanggung Jawab</span>
+            <span>:</span>
+            <span>{{ $closing->approverUser?->name ?? '-' }}</span>
+        </div>
+    </div>
 
-        <table class="data">
+    <div class="section">
+        <div class="section-title">A. REKAP SISTEM</div>
+
+        <table>
             <thead>
                 <tr>
-                    <th style="width: 5%;">No.</th>
-                    <th style="width: 12%;">No. Slip</th>
-                    <th style="width: 17%;">Tanggal</th>
-                    <th style="width: 20%;">Nama Nasabah</th>
-                    <th style="width: 16%;">No. Rekening</th>
-                    <th style="width: 12%;">Jenis</th>
-                    <th style="width: 18%;">Jumlah</th>
+                    <th style="width: 65%">Keterangan</th>
+                    <th>Jumlah</th>
+                    <th>Nominal</th>
                 </tr>
             </thead>
 
             <tbody>
-                @forelse ($transactions as $index => $transaction)
-                    <tr>
-                        <td class="text-center">{{ $index + 1 }}</td>
-                        <td>{{ $transaction->no_slip }}</td>
-                        <td>
-                            {{ $transaction->created_at->format('d/m/Y H:i') }}
-                        </td>
-                        <td>
-                            {{ $transaction->account?->customer?->nama ?? '-' }}
-                        </td>
-                        <td>
-                            {{ $transaction->account?->nomor_rekening ?? '-' }}
-                        </td>
-                        <td>{{ ucfirst($transaction->jenis_transaksi) }}</td>
-                        <td class="text-right">
-                            Rp {{ number_format($transaction->jumlah_transaksi, 0, ',', '.') }}
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="text-center">
-                            Tidak ada transaksi setoran.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-
-            <tfoot>
-                <tr class="total-row">
-                    <td colspan="6" class="text-right">
-                        Total Seluruh Uang Masuk
-                    </td>
-                    <td class="text-right">
-                        Rp {{ number_format($transactions->sum('jumlah_transaksi'), 0, ',', '.') }}
+                <tr>
+                    <td>Transaksi Setoran</td>
+                    <td class="center">{{ $rekap['jumlah_setoran'] }}</td>
+                    <td class="number">
+                        {{ $formatRupiah($rekap['total_setoran']) }}
                     </td>
                 </tr>
-            </tfoot>
+
+                <tr>
+                    <td>Transaksi Penarikan</td>
+                    <td class="center">{{ $rekap['jumlah_penarikan'] }}</td>
+                    <td class="number">
+                        {{ $formatRupiah($rekap['total_penarikan']) }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Transaksi Void yang Disetujui</td>
+                    <td class="center">{{ $rekap['jumlah_void'] }}</td>
+                    <td class="number">
+                        {{ $formatRupiah($rekap['total_void']) }}
+                    </td>
+                </tr>
+
+                <tr class="total-row">
+                    <td colspan="2">Saldo Kas Seharusnya</td>
+                    <td class="number">
+                        {{ $formatRupiah($closing->total_sistem) }}
+                    </td>
+                </tr>
+            </tbody>
         </table>
-
-        <h3 class="section-title">B. Rekapitulasi Kas</h3>
-
-        <table class="data summary">
-            <tr>
-                <td>Total Uang Sistem</td>
-                <td class="text-right">
-                    Rp {{ number_format($closing->total_sistem, 0, ',', '.') }}
-                </td>
-            </tr>
-
-            <tr>
-                <td>Saldo Kas Fisik</td>
-                <td class="text-right">
-                    Rp {{ number_format($closing->total_fisik, 0, ',', '.') }}
-                </td>
-            </tr>
-
-            <tr class="total-row">
-                <td>Selisih Kas</td>
-                <td class="text-right">
-                    Rp {{ number_format($closing->selisih, 0, ',', '.') }}
-                </td>
-            </tr>
-        </table>
-
-        <div class="signatures">
-            <div class="signature">
-                Petugas
-                <div class="signature-space"></div>
-                <div class="signature-name">
-                    {{ $closing->user?->name ?? '________________' }}
-                </div>
-            </div>
-
-            <div class="signature">
-                Guru Penanggung Jawab
-                <div class="signature-space"></div>
-                <div class="signature-name">
-                    {{ $closing->approverUser?->name ?? '________________' }}
-                </div>
-            </div>
-        </div>
-
-        <div class="page-number">
-            Halaman 1 dari 2
-        </div>
-
     </div>
 
+    <div class="section">
+        <div class="section-title">B. HASIL PENCOCOKAN</div>
 
-    <!-- HALAMAN 2: RINCIAN PECAHAN UANG -->
+        <table class="result-table">
+            <tbody>
+                <tr>
+                    <td>Saldo Sistem</td>
+                    <td class="number">
+                        {{ $formatRupiah($closing->total_sistem) }}
+                    </td>
+                </tr>
 
-    <div class="paper page-two">
+                <tr>
+                    <td>Jumlah Uang Fisik</td>
+                    <td class="number">
+                        {{ $formatRupiah($totalFisik) }}
+                    </td>
+                </tr>
 
-        <div class="header">
-            <h2>TABUNGAN SEKOLAH</h2>
-            <p>LAMPIRAN LAPORAN PENUTUPAN KAS</p>
+                <tr>
+                    <td>Selisih Kas</td>
+                    <td class="number result-highlight">
+                        {{ $formatRupiah(abs($selisih)) }}
+                    </td>
+                </tr>
+
+                <tr class="total-row">
+                    <td>Status</td>
+                    <td class="center result-highlight">
+                        {{ $statusCocok ? 'COCOK' : 'SELISIH' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {{-- HALAMAN 2 --}}
+    <div class="page-break"></div>
+
+    <div class="header">
+        <h2>LAPORAN PENUTUPAN KAS</h2>
+        <p>SMKS 1 PARAHYANGAN & SMP PARAHYANGAN</p>
+    </div>
+
+    <div class="identity">
+        <div>
+            <span>Tanggal</span>
+            <span>:</span>
+            <span>{{ $formatTanggal }}</span>
         </div>
 
-        <div class="page-title">
-            <h3>RINCIAN PECAHAN UANG</h3>
+        <div>
+            <span>Petugas</span>
+            <span>:</span>
+            <span>{{ $closing->user?->name ?? '-' }}</span>
         </div>
 
-        <div class="page-info">
-            <div>
-                Hari / Tanggal:
-                {{ $closing->created_at->translatedFormat('l, d F Y') }}
-            </div>
-
-            <div>
-                Petugas: {{ $closing->user?->name ?? '-' }}
-            </div>
+        <div>
+            <span>Penanggung Jawab</span>
+            <span>:</span>
+            <span>{{ $closing->approverUser?->name ?? '-' }}</span>
         </div>
+    </div>
 
-        <h3 class="section-title">C. Rincian Pecahan Uang Koin</h3>
+    <div class="section">
+        <div class="section-title">C. HITUNG UANG FISIK</div>
 
-        <table class="data">
+        <div class="sub-title">1. Uang Koin</div>
+
+        <table>
             <thead>
                 <tr>
-                    <th>Nominal</th>
+                    <th>Nominal Koin</th>
                     <th>Jumlah Keping</th>
                     <th>Subtotal</th>
                 </tr>
             </thead>
 
             <tbody>
-                @foreach ([100, 200, 500, 1000] as $nominal)
+                @foreach ($koin as $nominal)
                     @php
-                        $detail = $closing->closingDetails->first(
-                            fn ($item) =>
-                                $item->jenis_pecahan === 'koin'
-                                && (int) $item->nominal_pecahan === $nominal
-                        );
-
-                        $jumlah = (int) ($detail?->jumlah_pecahan ?? 0);
+                        $detail = $ambilDetail('koin', $nominal);
                     @endphp
 
                     <tr>
-                        <td class="text-right">
-                            Rp {{ number_format($nominal, 0, ',', '.') }}
+                        <td class="number">
+                            {{ $formatRupiah($nominal) }}
                         </td>
-                        <td class="text-center">{{ $jumlah }}</td>
-                        <td class="text-right">
-                            Rp {{ number_format($nominal * $jumlah, 0, ',', '.') }}
+                        <td class="center">
+                            {{ $detail['jumlah'] }}
+                        </td>
+                        <td class="number">
+                            {{ $formatRupiah($detail['subtotal']) }}
                         </td>
                     </tr>
                 @endforeach
-            </tbody>
 
-            <tfoot>
                 <tr class="total-row">
-                    <td colspan="2" class="text-right">Total Koin</td>
-                    <td class="text-right">
-                        Rp {{ number_format(
-                            $closing->closingDetails
-                                ->where('jenis_pecahan', 'koin')
-                                ->sum('subtotal'),
-                            0, ',', '.'
-                        ) }}
+                    <td>Total Koin</td>
+                    <td class="center">{{ $jumlahKoin }}</td>
+                    <td class="number">
+                        {{ $formatRupiah($totalKoin) }}
                     </td>
                 </tr>
-            </tfoot>
+            </tbody>
         </table>
 
-        <h3 class="section-title">D. Rincian Pecahan Uang Kertas</h3>
+        <div class="sub-title">2. Uang Kertas</div>
 
-        <table class="data">
+        <table>
             <thead>
                 <tr>
-                    <th>Nominal</th>
+                    <th>Nominal Kertas</th>
                     <th>Jumlah Lembar</th>
                     <th>Subtotal</th>
                 </tr>
             </thead>
 
             <tbody>
-                @foreach ([1000, 2000, 5000, 10000, 20000, 50000, 100000] as $nominal)
+                @foreach ($kertas as $nominal)
                     @php
-                        $detail = $closing->closingDetails->first(
-                            fn ($item) =>
-                                $item->jenis_pecahan === 'kertas'
-                                && (int) $item->nominal_pecahan === $nominal
-                        );
-
-                        $jumlah = (int) ($detail?->jumlah_pecahan ?? 0);
+                        $detail = $ambilDetail('kertas', $nominal);
                     @endphp
 
                     <tr>
-                        <td class="text-right">
-                            Rp {{ number_format($nominal, 0, ',', '.') }}
+                        <td class="number">
+                            {{ $formatRupiah($nominal) }}
                         </td>
-                        <td class="text-center">{{ $jumlah }}</td>
-                        <td class="text-right">
-                            Rp {{ number_format($nominal * $jumlah, 0, ',', '.') }}
+                        <td class="center">
+                            {{ $detail['jumlah'] }}
+                        </td>
+                        <td class="number">
+                            {{ $formatRupiah($detail['subtotal']) }}
                         </td>
                     </tr>
                 @endforeach
-            </tbody>
 
-            <tfoot>
                 <tr class="total-row">
-                    <td colspan="2" class="text-right">
-                        Total Uang Kertas
-                    </td>
-                    <td class="text-right">
-                        Rp {{ number_format(
-                            $closing->closingDetails
-                                ->where('jenis_pecahan', 'kertas')
-                                ->sum('subtotal'),
-                            0, ',', '.'
-                        ) }}
+                    <td>Total Kertas</td>
+                    <td class="center">{{ $jumlahKertas }}</td>
+                    <td class="number">
+                        {{ $formatRupiah($totalKertas) }}
                     </td>
                 </tr>
-            </tfoot>
+
+                <tr class="total-row">
+                    <td colspan="2">TOTAL UANG FISIK</td>
+                    <td class="number">
+                        {{ $formatRupiah($totalFisik) }}
+                    </td>
+                </tr>
+            </tbody>
         </table>
+    </div>
 
-        <div class="page-number">
-            Halaman 2 dari 2
+        {{-- TANDA TANGAN --}}
+    <div class="signature-area">
+        <div class="signature">
+            <div>Petugas</div>
+            <div class="space"></div>
+            <div class="name">
+                {{ $closing->user?->name ?? '........................' }}
+            </div>
+    </div>
+
+    <div class="signature">
+        <div>Penanggung Jawab</div>
+        <div class="space"></div>
+        <div class="name">
+            {{ $closing->approverUser?->name ?? '........................' }}
         </div>
-
     </div>
+</div>
 
-    <div class="no-print">
-        <button onclick="window.print()">
-            Cetak / Simpan PDF
-        </button>
-    </div>
-
+    <button class="print-button" onclick="window.print()">
+        Cetak Laporan
+    </button>
 </body>
 </html>
