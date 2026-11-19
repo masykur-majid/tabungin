@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\Transactions\Schemas;
 
 use App\Models\Account;
+use Closure;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Schemas\Schema;
+use Filament\Notifications\Notification;
 use Filament\Support\RawJs;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class TransactionForm
 {
@@ -41,6 +44,7 @@ class TransactionForm
                     })
                     ->searchable()
                     ->preload()
+                    ->live()
                     ->required(),
 
                 TextInput::make('jumlah_transaksi')
@@ -48,11 +52,40 @@ class TransactionForm
                     ->required()
                     ->prefix('Rp')
                     ->mask(RawJs::make('$money($input, \',\', \'.\', 0)'))
-                    ->stripCharacters('.')
-                    ->numeric()
-                    ->minValue(1000)
-                    ->validationMessages([
-                        'min' => 'Jumlah minimal Rp 1.000',
+                    ->inputMode('numeric')
+                    ->autocomplete(false)
+                    ->placeholder('0')
+                    ->extraInputAttributes([
+                        'x-on:input' => '$el.value = $el.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".")',
+                    ])
+                    ->formatStateUsing(fn ($state) => $state !== null ? number_format((float) $state, 0, ',', '.') : null)
+                    ->dehydrateStateUsing(fn ($state) => (int) preg_replace('/\D/', '', (string) $state))
+                    ->rules([
+                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                            $jumlah = (float) preg_replace('/\D/', '', (string) $value);
+
+                            if ($jumlah < 1000) {
+                                $fail('Jumlah minimal Rp 1.000');
+
+                                return;
+                            }
+
+                            if ($get('jenis_transaksi') !== 'penarikan' || ! $get('account_id')) {
+                                return;
+                            }
+
+                            $saldo = (float) Account::find($get('account_id'))?->saldo;
+
+                            if ($jumlah > $saldo) {
+                                Notification::make()
+                                    ->title('Saldo tidak cukup')
+                                    ->body('Saldo saat ini: Rp ' . number_format($saldo, 0, ',', '.'))
+                                    ->danger()
+                                    ->send();
+
+                                $fail('Saldo tidak cukup.');
+                            }
+                        },
                     ]),
 
                 Select::make('user_id')
@@ -69,8 +102,8 @@ class TransactionForm
                     ->disabled()
                     ->dehydrated(false),
 
-                DatePicker::make('created_et')
-                    ->required()
+                DatePicker::make('created_at')
+                    ->label('Tanggal Dibuat')
                     ->default(today())
                     ->disabled()
                     ->dehydrated(false),
@@ -90,6 +123,7 @@ class TransactionForm
                         'penarikan' => 'danger',
                     ])
                     ->grouped()
+                    ->live()
                     ->required()
                     ->default('setoran'),
             ]);
