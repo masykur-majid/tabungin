@@ -32,8 +32,6 @@ class CustomerForm
                                 ->extraInputAttributes([
                                     'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
                                 ]),
-
-
                             TextInput::make('nik')
                                 ->label('NIK')
                                 ->required()
@@ -63,7 +61,6 @@ class CustomerForm
                                 ->extraInputAttributes([
                                     'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
                                 ]),
-
                             ToggleButtons::make('asal_sekolah')
                                 ->label('Asal Sekolah')
                                 ->options([
@@ -89,14 +86,10 @@ class CustomerForm
                                     'Laki-laki' => 'Laki-laki',
                                     'Perempuan' => 'Perempuan',
                                 ]),
-
-                            
                             TextInput::make('alamat_rumah')
                                 ->label('Alamat Rumah')
                                 ->prefixIcon('heroicon-m-home')
                                 ->required(),
-
-                           
                             TextInput::make('no_telepon')
                                 ->label('Nomor Telepon')
                                 ->prefixIcon('heroicon-m-phone')
@@ -117,7 +110,6 @@ class CustomerForm
                                 ])
                                 ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
                         ]),
-
                     Step::make('Rekening')
                         ->icon('heroicon-m-credit-card')
                         ->visibleOn('create')
