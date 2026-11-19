@@ -39,6 +39,7 @@ class CustomerForm
                                 ->required()
                                 ->live(debounce: 500)
                                 ->maxLength(16)
+                                ->prefixIcon('heroicon-o-identification')
                                 ->extraInputAttributes([
                                     'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)",
                                 ])
