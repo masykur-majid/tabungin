@@ -132,7 +132,7 @@ class CustomerForm
                                         ->maxLength(15)
                                         ->live(debounce: 500)
                                         ->extraInputAttributes([
-                                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
+                                        'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
                                         ])
                                         ->rules([
                                             fn () => function (string $attribute, $value, Closure $fail): void {
