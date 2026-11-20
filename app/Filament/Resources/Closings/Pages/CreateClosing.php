@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Closings\Pages;
 
-use App\Filament\Resources\Closings\ClosingResource;
 use App\Enums\ClosingStatus;
+use App\Filament\Resources\Closings\ClosingResource;
 use App\Models\Closing;
 use App\Models\Transaction;
 use Filament\Actions\Action;
@@ -39,9 +39,12 @@ class CreateClosing extends CreateRecord
 
         $tanggal = today()->toDateString();
 
+        $this->cekPembatalanTertunda($tanggal);
+
         $totalSistem = (int) Transaction::query()
             ->whereDate('created_at', $tanggal)
             ->where('jenis_transaksi', 'setoran')
+            ->where('status', 'sukses')
             ->sum('jumlah_transaksi');
 
         $totalFisik = (int) ($data['total_fisik'] ?? 0);
@@ -59,6 +62,7 @@ class CreateClosing extends CreateRecord
             $data['total_uang_koin'],
             $data['total_uang_kertas'],
             $data['peringatan_kas'],
+            $data['selisih'],
             $data['created_at'],
             $data['updated_at'],
         );
@@ -66,11 +70,31 @@ class CreateClosing extends CreateRecord
         $data['user_id'] = auth()->id();
         $data['total_sistem'] = $totalSistem;
         $data['total_fisik'] = $totalFisik;
-        $data['selisih'] = $selisih;
         $data['status'] = ClosingStatus::Pending;
         $data['is_approved'] = false;
 
         return $data;
+    }
+
+    private function cekPembatalanTertunda(string $tanggal): void
+    {
+        $adaPembatalanTertunda = Transaction::query()
+            ->whereDate('created_at', $tanggal)
+            ->where('status', 'pengajuan pembatalan')
+            ->exists();
+
+        if ($adaPembatalanTertunda) {
+            Notification::make()
+                ->danger()
+                ->title('Tutup Kas Belum Dapat Dilakukan')
+                ->body('Masih ada transaksi yang menunggu persetujuan pembatalan. Selesaikan persetujuan pembatalan terlebih dahulu.')
+                ->persistent()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'selisih' => 'Tutup kas tidak dapat diajukan karena masih ada pembatalan transaksi yang belum disetujui.',
+            ]);
+        }
     }
 
     protected function afterCreate(): void
@@ -87,7 +111,7 @@ class CreateClosing extends CreateRecord
                 $jumlah = max(0, (int) ($item['banyak_koin'] ?? 0));
 
                 $details[] = [
-                    'jenis' => 'koin',
+                    'jenis_pecahan' => 'koin',
                     'nominal_pecahan' => $nominal,
                     'jumlah_pecahan' => $jumlah,
                     'subtotal' => $nominal * $jumlah,
@@ -99,7 +123,7 @@ class CreateClosing extends CreateRecord
                 $jumlah = max(0, (int) ($item['banyak_kertas'] ?? 0));
 
                 $details[] = [
-                    'jenis' => 'kertas',
+                    'jenis_pecahan' => 'kertas',
                     'nominal_pecahan' => $nominal,
                     'jumlah_pecahan' => $jumlah,
                     'subtotal' => $nominal * $jumlah,

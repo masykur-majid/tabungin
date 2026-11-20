@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Closings;
 
+use App\Enums\ClosingStatus;
 use App\Filament\Resources\Closings\Pages\CreateClosing;
 use App\Filament\Resources\Closings\Pages\EditClosing;
 use App\Filament\Resources\Closings\Pages\ListClosings;
@@ -16,42 +17,35 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ClosingResource extends Resource
 {
     protected static ?int $navigationSort = 999;
 
-    protected static ?string $navigationLabel =
-        'Tutup Kas';
+    protected static ?string $navigationLabel = 'Tutup Kas';
 
-    protected static ?string $pluralModelLabel =
-        'Tutup Kas';
+    protected static ?string $pluralModelLabel = 'Tutup Kas';
 
-    protected static ?string $modelLabel =
-        'Tutup Kas';
+    protected static ?string $modelLabel = 'Tutup Kas';
 
-    protected static ?string $model =
-        Closing::class;
+    protected static ?string $model = Closing::class;
 
-    protected static string|BackedEnum|null
-        $navigationIcon =
+    protected static string|BackedEnum|null $navigationIcon =
         Heroicon::OutlinedClipboardDocumentList;
 
-    public static function form(
-        Schema $schema
-    ): Schema {
+    public static function form(Schema $schema): Schema
+    {
         return ClosingForm::configure($schema);
     }
 
-    public static function infolist(
-        Schema $schema
-    ): Schema {
+    public static function infolist(Schema $schema): Schema
+    {
         return ClosingInfolist::configure($schema);
     }
 
-    public static function table(
-        Table $table
-    ): Table {
+    public static function table(Table $table): Table
+    {
         return ClosingsTable::configure($table);
     }
 
@@ -71,20 +65,19 @@ class ClosingResource extends Resource
         return $query->where('user_id', auth()->id());
     }
 
+    public static function canEdit(Model $record): bool
+    {
+        return parent::canEdit($record)
+            && $record->status === ClosingStatus::Pending;
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' =>
-                ListClosings::route('/'),
-
-            'create' =>
-                CreateClosing::route('/create'),
-
-            'view' =>
-                ViewClosing::route('/{record}'),
-
-            'edit' =>
-                EditClosing::route('/{record}/edit'),
+            'index' => ListClosings::route('/'),
+            'create' => CreateClosing::route('/create'),
+            'view' => ViewClosing::route('/{record}'),
+            'edit' => EditClosing::route('/{record}/edit'),
         ];
     }
 }
