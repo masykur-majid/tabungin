@@ -52,7 +52,7 @@ class TransactionForm
                     ->numeric()
                     ->minValue(1000)
                     ->validationMessages([
-                        'min' => 'Jumlah minimal Rp 1.000',
+                        'min' => 'Jumlah minimal Rp 5.000',
                     ]),
 
                 Select::make('user_id')
