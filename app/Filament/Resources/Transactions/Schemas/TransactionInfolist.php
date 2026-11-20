@@ -41,7 +41,7 @@ class TransactionInfolist
                     }),
 
                 TextEntry::make('alasan_batal')
-                    ->label('Alasan Pembatalan')
+                    ->label('Alasan Dibatalkan')
                     ->visible(fn ($record) => filled($record->alasan_batal)),
 
                 TextEntry::make('tanggal_pengajuan_batal')
