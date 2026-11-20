@@ -38,7 +38,7 @@ class ClosingsTable
                     ->sortable(),
 
                 TextColumn::make('selisih')
-                    ->label('Selisih Kas')
+                    ->label('Selisih kas')
                     ->numeric(),
 
                 TextColumn::make('status')
