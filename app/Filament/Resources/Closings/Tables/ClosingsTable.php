@@ -65,7 +65,7 @@ class ClosingsTable
                     EditAction::make()
                         ->visible(fn ($record): bool =>
                             $record->status === ClosingStatus::Pending
-                            || auth()->user()?->hasRole([
+                            && auth()->user()?->hasRole([
                                 'super_admin',
                                 'supervisor',
                             ])

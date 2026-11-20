@@ -78,7 +78,7 @@ class ViewClosing extends ViewRecord
             EditAction::make()
                 ->visible(fn (): bool =>
                     $this->record->status === ClosingStatus::Pending
-                    || auth()->user()?->hasRole([
+                    && auth()->user()?->hasRole([
                         'super_admin',
                         'supervisor',
                     ])
