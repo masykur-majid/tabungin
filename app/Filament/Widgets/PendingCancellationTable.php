@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class PendingCancellationTable extends BaseWidget
 {
-    protected static ?string $heading = 'Pengajuan Pembatalan Perlu Di-Resolve';
+    protected static ?string $heading = 'Pengajuan Pembatalan';
 
     protected static ?int $sort = 3;
     protected int | string | array $columnSpan = 'full';
@@ -28,8 +28,8 @@ class PendingCancellationTable extends BaseWidget
                 Tables\Columns\TextColumn::make('jenis_transaksi'),
                 Tables\Columns\TextColumn::make('jumlah_transaksi')
                     ->label('Jumlah Transaksi')
-                    ->money('IDR', locale: 'id'),
-                Tables\Columns\TextColumn::make('alasan_pembatalan')->label('Alasan'),
+                    ->money('IDR', decimalPlaces: 0, locale: 'id'),
+               Tables\Columns\TextColumn::make('alasan_batal')->label('Alasan'),
             ])
             ->actions([
                 Action::make('Setujui')

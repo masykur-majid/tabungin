@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Closings\Pages;
 
-use App\Enums\Enums\ClosingStatus;
+use App\Enums\ClosingStatus;
 use App\Filament\Resources\Closings\ClosingResource;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;

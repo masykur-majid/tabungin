@@ -2,63 +2,104 @@
 
 namespace App\Observers;
 
+use App\Models\Account;
 use App\Models\Transaction;
 
 class TransactionObserver
 {
     public function created(Transaction $transaction): void
     {
-        $this->updateSaldo($transaction);
+        $this->adjust(
+            $transaction->account_id,
+            $transaction->jenis_transaksi,
+            $transaction->jumlah_transaksi,
+            1
+        );
+    }
+
+    public function updated(Transaction $transaction): void
+    {
+        $wasCancelled = $transaction->getOriginal('status') === 'dibatalkan';
+        $isCancelled  = $transaction->status === 'dibatalkan';
+
+        if ($wasCancelled && $isCancelled) {
+            return;
+        }
+
+        // Baru saja dibatalkan: balikkan efek transaksi ke saldo.
+        if (! $wasCancelled && $isCancelled) {
+            $this->adjust(
+                $transaction->getOriginal('account_id'),
+                $transaction->getOriginal('jenis_transaksi'),
+                $transaction->getOriginal('jumlah_transaksi'),
+                -1
+            );
+            return;
+        }
+
+        // Pembatalan dibatalkan (status kembali aktif): terapkan lagi.
+        if ($wasCancelled && ! $isCancelled) {
+            $this->adjust(
+                $transaction->account_id,
+                $transaction->jenis_transaksi,
+                $transaction->jumlah_transaksi,
+                1
+            );
+            return;
+        }
+
+        if ($transaction->wasChanged(['account_id', 'jenis_transaksi', 'jumlah_transaksi'])) {
+            $this->adjust(
+                $transaction->getOriginal('account_id'),
+                $transaction->getOriginal('jenis_transaksi'),
+                $transaction->getOriginal('jumlah_transaksi'),
+                -1
+            );
+
+            $this->adjust(
+                $transaction->account_id,
+                $transaction->jenis_transaksi,
+                $transaction->jumlah_transaksi,
+                1
+            );
+        }
     }
 
     public function deleted(Transaction $transaction): void
     {
-        $this->reverseSaldo($transaction);
-    }
-
-    protected function updateSaldo(Transaction $transaction): void
-    {
-        $account = $transaction->account;
-
-        if (!$account) {
+       
+        if ($transaction->status === 'dibatalkan') {
             return;
         }
 
-        match ($transaction->jenis_transaksi) {
-            'setoran'   => $account->increment('saldo', $transaction->jumlah_transaksi),
-            'penarikan' => $account->decrement('saldo', $transaction->jumlah_transaksi),
-            default     => null,
-        };
+        $this->adjust(
+            $transaction->account_id,
+            $transaction->jenis_transaksi,
+            $transaction->jumlah_transaksi,
+            -1
+        );
     }
 
-    protected function reverseSaldo(Transaction $transaction): void
+    protected function adjust($accountId, ?string $jenis, $jumlah, int $sign): void
     {
-        $account = $transaction->account;
+        $account = Account::find($accountId);
 
-        if (!$account) {
+        if (! $account) {
             return;
         }
 
-        match ($transaction->jenis_transaksi) {
-            'setoran'   => $account->decrement('saldo', $transaction->jumlah_transaksi),
-            'penarikan' => $account->increment('saldo', $transaction->jumlah_transaksi),
-            default     => null,
+        $delta = match ($jenis) {
+            'setoran'   => (float) $jumlah,
+            'penarikan' => -(float) $jumlah,
+            default     => 0.0,
         };
-    } 
-        public function updated(Transaction $transaction): void
-    {
-        $original = $transaction->getOriginal();
-        $oldTransaction = new Transaction($original);
-        $this->reverseSaldo($oldTransaction);
 
-        $this->updateSaldo($transaction);
+        $delta *= $sign;
+
+        if ($delta > 0) {
+            $account->increment('saldo', $delta);
+        } elseif ($delta < 0) {
+            $account->decrement('saldo', abs($delta));
+        }
     }
-     public function update(Transaction $transaction): void
-     {
-        $original = $transaction->getOriginal();
-        $oldTransaction = new Transaction($original);
-        $this->reverseSaldo($oldTransaction);
-
-        $this->updateSaldo($transaction);
-     }
 }

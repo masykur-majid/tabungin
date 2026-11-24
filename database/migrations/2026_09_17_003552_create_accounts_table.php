@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained();
-            $table->string('nomor_rekening', 15);
+            $table->string('nomor_rekening', 15)->unique();
             $table->decimal('saldo', 12, 2);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

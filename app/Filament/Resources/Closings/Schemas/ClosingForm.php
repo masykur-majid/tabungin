@@ -6,7 +6,6 @@ use App\Models\Transaction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -369,12 +368,6 @@ class ClosingForm
                         ->inline()
                         ->columnSpanFull(),
 
-                    Textarea::make('catatan')
-                        ->label('Catatan')
-                        ->placeholder('Masukkan catatan tutup kas')
-                        ->default('-')
-                        ->required()
-                        ->columnSpanFull(),
                 ])
                 ->columns(3)
                 ->columnSpanFull(),
