@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
+use App\Models\Customer;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +20,9 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'account_id' => Account::inRandomOrder()->first()?->id,
+            'user_id' => 2,
+            'jumlah_transaksi' =>fake()->numberBetween(2, 100)*1000,
         ];
     }
 }

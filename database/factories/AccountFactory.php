@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Account;
+use App\Models\Customer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,8 +18,13 @@ class AccountFactory extends Factory
      */
     public function definition(): array
     {
+       
+        
         return [
-            //
+            'customer_id' => Customer::factory(),
+            'nomor_rekening' => fake()->numerify('###############'),
+            'saldo' => 10000,
+            'is_active' => true,
         ];
     }
 }
