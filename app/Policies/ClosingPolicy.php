@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class ClosingPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:Closing');
@@ -71,5 +71,4 @@ class ClosingPolicy
     {
         return $authUser->can('Reorder:Closing');
     }
-
 }

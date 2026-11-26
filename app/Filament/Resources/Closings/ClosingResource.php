@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Closings;
 
+use App\Enums\ClosingStatus;
 use App\Filament\Resources\Closings\Pages\CreateClosing;
 use App\Filament\Resources\Closings\Pages\EditClosing;
 use App\Filament\Resources\Closings\Pages\ListClosings;
@@ -16,6 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ClosingResource extends Resource
 {
@@ -69,6 +71,13 @@ class ClosingResource extends Resource
         }
 
         return $query->where('user_id', auth()->id());
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return ! $record->is_approved
+            && $record->status !== ClosingStatus::Close
+            && parent::canEdit($record);
     }
 
     public static function getPages(): array
