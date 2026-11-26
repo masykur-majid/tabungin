@@ -77,21 +77,11 @@ class ViewClosing extends ViewRecord
 
             EditAction::make()
                 ->visible(fn (): bool =>
-                    $this->record->status === ClosingStatus::Pending
-                    && auth()->user()?->hasRole([
-                        'super_admin',
-                        'supervisor',
-                    ])
+                    ! $this->record->is_approved
+                    && $this->record->status !== ClosingStatus::Close
                 ),
 
             DeleteAction::make()
-                ->visible(fn (): bool =>
-                    $this->record->status === ClosingStatus::Pending
-                    || auth()->user()?->hasRole([
-                        'super_admin',
-                        'supervisor',
-                    ])
-                )
                 ->requiresConfirmation()
                 ->modalHeading('Hapus Data Closing')
                 ->modalDescription(

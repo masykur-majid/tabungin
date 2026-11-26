@@ -1,86 +1,74 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
-use App\Enums\ClosingStatus;
+use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Closing;
-use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ClosingPolicy
 {
-    public function viewAny(User $user): bool
+    use HandlesAuthorization;
+
+    public function viewAny(AuthUser $authUser): bool
     {
-        return $user->can('ViewAny:Closing');
+        return $authUser->can('ViewAny:Closing');
     }
 
-    public function view(User $user, Closing $closing): bool
+    public function view(AuthUser $authUser, Closing $closing): bool
     {
-        return $user->can('View:Closing')
-            && $this->canAccessClosing($user, $closing);
+        return $authUser->can('View:Closing');
     }
 
-    public function create(User $user): bool
+    public function create(AuthUser $authUser): bool
     {
-        return $user->can('Create:Closing');
+        return $authUser->can('Create:Closing');
     }
 
-    public function update(User $user, Closing $closing): bool
+    public function update(AuthUser $authUser, Closing $closing): bool
     {
-        return $user->can('Update:Closing')
-            && $this->canAccessClosing($user, $closing)
-            && $closing->status === ClosingStatus::Pending;
+        return $authUser->can('Update:Closing');
     }
 
-    public function delete(User $user, Closing $closing): bool
+    public function delete(AuthUser $authUser, Closing $closing): bool
     {
-        return $user->can('Delete:Closing')
-            && $this->canAccessClosing($user, $closing);
+        return $authUser->can('Delete:Closing');
     }
 
-    public function deleteAny(User $user): bool
+    public function deleteAny(AuthUser $authUser): bool
     {
-        return $user->can('DeleteAny:Closing');
+        return $authUser->can('DeleteAny:Closing');
     }
 
-    public function restore(User $user, Closing $closing): bool
+    public function restore(AuthUser $authUser, Closing $closing): bool
     {
-        return $user->can('Restore:Closing')
-            && $this->canAccessClosing($user, $closing);
+        return $authUser->can('Restore:Closing');
     }
 
-    public function forceDelete(User $user, Closing $closing): bool
+    public function forceDelete(AuthUser $authUser, Closing $closing): bool
     {
-        return $user->can('ForceDelete:Closing')
-            && $this->canAccessClosing($user, $closing);
+        return $authUser->can('ForceDelete:Closing');
     }
 
-    public function forceDeleteAny(User $user): bool
+    public function forceDeleteAny(AuthUser $authUser): bool
     {
-        return $user->can('ForceDeleteAny:Closing');
+        return $authUser->can('ForceDeleteAny:Closing');
     }
 
-    public function restoreAny(User $user): bool
+    public function restoreAny(AuthUser $authUser): bool
     {
-        return $user->can('RestoreAny:Closing');
+        return $authUser->can('RestoreAny:Closing');
     }
 
-    public function replicate(User $user, Closing $closing): bool
+    public function replicate(AuthUser $authUser, Closing $closing): bool
     {
-        return $user->can('Replicate:Closing')
-            && $this->canAccessClosing($user, $closing);
+        return $authUser->can('Replicate:Closing');
     }
 
-    public function reorder(User $user): bool
+    public function reorder(AuthUser $authUser): bool
     {
-        return $user->can('Reorder:Closing');
-    }
-
-    private function canAccessClosing(User $user, Closing $closing): bool
-    {
-        if ($user->hasRole(['super_admin', 'supervisor'])) {
-            return true;
-        }
-
-        return (int) $closing->user_id === (int) $user->id;
+        return $authUser->can('Reorder:Closing');
     }
 }

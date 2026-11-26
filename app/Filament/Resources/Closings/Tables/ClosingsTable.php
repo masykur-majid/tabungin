@@ -64,21 +64,11 @@ class ClosingsTable
 
                     EditAction::make()
                         ->visible(fn ($record): bool =>
-                            $record->status === ClosingStatus::Pending
-                            && auth()->user()?->hasRole([
-                                'super_admin',
-                                'supervisor',
-                            ])
+                            ! $record->is_approved
+                            && $record->status !== ClosingStatus::Close
                         ),
 
                     DeleteAction::make()
-                        ->visible(fn ($record): bool =>
-                            $record->status === ClosingStatus::Pending
-                            || auth()->user()?->hasRole([
-                                'super_admin',
-                                'supervisor',
-                            ])
-                        )
                         ->requiresConfirmation()
                         ->modalHeading('Hapus Data Closing')
                         ->modalDescription(
