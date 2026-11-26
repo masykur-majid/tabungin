@@ -161,7 +161,7 @@ class TransactionsTable
                         ->visible(fn (): bool => Filament::auth()->user()->hasAnyRole(['admin', 'super_admin'])),
                 ]),
             ])
-            ->toolbarActions([
+                ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->visible(fn (): bool => Filament::auth()->user()->hasAnyRole(['admin', 'super_admin'])),
