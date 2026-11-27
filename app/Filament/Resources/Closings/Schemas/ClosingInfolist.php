@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Closings\Schemas;
 
+use App\Enums\ClosingStatus;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -30,23 +31,22 @@ class ClosingInfolist
             TextEntry::make('status')
                 ->label('Status')
                 ->formatStateUsing(fn ($state) => match ($state) {
+                    ClosingStatus::Pending,
                     'pengajuan_tutup' => 'Pengajuan Tutup',
+
+                    ClosingStatus::Close,
                     'tutup' => 'Tutup',
+
                     default => $state,
                 })
                 ->badge(),
-                
+
             TextEntry::make('is_approved')
                 ->label('Persetujuan')
                 ->formatStateUsing(fn ($state) =>
                     $state ? 'Disetujui' : 'Belum disetujui'
                 )
                 ->badge(),
-
-            TextEntry::make('catatan')
-                ->label('Catatan')
-                ->placeholder('-')
-                ->columnSpanFull(),
 
             TextEntry::make('updated_at')
                 ->label('Terakhir Diubah')

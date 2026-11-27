@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Closings\Pages;
 
+use App\Enums\ClosingStatus;
 use App\Filament\Resources\Closings\ClosingResource;
 use App\Models\Transaction;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -35,9 +37,8 @@ class EditClosing extends EditRecord
         $details = $this->record->closingDetails()->orderBy('id')->get();
 
         foreach ($details as $index => $detail) {
-            $jenis = $detail->jenis;
+            $jenis = $detail->jenis_pecahan;
 
-            // Kompatibilitas untuk detail lama yang belum memiliki jenis.
             if (! $jenis) {
                 $jenis = $index < count($pecahanKoin) ? 'koin' : 'kertas';
             }
@@ -70,8 +71,9 @@ class EditClosing extends EditRecord
         );
 
         $totalSistem = (int) Transaction::query()
-            ->whereDate('tanggal', $this->record->created_at->toDateString())
+            ->whereDate('created_at', $this->record->created_at->toDateString())
             ->where('jenis_transaksi', 'setoran')
+            ->where('status', 'sukses')
             ->sum('jumlah_transaksi');
 
         $data['jumlah_uang_koin'] = $defaultKoin;
@@ -87,9 +89,32 @@ class EditClosing extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        $tanggal = $this->record->created_at->toDateString();
+
+        // Cek ulang pembatalan tertunda sebelum menyimpan Closing.
+        $adaPembatalanTertunda = Transaction::query()
+            ->whereDate('created_at', $tanggal)
+            ->where('status', 'pengajuan pembatalan')
+            ->exists();
+
+        if ($adaPembatalanTertunda) {
+            Notification::make()
+                ->danger()
+                ->title('Tutup Kas Belum Dapat Dilakukan')
+                ->body('Masih ada transaksi yang menunggu persetujuan pembatalan. Selesaikan persetujuan pembatalan terlebih dahulu.')
+                ->persistent()
+                ->send();
+
+            throw ValidationException::withMessages([
+                'selisih' => 'Tutup kas tidak dapat diajukan karena masih ada pembatalan transaksi yang belum disetujui.',
+            ]);
+        }
+
+        // Hanya transaksi setoran yang sukses dihitung.
         $totalSistem = (int) Transaction::query()
-            ->whereDate('tanggal', $this->record->created_at->toDateString())
+            ->whereDate('created_at', $tanggal)
             ->where('jenis_transaksi', 'setoran')
+            ->where('status', 'sukses')
             ->sum('jumlah_transaksi');
 
         $totalFisik = (int) ($data['total_fisik'] ?? 0);
@@ -107,6 +132,7 @@ class EditClosing extends EditRecord
             $data['total_uang_koin'],
             $data['total_uang_kertas'],
             $data['peringatan_kas'],
+            $data['selisih'],
             $data['created_at'],
             $data['updated_at'],
             $data['user_id'],
@@ -114,8 +140,7 @@ class EditClosing extends EditRecord
 
         $data['total_sistem'] = $totalSistem;
         $data['total_fisik'] = $totalFisik;
-        $data['selisih'] = $selisih;
-        $data['status'] = 'pengajuan_tutup';
+        $data['status'] = ClosingStatus::Pending;
         $data['is_approved'] = false;
 
         return $data;
@@ -135,7 +160,7 @@ class EditClosing extends EditRecord
                 $jumlah = max(0, (int) ($item['banyak_koin'] ?? 0));
 
                 $details[] = [
-                    'jenis' => 'koin',
+                    'jenis_pecahan' => 'koin',
                     'nominal_pecahan' => $nominal,
                     'jumlah_pecahan' => $jumlah,
                     'subtotal' => $nominal * $jumlah,
@@ -147,7 +172,7 @@ class EditClosing extends EditRecord
                 $jumlah = max(0, (int) ($item['banyak_kertas'] ?? 0));
 
                 $details[] = [
-                    'jenis' => 'kertas',
+                    'jenis_pecahan' => 'kertas',
                     'nominal_pecahan' => $nominal,
                     'jumlah_pecahan' => $jumlah,
                     'subtotal' => $nominal * $jumlah,
@@ -172,6 +197,7 @@ class EditClosing extends EditRecord
 
     protected function getSaveFormAction(): Action
     {
-        return parent::getSaveFormAction()->label('Ajukan Tutup Kas');
+        return parent::getSaveFormAction()
+            ->label('Ajukan Tutup Kas');
     }
 }

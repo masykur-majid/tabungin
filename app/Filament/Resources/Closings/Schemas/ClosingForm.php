@@ -24,6 +24,7 @@ class ClosingForm
         return (int) Transaction::query()
             ->whereDate('created_at', $tanggal)
             ->where('jenis_transaksi', 'setoran')
+            ->where('status', 'sukses')
             ->sum('jumlah_transaksi');
     }
 
@@ -120,7 +121,8 @@ class ClosingForm
                     TextInput::make('user_id')
                         ->label('Nama Petugas')
                         ->formatStateUsing(
-                            fn () => Auth::user()?->name
+                            fn ($record) => $record?->user?->name
+                                ?? Auth::user()?->name
                         )
                         ->readOnly()
                         ->dehydrated(false),
