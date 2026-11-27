@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('account_id')->constrained();
             $table->foreignId('user_id')->constrained();
-            $table->string('no_slip');
+            $table->string('no_slip')->nullable();
             $table->string('jenis_transaksi')->default('setoran');
             $table->decimal('jumlah_transaksi', 9, 2);
             $table->string('status')->default(TransactionStatus::Success);
