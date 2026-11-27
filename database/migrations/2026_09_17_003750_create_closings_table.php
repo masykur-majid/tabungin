@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('closings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
             $table->decimal('total_sistem', 12, 2);
             $table->decimal('total_fisik', 12, 2);
             $table->string('status');

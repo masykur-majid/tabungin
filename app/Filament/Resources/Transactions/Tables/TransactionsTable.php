@@ -5,9 +5,7 @@ namespace App\Filament\Resources\Transactions\Tables;
 use App\Enums\TransactionStatus;
 use App\Models\Transaction;
 use Filament\Actions\Action;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
@@ -58,8 +56,8 @@ class TransactionsTable
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'sukses' => 'success',
-                        'pengajuan_pembatalan' => 'warning',
-                        'batal' => 'danger',
+                        TransactionStatus::PendingCancellation->value => 'warning',
+                        'dibatalkan' => 'danger',
                         default => 'gray',
                     }),
 
@@ -74,8 +72,13 @@ class TransactionsTable
             ->recordActions([
                 ViewAction::make()->iconButton(),
 
-            EditAction::make()->iconButton()
-                ->hidden(fn (Transaction $record): bool => in_array($record->status, ['sukses', 'dibatalkan'])),
+                EditAction::make()
+                    ->iconButton()
+                    ->hidden(fn (Transaction $record): bool => in_array($record->status, [
+                        'sukses',
+                        TransactionStatus::PendingCancellation->value,
+                        'dibatalkan',
+                    ])),
 
                 Action::make('Ajukan Pembatalan')
                     ->icon('heroicon-o-x-circle')
@@ -91,7 +94,7 @@ class TransactionsTable
                     ])
                     ->action(function ($record, array $data) {
                         $record->update([
-                            'status' => 'pengajuan pembatalan',
+                            'status' => TransactionStatus::PendingCancellation->value,
                             'alasan_batal' => $data['alasan_batal'],
                             'tanggal_pengajuan_batal' => now(),
                         ]);
@@ -146,9 +149,10 @@ class TransactionsTable
                             ->openUrlInNewTab(),
                     ]),
 
-               DeleteAction::make()->iconButton()
-                ->visible(fn (Transaction $record): bool => $record->status === 'dibatalkan'
-                    && Filament::auth()->user()->hasRole('admin')),
+                DeleteAction::make()
+                    ->iconButton()
+                    ->visible(fn (Transaction $record): bool => $record->status === 'dibatalkan'
+                        && Filament::auth()->user()->hasRole('admin')),
             ]);
     }
 }
