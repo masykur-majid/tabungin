@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Account;
 use App\Models\Customer;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,5 +25,11 @@ class TransactionFactory extends Factory
             'user_id' => 2,
             'jumlah_transaksi' =>fake()->numberBetween(2, 100)*1000,
         ];
+    }
+
+    public function yesterday(){
+        return $this->state(fn(array $attributes) => [
+            'created_at' => Carbon::yesterday(),
+        ]);
     }
 }
