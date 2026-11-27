@@ -36,7 +36,6 @@ class CustomersTable
                         default => 'gray',
                     })
                 ->searchable(),
-
                 TextColumn::make('jenis_kelamin')
                 ->label('Jenis Kelamin')
                 ->badge()
@@ -60,7 +59,6 @@ class CustomersTable
                     'SMKS 1 PARAHYANGAN' => 'warning', 
                     'SMP PARAHYANGAN'    => 'info',
                     'GURU PARAHYANGAN'   => 'success',
-                    
                     default => 'gray',
                  }),
                 TextColumn::make('created_at')
