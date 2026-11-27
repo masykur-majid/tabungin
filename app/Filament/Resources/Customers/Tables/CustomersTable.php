@@ -23,11 +23,9 @@ class CustomersTable
                 ->label('NIK')
                 ->placeholder('-')
                 ->searchable(),
-
                 TextColumn::make('nama')
                 ->label('Nama')
                 ->searchable(),
-                
                 TextColumn::make('asal_sekolah')
                 ->label('Asal sekolah')
                 ->badge()
@@ -38,7 +36,6 @@ class CustomersTable
                         default => 'gray',
                     })
                 ->searchable(),
-
                 TextColumn::make('jenis_kelamin')
                 ->label('Jenis Kelamin')
                 ->badge()
@@ -49,42 +46,41 @@ class CustomersTable
                     })
                 ->toggleable()
                 ->toggleable(isToggledHiddenByDefault: true),
-                 
-
                 TextColumn::make('alamat_rumah')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
                TextColumn::make('no_telepon')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->formatStateUsing(fn ($state) => preg_replace('/(\d{4})(\d{4})(\d+)/', '$1-$2-$3', $state)),
-
+                TextColumn::make('asal_sekolah')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                    'SMKS 1 PARAHYANGAN' => 'warning', 
+                    'SMP PARAHYANGAN'    => 'info',
+                    'GURU PARAHYANGAN'   => 'success',
+                    default => 'gray',
+                 }),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                    
+                    ->toggleable(isToggledHiddenByDefault: true),    
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                
             ])
-           
           ->actions([
                 ViewAction::make()
                     ->hiddenLabel()
                     ->tooltip('View')
                     ->slideOver(),
-
                 EditAction::make()
                     ->hiddenLabel()
                     ->tooltip('Edit')
                     ->slideOver(),
-
                 DeleteAction::make()
                     ->hiddenLabel()
                     ->tooltip('Delete')
@@ -95,13 +91,10 @@ class CustomersTable
                                 ->body('Hapus rekening nasabah ini terlebih dahulu.')
                                 ->danger()
                                 ->send();
-
                             $action->cancel();
                         }  
         }),
             ])
-                
-            
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

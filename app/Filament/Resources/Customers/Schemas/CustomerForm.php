@@ -32,8 +32,6 @@ class CustomerForm
                                 ->extraInputAttributes([
                                     'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
                                 ]),
-
-
                             TextInput::make('nik')
                                 ->label('NIK')
                                 ->required()
@@ -54,16 +52,6 @@ class CustomerForm
                                     'unique' => 'NIK sudah terdaftar.',
                                 ])
                                 ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
-
-                            TextInput::make('nama')
-                                ->label('Nama Lengkap')
-                                ->prefixIcon('heroicon-m-user')
-                                ->dehydrateStateUsing(fn ($state) => Str::title($state))
-                                ->required()
-                                ->extraInputAttributes([
-                                    'oninput' => "this.value = this.value.replace(/[^a-zA-Z\\s]/g, '')",
-                                ]),
-
                             ToggleButtons::make('asal_sekolah')
                                 ->label('Asal Sekolah')
                                 ->options([
@@ -79,8 +67,6 @@ class CustomerForm
                                 ->inline()
                                 ->live()
                                 ->required(),
-
-                            
                             Radio::make('jenis_kelamin')
                                 ->label('Jenis Kelamin')
                                 ->inline()
@@ -89,14 +75,10 @@ class CustomerForm
                                     'Laki-laki' => 'Laki-laki',
                                     'Perempuan' => 'Perempuan',
                                 ]),
-
-                            
                             TextInput::make('alamat_rumah')
                                 ->label('Alamat Rumah')
                                 ->prefixIcon('heroicon-m-home')
                                 ->required(),
-
-                           
                             TextInput::make('no_telepon')
                                 ->label('Nomor Telepon')
                                 ->prefixIcon('heroicon-m-phone')
@@ -117,7 +99,6 @@ class CustomerForm
                                 ])
                                 ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
                         ]),
-
                     Step::make('Rekening')
                         ->icon('heroicon-m-credit-card')
                         ->visibleOn('create')
@@ -132,7 +113,7 @@ class CustomerForm
                                         ->maxLength(15)
                                         ->live(debounce: 500)
                                         ->extraInputAttributes([
-                                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
+                                        'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
                                         ])
                                         ->rules([
                                             fn () => function (string $attribute, $value, Closure $fail): void {
@@ -147,7 +128,6 @@ class CustomerForm
                                             'unique' => 'Nomor rekening sudah terdaftar.',
                                         ])
                                         ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
-
                                     TextInput::make('saldo')
                                         ->label('Saldo')
                                         ->numeric()
@@ -156,7 +136,6 @@ class CustomerForm
                                         ->minValue(1000)
                                         ->stripCharacters('.')
                                         ->required(),
-
                                     Toggle::make('is_active')
                                         ->label('Status Aktif')
                                         ->onColor('success')
