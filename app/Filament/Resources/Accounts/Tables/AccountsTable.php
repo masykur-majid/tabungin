@@ -24,14 +24,12 @@ class AccountsTable
                TextColumn::make('customer.nama')
                     ->label('Nasabah')
                     ->sortable(),
-
                 TextColumn::make('nomor_rekening')
                     ->copyable()
                     ->copyMessage('Nomor rekening disalin')
                     ->icon('heroicon-o-document-duplicate')
                     ->iconColor('blue')
                     ->iconPosition('after'),
-
                 TextColumn::make('saldo')
                     ->numeric()
                     ->money('IDR', locale: 'id', decimalPlaces: 0)
@@ -43,12 +41,10 @@ class AccountsTable
                     ->offIcon('heroicon-m-x-mark')
                     ->onColor('success')
                     ->offColor('danger'),
-
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                    
+                    ->toggleable(isToggledHiddenByDefault: true),             
                 TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
@@ -57,21 +53,17 @@ class AccountsTable
             ->filters([
                 //
             ])
-            
           ->actions([
                 ViewAction::make()
                     ->hiddenLabel()
                     ->tooltip('View'),
-
                 EditAction::make()
                     ->hiddenLabel()
                     ->tooltip('Edit'),
-
                 DeleteAction::make()
                     ->hiddenLabel()
                     ->tooltip('Delete'),
             ])
-            
             ->toolbarActions([
                 BulkActionGroup::make([
                 DeleteBulkAction::make(),

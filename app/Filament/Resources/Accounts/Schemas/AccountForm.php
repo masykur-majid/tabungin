@@ -23,7 +23,6 @@ class AccountForm
                     ->searchable()
                     ->preload()
                     ->required(),
-
                 TextInput::make('nomor_rekening')
                     ->label('Nomor Rekening')
                     ->required()
@@ -39,7 +38,6 @@ class AccountForm
                     ->extraInputAttributes([
                         'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 15)",
                     ]),
-
                 TextInput::make('saldo')
                     ->label('Saldo')
                     ->required()
@@ -52,7 +50,6 @@ class AccountForm
                     ->validationMessages([
                         'min' => 'Saldo tidak boleh kurang dari Rp 1.000.',
                     ]),
-
                 Toggle::make('is_active')
                     ->label('Status Aktif')
                     ->onIcon(Heroicon::Check)
