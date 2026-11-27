@@ -60,16 +60,6 @@ class CustomersTable
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->formatStateUsing(fn ($state) => preg_replace('/(\d{4})(\d{4})(\d+)/', '$1-$2-$3', $state)),
 
-                TextColumn::make('asal_sekolah')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                    'SMKS 1 PARAHYANGAN' => 'warning', 
-                    'SMP PARAHYANGAN'    => 'info',
-                    'GURU PARAHYANGAN'   => 'success',
-                    
-                    default => 'gray',
-                 }),
-
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -119,3 +109,4 @@ class CustomersTable
             ]);
     }
 }
+

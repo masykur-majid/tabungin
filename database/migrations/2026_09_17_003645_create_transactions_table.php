@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamp('tanggal_dibatalkan')->nullable();
             $table->foreignId('approver')->nullable()->constrained('users', 'id');
             $table->boolean('is_closed')->default(false);
-            $table->timestamps();          
+            $table->timestamps(); 
         });
     }
     
