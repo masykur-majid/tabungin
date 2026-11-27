@@ -34,10 +34,11 @@ class AccountsTable
 
                 TextColumn::make('saldo')
                     ->numeric()
-                    ->sortable()
-                    ->numeric(decimalPlaces: 0, decimalSeparator: ',', thousandsSeparator: '.'),
+                    ->money('IDR', locale: 'id', decimalPlaces: 0)
+                    ->sortable(),
 
                 ToggleColumn::make('is_active')
+                    ->label('Aktif')
                     ->onIcon('heroicon-m-check')
                     ->offIcon('heroicon-m-x-mark')
                     ->onColor('success')
