@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 
 class TransaksiHariIniTable extends BaseWidget
 {
-    protected static ?string $heading = 'Transaksi Hari Ini (Minimal 10 Transaksi)';
+    protected static ?string $heading = 'Transaksi Hari Ini';
 
     protected static ?int $sort = 4;
     protected int | string | array $columnSpan = 'full';

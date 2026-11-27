@@ -21,7 +21,7 @@ class CustomerForm
         return $schema
             ->components([
                 Wizard::make([
-                    Step::make('Data Nasabah')
+                    Step::make('Data Nasabah')      
                         ->icon('heroicon-m-user')
                         ->schema([
                             TextInput::make('nama')
@@ -37,6 +37,7 @@ class CustomerForm
                                 ->required()
                                 ->live(debounce: 500)
                                 ->maxLength(16)
+                                ->prefixIcon('heroicon-o-identification')
                                 ->extraInputAttributes([
                                     'oninput' => "this.value = this.value.replace(/[^0-9]/g, '').slice(0, 16)",
                                 ])
@@ -52,6 +53,7 @@ class CustomerForm
                                     'unique' => 'NIK sudah terdaftar.',
                                 ])
                                 ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
+
                             ToggleButtons::make('asal_sekolah')
                                 ->label('Asal Sekolah')
                                 ->options([
@@ -93,7 +95,7 @@ class CustomerForm
                                     fn () => function (string $attribute, $value, Closure $fail): void {
                                         $length = strlen((string) $value);
                                         if ($length < 10 || $length > 13) {
-                                            $fail('Nomor telepon harus berisi antara 10 hingga 13 digit.');
+                                            $fail('Nomor telepon harus 13 digit.');
                                         }
                                     },
                                 ])
@@ -119,7 +121,7 @@ class CustomerForm
                                             fn () => function (string $attribute, $value, Closure $fail): void {
                                                 $length = strlen((string) $value);
                                                 if ($length < 10 || $length > 15) {
-                                                    $fail('Nomor rekening harus berisi antara 10 hingga 15 digit.');
+                                                    $fail('Nomor rekening harus berisi 15 digit.');
                                                 }
                                             },
                                         ])
