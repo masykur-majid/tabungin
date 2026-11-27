@@ -52,7 +52,6 @@ class CustomerForm
                                     'unique' => 'NIK sudah terdaftar.',
                                 ])
                                 ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
-
                             ToggleButtons::make('asal_sekolah')
                                 ->label('Asal Sekolah')
                                 ->options([
@@ -68,8 +67,6 @@ class CustomerForm
                                 ->inline()
                                 ->live()
                                 ->required(),
-
-                            
                             Radio::make('jenis_kelamin')
                                 ->label('Jenis Kelamin')
                                 ->inline()
@@ -131,7 +128,6 @@ class CustomerForm
                                             'unique' => 'Nomor rekening sudah terdaftar.',
                                         ])
                                         ->afterStateUpdated(fn ($livewire, TextInput $component) => $livewire->validateOnly($component->getStatePath())),
-
                                     TextInput::make('saldo')
                                         ->label('Saldo')
                                         ->numeric()
@@ -140,7 +136,6 @@ class CustomerForm
                                         ->minValue(1000)
                                         ->stripCharacters('.')
                                         ->required(),
-
                                     Toggle::make('is_active')
                                         ->label('Status Aktif')
                                         ->onColor('success')
